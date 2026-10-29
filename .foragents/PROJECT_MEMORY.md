@@ -11,7 +11,8 @@
 - [x] Cloned `unity6-ai-workflow` (`e:\GIT\unity6-ai-workflow`) and connected `.agents` submodule (`develop` branch).
 - [x] Initialized `.foragents/` project memory infrastructure.
 - [x] Connected `com.reenbo.suif` (`file:../../SUIF`) and Golden Stack (`UniTask`, `VContainer`, `R3`, `ObservableCollections`, `ZString`, `Addressables`, `NuGetForUnity`) in `Packages/manifest.json`.
-- [ ] **Next**: Set `develop` as default branch on GitHub remote, open Unity Editor to resolve packages, and build SUIF showcase views.
+- [x] Resolved Unity 6000 compilation: restored NuGet assemblies for R3/ObservableCollections, updated Addressables to 4.1.2, fixed SUIF.R3 assembly definition and USS properties.
+- [ ] **Next**: Build first SUIF showcase window/scene.
 
 ---
 
