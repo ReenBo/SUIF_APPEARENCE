@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.observablecollections": "https://github.com/Cysharp/ObservableCollections.git?path=src/ObservableCollections.Unity/Assets/ObservableCollections.Unity",
+    "com.cysharp.r3": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity",
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.cysharp.zstring": "https://github.com/Cysharp/ZString.git?path=src/ZString.Unity/Assets/Scripts/ZString",
+    "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+    "com.reenbo.suif": "file:../../SUIF",
+    "com.unity.addressables": "2.3.16",
     "com.unity.collab-proxy": "2.13.6",
     "com.unity.ide.rider": "3.1.0",
     "com.unity.ide.visualstudio": "2.0.28",
@@ -7,6 +14,7 @@
     "com.unity.pipeline": "0.9.1-exp.1",
     "com.unity.render-pipelines.universal": "17.6.0",
     "com.unity.ugui": "2.6.0",
+    "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.adaptiveperformance": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
