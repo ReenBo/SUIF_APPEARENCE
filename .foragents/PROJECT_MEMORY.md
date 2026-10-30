@@ -13,7 +13,9 @@
 - [x] Connected `com.reenbo.suif` (`file:../../SUIF`) and Golden Stack (`UniTask`, `VContainer`, `R3`, `ObservableCollections`, `ZString`, `Addressables`, `NuGetForUnity`) in `Packages/manifest.json`.
 - [x] Resolved Unity 6000 compilation: restored NuGet assemblies for R3/ObservableCollections, updated Addressables to 4.1.2, fixed SUIF.R3 assembly definition and USS properties.
 - [x] Integrated official Unity CLI (`1.0.0-beta.13`) & `com.unity.pipeline` for live editor introspection, configured Antigravity MCP server (`unity mcp configure antigravity`), and verified 2.5s live EditMode tests.
-- [ ] **Next**: Build first SUIF showcase window/scene.
+- [x] **[feature/showcase-hub-foundation]**: Implemented Cyberpunk FUI Showcase Hub 1-to-1 matching HTML prototype (ShowcaseHubView, UXML, USS, POCO ViewModels, R3 reactive bindings, 6 modules, non-destructive modal overlay).
+- [x] Verified live runtime execution in warm Unity Editor via Unity CLI (0 errors, 0 warnings, 1920x1080 GameView capture confirmed pixel-perfect).
+- [ ] **Next**: User review and merging `feature/showcase-hub-foundation` into `develop`.
 
 ---
 
