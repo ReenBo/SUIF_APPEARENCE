@@ -7,8 +7,11 @@
                 <ui:Label text="MODULE_06 // GLOBAL_PALETTE_ENGINE" class="fui-stage-tag" />
                 <ui:Label text="Dynamic Theme Switcher Matrix" class="fui-stage-title" />
             </ui:VisualElement>
-            <ui:VisualElement style="border-width: 1px; border-color: rgba(244, 244, 246, 0.5); padding: 2px 8px;">
-                <ui:Label text="4 COLOR PROFILES" style="font-size: 9px; color: var(--fg-primary); letter-spacing: 1px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:VisualElement style="border-width: 1px; border-color: rgba(244, 244, 246, 0.5); padding: 2px 8px; margin-right: 8px;">
+                    <ui:Label text="4 COLOR PROFILES" style="font-size: 9px; color: var(--fg-primary); letter-spacing: 1px;" />
+                </ui:VisualElement>
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
             </ui:VisualElement>
         </ui:VisualElement>
 

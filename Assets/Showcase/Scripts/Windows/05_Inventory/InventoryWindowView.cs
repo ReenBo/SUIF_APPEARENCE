@@ -18,6 +18,7 @@ namespace SUIF.Showcase.Windows.Inventory
         [UQuery("inventory-inspector-power")] private Label _inspectorPower;
         [UQuery("inventory-inspector-desc")] private Label _inspectorDesc;
         [UQuery("btn-inventory-modal-inspect")] private Button _btnModalInspect;
+        [UQuery("btn-window-close")] private Button _btnClose;
 
         public InventoryWindowView(VisualElement root) : base(root)
         {
@@ -28,6 +29,10 @@ namespace SUIF.Showcase.Windows.Inventory
             if (_btnModalInspect != null)
             {
                 Binder.Bind(_btnModalInspect).ToClick(ViewModel.InspectInModal);
+            }
+            if (_btnClose != null)
+            {
+                Binder.Bind(_btnClose).ToClick(ViewModel.Close);
             }
 
             AddDisposable(ViewModel.SelectedIndex.Subscribe(OnSelectionChanged));

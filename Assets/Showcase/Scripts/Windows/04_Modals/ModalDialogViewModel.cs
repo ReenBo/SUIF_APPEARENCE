@@ -2,6 +2,7 @@ using System;
 using global::R3;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.Showcase.Frame;
 
 namespace SUIF.Showcase.Windows.Modals
 {
@@ -27,13 +28,15 @@ namespace SUIF.Showcase.Windows.Modals
         };
 
         private readonly IUIFlow _uiFlow;
+        private readonly ShowcaseFrameViewModel _frameViewModel;
 
         public ReactiveProperty<int> Depth { get; } = new(1);
         public ReactiveProperty<int> PresetIndex { get; } = new(0);
 
-        public ModalDialogViewModel(IUIFlow uiFlow)
+        public ModalDialogViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
+            _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
 
             AddDisposable(Depth);
             AddDisposable(PresetIndex);
@@ -52,6 +55,7 @@ namespace SUIF.Showcase.Windows.Modals
 
         public void Dismiss()
         {
+            _frameViewModel.SetModalState(false);
             _uiFlow.Close<ModalDialogView>();
         }
 

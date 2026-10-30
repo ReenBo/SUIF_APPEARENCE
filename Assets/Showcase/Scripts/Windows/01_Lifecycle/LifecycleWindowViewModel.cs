@@ -5,6 +5,7 @@ using global::R3;
 using ObservableCollections;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Modals;
 
 namespace SUIF.Showcase.Windows.Lifecycle
@@ -12,13 +13,15 @@ namespace SUIF.Showcase.Windows.Lifecycle
     public sealed class LifecycleWindowViewModel : BaseViewModel
     {
         private readonly IUIFlow _uiFlow;
+        private readonly ShowcaseFrameViewModel _frameViewModel;
 
         public ReactiveProperty<string> LifecycleStage { get; } = new("OnShow");
         public ObservableList<string> LifecycleLogs { get; } = new();
 
-        public LifecycleWindowViewModel(IUIFlow uiFlow)
+        public LifecycleWindowViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
+            _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
 
             AddDisposable(LifecycleStage);
 
@@ -40,7 +43,13 @@ namespace SUIF.Showcase.Windows.Lifecycle
 
         public void OpenModal()
         {
+            _frameViewModel.SetModalState(true);
             _uiFlow.OpenAsync<ModalDialogView>().Forget();
+        }
+
+        public void Close()
+        {
+            _frameViewModel.CloseActiveWindow();
         }
     }
 }

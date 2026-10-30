@@ -16,6 +16,7 @@ namespace SUIF.Showcase.Windows.Counter
         [UQuery("btn-counter-inc")] private Button _btnInc;
         [UQuery("btn-counter-boost")] private Button _btnBoost;
         [UQuery("btn-counter-reset")] private Button _btnReset;
+        [UQuery("btn-window-close")] private Button _btnClose;
         [UQuery("counter-marbles-container")] private VisualElement _marblesContainer;
 
         public ReactiveCounterView(VisualElement root) : base(root)
@@ -28,6 +29,7 @@ namespace SUIF.Showcase.Windows.Counter
             if (_btnInc != null) Binder.Bind(_btnInc).ToClick(() => ViewModel.UpdateCounter(1));
             if (_btnBoost != null) Binder.Bind(_btnBoost).ToClick(() => ViewModel.UpdateCounter(10));
             if (_btnReset != null) Binder.Bind(_btnReset).ToClick(ViewModel.ResetCounter);
+            if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
             AddDisposable(ViewModel.CounterValue.Subscribe(OnValueChanged));
             RefreshMarbles();

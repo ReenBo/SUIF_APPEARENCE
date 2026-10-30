@@ -7,7 +7,10 @@
                 <ui:Label text="MODULE_01 // STATE_MACHINE" class="fui-stage-tag" />
                 <ui:Label text="Basic Window Lifecycle Pipeline" class="fui-stage-title" />
             </ui:VisualElement>
-            <ui:Button name="btn-lifecycle-modal-test" text="+ TEST MODAL OVERLAY [04]" class="fui-modal-test-btn" />
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Button name="btn-lifecycle-modal-test" text="+ TEST MODAL OVERLAY [04]" class="fui-modal-test-btn" />
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement class="fui-lifecycle-grid">

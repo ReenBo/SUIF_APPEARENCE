@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using global::R3;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Modals;
 
 namespace SUIF.Showcase.Windows.Inventory
@@ -44,12 +45,14 @@ namespace SUIF.Showcase.Windows.Inventory
         };
 
         private readonly IUIFlow _uiFlow;
+        private readonly ShowcaseFrameViewModel _frameViewModel;
 
         public ReactiveProperty<int> SelectedIndex { get; } = new(0);
 
-        public InventoryWindowViewModel(IUIFlow uiFlow)
+        public InventoryWindowViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
+            _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
 
             AddDisposable(SelectedIndex);
         }
@@ -64,7 +67,13 @@ namespace SUIF.Showcase.Windows.Inventory
 
         public void InspectInModal()
         {
+            _frameViewModel.SetModalState(true);
             _uiFlow.OpenAsync<ModalDialogView>().Forget();
+        }
+
+        public void Close()
+        {
+            _frameViewModel.CloseActiveWindow();
         }
 
         public InventoryItemData GetCurrentItem()

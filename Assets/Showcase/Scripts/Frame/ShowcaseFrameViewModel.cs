@@ -18,8 +18,8 @@ namespace SUIF.Showcase.Frame
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseThemeService _themeService;
 
-        public ReactiveProperty<int> ActiveNavIndex { get; } = new(1);
-        public ReactiveProperty<string> ActiveTitle { get; } = new("Basic Window Lifecycle");
+        public ReactiveProperty<int> ActiveNavIndex { get; } = new(0);
+        public ReactiveProperty<string> ActiveTitle { get; } = new("[ NO_ACTIVE_VIEW // IDLE ]");
         public ReactiveProperty<bool> IsModalOpen { get; } = new(false);
         public ReactiveProperty<string> FooterStatus { get; } = new("STATE_SYNC // READY");
 

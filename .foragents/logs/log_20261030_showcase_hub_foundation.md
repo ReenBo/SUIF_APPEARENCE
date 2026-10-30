@@ -53,7 +53,22 @@ Implement the Cyberpunk FUI Showcase Hub according to the provided HTML prototyp
 
 ---
 
-## 3. Audit & Compliance
+## 3. Refinements & Layout Fixes (Post-Review)
+
+1. **Window Close & Standby State**:
+   - Added dedicated `[ X ]` header close buttons (`btn-window-close`) across all window UXML templates and wired them to `ViewModel.Close()`.
+   - Wired main shell close button `btn-main-close` (`CLS // WIN`) to `ShowcaseFrameViewModel.CloseActiveWindow()`.
+   - Added official standby viewport display (`viewport-standby-box` / `ALL BASE WINDOWS CLOSED // STANDBY`) displayed when all base windows are closed, matching HTML prototype 1-to-1.
+2. **Modal Dialog Text Overflow Fix**:
+   - Resolved text clipping in `ModalDialogView` danger description box by applying `white-space: normal;` on `.fui-modal-body-msg` and `flex-shrink: 1; min-width: 0;` on `.fui-modal-danger-content`.
+3. **Modal Lifecycle Synchronization**:
+   - Injected `ShowcaseFrameViewModel` into `ModalDialogViewModel` to properly reset `IsModalOpen = false` when dismissed via `btn-modal-dismiss` (`DISMISS OVERLAY`).
+4. **Permanent Background Execution**:
+   - Enabled `Application.runInBackground` to ensure uninterrupted frame ticking for UniTask and Addressables async operations during CLI/MCP introspection.
+
+---
+
+## 4. Audit & Compliance
 
 - **VContainer & POCO**: 100% POCO classes, 0 prohibited `MonoBehaviour` controllers.
 - **GC & Performance**: Zero heap allocations in frame loops, struct DTOs used.

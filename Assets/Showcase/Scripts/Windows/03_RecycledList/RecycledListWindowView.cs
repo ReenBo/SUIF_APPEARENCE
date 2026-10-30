@@ -1,6 +1,7 @@
 using Cysharp.Text;
 using SUIF.Attributes;
 using SUIF.Base;
+using SUIF.R3.Extensions;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.RecycledList
@@ -9,6 +10,7 @@ namespace SUIF.Showcase.Windows.RecycledList
     public sealed class RecycledListWindowView : BaseView<RecycledListWindowViewModel>
     {
         [UQuery("list-nodes-container")] private ScrollView _listContainer;
+        [UQuery("btn-window-close")] private Button _btnClose;
 
         public RecycledListWindowView(VisualElement root) : base(root)
         {
@@ -16,6 +18,7 @@ namespace SUIF.Showcase.Windows.RecycledList
 
         protected override void Bind()
         {
+            if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
             if (_listContainer == null) return;
             _listContainer.Clear();
             var nodes = RecycledListWindowViewModel.Nodes;

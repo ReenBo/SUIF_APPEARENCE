@@ -33,6 +33,7 @@ namespace SUIF.Showcase.Frame
         [UQuery("viewport-id-badge")] private Label _viewportIdBadge;
         [UQuery("viewport-sub-badge")] private Label _viewportSubBadge;
         [UQuery("viewport-coords")] private Label _viewportCoords;
+        [UQuery("viewport-standby-box")] private VisualElement _standbyBox;
 
         [UQuery("footer-status-log")] private Label _footerStatusLog;
 
@@ -99,6 +100,16 @@ namespace SUIF.Showcase.Frame
                     6 => "06_THEME_MATRIX",
                     _ => "NONE // IDLE"
                 };
+            }
+
+            if (_viewportCoords != null)
+            {
+                _viewportCoords.text = index == 0 ? "BASE_STATE: STANDBY" : "BASE_STATE: ACTIVE";
+            }
+
+            if (_standbyBox != null)
+            {
+                _standbyBox.style.display = index == 0 ? DisplayStyle.Flex : DisplayStyle.None;
             }
 
             if (_headerOpenState != null)

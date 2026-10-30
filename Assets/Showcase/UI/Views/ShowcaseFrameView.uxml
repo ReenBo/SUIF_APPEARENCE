@@ -179,14 +179,20 @@
                             </ui:VisualElement>
 
                             <ui:VisualElement class="fui-close-btn-wrapper">
-                                <ui:Button name="btn-main-close" class="fui-close-btn">
-                                    <ui:Label text="X" class="fui-close-btn-text" />
-                                </ui:Button>
-                                <ui:Label name="close-btn-hint" text="CLS // WIN" class="fui-close-btn-hint" />
+                                <ui:Button name="btn-main-close" text="X" class="fui-close-btn" />
+                                <ui:Label name="close-btn-hint" text="CLS // WIN" class="fui-close-btn-hint" picking-mode="Ignore" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="ViewportContentArea" style="flex-grow: 1;" />
+                        <ui:VisualElement name="ViewportContentArea" style="flex-grow: 1; justify-content: center; align-items: center;">
+                            <ui:VisualElement name="viewport-standby-box" class="fui-standby-box" style="display: none;">
+                                <ui:VisualElement class="fui-standby-icon-box">
+                                    <ui:Label text="×" class="fui-standby-icon" />
+                                </ui:VisualElement>
+                                <ui:Label text="ALL BASE WINDOWS CLOSED // STANDBY" class="fui-standby-title" />
+                                <ui:Label text="CLICK ANY VIEW BUTTON [01–06] IN THE LEFT PANEL TO MOUNT A WINDOW MODULE" class="fui-standby-sub" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
 
                         <ui:VisualElement class="fui-viewport-footer">
                             <ui:VisualElement class="fui-footer-left">

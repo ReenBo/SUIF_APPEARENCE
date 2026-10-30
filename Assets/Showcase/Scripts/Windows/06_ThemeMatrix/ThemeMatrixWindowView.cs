@@ -12,6 +12,7 @@ namespace SUIF.Showcase.Windows.ThemeMatrix
         [UQuery("btn-theme-cyan")] private Button _btnCyan;
         [UQuery("btn-theme-crimson")] private Button _btnCrimson;
         [UQuery("btn-theme-amber")] private Button _btnAmber;
+        [UQuery("btn-window-close")] private Button _btnClose;
 
         public ThemeMatrixWindowView(VisualElement root) : base(root)
         {
@@ -23,6 +24,7 @@ namespace SUIF.Showcase.Windows.ThemeMatrix
             if (_btnCyan != null) Binder.Bind(_btnCyan).ToClick(() => ViewModel.ApplyTheme("cyan"));
             if (_btnCrimson != null) Binder.Bind(_btnCrimson).ToClick(() => ViewModel.ApplyTheme("crimson"));
             if (_btnAmber != null) Binder.Bind(_btnAmber).ToClick(() => ViewModel.ApplyTheme("amber"));
+            if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
         }
     }
 }

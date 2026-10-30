@@ -18,6 +18,7 @@ namespace SUIF.Showcase.Windows.Lifecycle
         [UQuery("btn-stage-hide")] private Button _btnStageHide;
         [UQuery("btn-stage-close")] private Button _btnStageClose;
         [UQuery("btn-lifecycle-modal-test")] private Button _btnModalTest;
+        [UQuery("btn-window-close")] private Button _btnClose;
         [UQuery("lifecycle-logs-container")] private VisualElement _logsContainer;
 
         public LifecycleWindowView(VisualElement root) : base(root)
@@ -32,6 +33,7 @@ namespace SUIF.Showcase.Windows.Lifecycle
             if (_btnStageHide != null) Binder.Bind(_btnStageHide).ToClick(() => ViewModel.TriggerStage("OnHide"));
             if (_btnStageClose != null) Binder.Bind(_btnStageClose).ToClick(() => ViewModel.TriggerStage("OnClose"));
             if (_btnModalTest != null) Binder.Bind(_btnModalTest).ToClick(ViewModel.OpenModal);
+            if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
             AddDisposable(ViewModel.LifecycleStage.Subscribe(OnStageChanged));
             RefreshLogs();

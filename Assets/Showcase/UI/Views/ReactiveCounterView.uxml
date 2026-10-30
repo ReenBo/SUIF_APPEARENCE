@@ -7,7 +7,10 @@
                 <ui:Label text="MODULE_02 // ZERO_ALLOC_BINDING" class="fui-stage-tag" style="color: var(--cyber-red);" />
                 <ui:Label text="MVVM &amp; R3 Reactive Counter" class="fui-stage-title" />
             </ui:VisualElement>
-            <ui:Label text="ReactiveProperty&lt;int&gt;" class="fui-stage-badge" />
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label text="ReactiveProperty&lt;int&gt;" class="fui-stage-badge" style="margin-right: 8px;" />
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <ui:VisualElement class="fui-counter-grid">

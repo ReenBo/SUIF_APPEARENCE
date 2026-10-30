@@ -678,6 +678,9 @@
     border-width: 1.5px;
     border-color: var(--fg-primary);
     background-color: #0e0e14;
+    color: var(--fg-primary);
+    font-size: 14px;
+    -unity-font-style: bold;
     align-items: center;
     justify-content: center;
     transition-duration: 0.15s;
@@ -686,6 +689,7 @@
 .fui-close-btn:hover {
     background-color: var(--cyber-red);
     border-color: var(--cyber-red);
+    color: #ffffff;
 }
 
 .fui-close-btn-text {
@@ -701,13 +705,67 @@
     margin-top: 2px;
 }
 
+.fui-stage-close-btn {
+    border-width: 1px;
+    border-color: var(--fg-primary);
+    background-color: #0e0e14;
+    color: var(--fg-primary);
+    font-size: 10px;
+    -unity-font-style: bold;
+    padding: 3px 8px;
+    margin-left: 8px;
+    transition-duration: 0.15s;
+}
+
+.fui-stage-close-btn:hover {
+    background-color: var(--cyber-red);
+    border-color: var(--cyber-red);
+    color: #ffffff;
+}
+
+.fui-standby-box {
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+}
+
+.fui-standby-icon-box {
+    width: 64px;
+    height: 64px;
+    border-width: 1px;
+    border-color: rgba(244, 244, 246, 0.4);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.fui-standby-icon {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: rgba(244, 244, 246, 0.4);
+}
+
+.fui-standby-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgba(244, 244, 246, 0.7);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.fui-standby-sub {
+    font-size: 9px;
+    color: rgba(244, 244, 246, 0.4);
+    letter-spacing: 1px;
+}
+
 /* CONTENT WINDOW ABSOLUTE PLACEMENT INSIDE VIEWPORT */
 .fui-content-window {
     position: absolute;
-    left: 388px;
-    top: 96px;
-    right: 42px;
-    bottom: 64px;
+    left: 632px;
+    top: 276px;
+    width: 1008px;
+    height: 710px;
     background-color: rgba(10, 10, 16, 0.96);
     border-width: 1px;
     border-color: rgba(244, 244, 246, 0.25);
@@ -1198,10 +1256,10 @@
 
 .fui-modal-overlay {
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    left: 632px;
+    top: 276px;
+    width: 1008px;
+    height: 710px;
     background-color: rgba(5, 5, 7, 0.88);
     align-items: center;
     justify-content: center;
@@ -1298,6 +1356,8 @@
 
 .fui-modal-danger-content {
     flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
 .fui-modal-danger-title-row {
@@ -1326,6 +1386,7 @@
     font-size: 10px;
     color: rgba(244, 244, 246, 0.85);
     letter-spacing: 0.5px;
+    white-space: normal;
 }
 
 .fui-modal-danger-stripe {

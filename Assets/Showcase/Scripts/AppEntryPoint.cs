@@ -27,9 +27,8 @@ namespace SUIF.Showcase
 
             try
             {
+                await UnityEngine.AddressableAssets.Addressables.InitializeAsync().WithCancellation(ct);
                 await _uiFlow.OpenAsync<ShowcaseFrameView>(ct);
-                await _uiFlow.OpenAsync<LifecycleWindowView>(ct);
-                await _uiFlow.OpenAsync<ModalDialogView>(ct);
             }
             catch (OperationCanceledException)
             {

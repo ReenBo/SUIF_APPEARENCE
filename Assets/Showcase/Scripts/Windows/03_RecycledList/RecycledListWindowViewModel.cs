@@ -1,4 +1,6 @@
+using System;
 using SUIF.Base;
+using SUIF.Showcase.Frame;
 
 namespace SUIF.Showcase.Windows.RecycledList
 {
@@ -22,6 +24,8 @@ namespace SUIF.Showcase.Windows.RecycledList
 
     public sealed class RecycledListWindowViewModel : BaseViewModel
     {
+        private readonly ShowcaseFrameViewModel _frameViewModel;
+
         public static readonly RecycledNodeData[] Nodes =
         {
             new(1, "NODE_01", "0x00F410", "HOT_SWAP", "0.12ms"),
@@ -43,6 +47,16 @@ namespace SUIF.Showcase.Windows.RecycledList
             new(17, "NODE_05", "0x00F420", "HOT_SWAP", "0.12ms"),
             new(18, "NODE_06", "0x00F421", "RECYCLED", "0.15ms")
         };
+
+        public RecycledListWindowViewModel(ShowcaseFrameViewModel frameViewModel)
+        {
+            _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
+        }
+
+        public void Close()
+        {
+            _frameViewModel.CloseActiveWindow();
+        }
     }
 }
 
