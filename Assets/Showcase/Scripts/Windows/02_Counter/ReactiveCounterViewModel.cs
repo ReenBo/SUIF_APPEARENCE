@@ -38,3 +38,4 @@ namespace SUIF.Showcase.Windows.Counter
         }
     }
 }
+

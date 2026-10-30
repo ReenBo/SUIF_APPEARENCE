@@ -45,3 +45,4 @@ namespace SUIF.Showcase.Windows.RecycledList
         };
     }
 }
+

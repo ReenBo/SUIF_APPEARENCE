@@ -159,7 +159,7 @@
                             <ui:Label name="header-open-state" text="open" class="fui-open-text" />
                             <ui:Label text="-&gt;" class="fui-arrow-cyan" />
                             <ui:Label name="header-base-title" text="Basic Window Lifecycle" class="fui-base-title" />
-                            <ui:VisualElement name="header-overlay-badge" class="fui-overlay-badge">
+                            <ui:VisualElement name="header-overlay-badge" class="fui-overlay-badge is-hidden" style="display: none;">
                                 <ui:VisualElement class="fui-overlay-dot" />
                                 <ui:Label text="+ OVERLAY: Modals/Popups" class="fui-overlay-badge-text" />
                             </ui:VisualElement>
@@ -210,3 +210,4 @@
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
+

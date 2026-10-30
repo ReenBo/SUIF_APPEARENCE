@@ -704,10 +704,10 @@
 /* CONTENT WINDOW ABSOLUTE PLACEMENT INSIDE VIEWPORT */
 .fui-content-window {
     position: absolute;
-    left: 632px;
-    top: 276px;
-    width: 1008px;
-    height: 710px;
+    left: 388px;
+    top: 96px;
+    right: 42px;
+    bottom: 64px;
     background-color: rgba(10, 10, 16, 0.96);
     border-width: 1px;
     border-color: rgba(244, 244, 246, 0.25);
@@ -1198,10 +1198,10 @@
 
 .fui-modal-overlay {
     position: absolute;
-    left: 632px;
-    top: 276px;
-    width: 1008px;
-    height: 710px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     background-color: rgba(5, 5, 7, 0.88);
     align-items: center;
     justify-content: center;
@@ -1453,3 +1453,4 @@
 .is-hidden {
     display: none;
 }
+

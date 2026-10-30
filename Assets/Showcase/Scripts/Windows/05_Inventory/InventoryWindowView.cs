@@ -94,3 +94,4 @@ namespace SUIF.Showcase.Windows.Inventory
         }
     }
 }
+
