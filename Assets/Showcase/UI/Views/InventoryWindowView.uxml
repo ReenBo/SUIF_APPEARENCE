@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="InventoryWindowRoot" class="fui-content-window">
+        <ui:VisualElement class="fui-stage-header">
+            <ui:VisualElement>
+                <ui:Label text="MODULE_05 // TACTICAL_CARGO_GRID" class="fui-stage-tag-red" />
+                <ui:Label text="Cyberware &amp; Hardware Inventory" class="fui-stage-title" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label text="CAPACITY: 13.3 / 64.0 KG" style="font-size: 9px; color: rgba(244, 244, 246, 0.7); letter-spacing: 1px; margin-right: 8px;" />
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="fui-inventory-grid-wrap">
+            <ui:VisualElement name="inventory-slots-container" class="fui-inventory-slots-box" />
+
+            <ui:VisualElement class="fui-inventory-inspector">
+                <ui:VisualElement>
+                    <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <ui:Label text="ITEM_INSPECTOR" style="font-size: 8px; color: var(--cyber-cyan); letter-spacing: 1px;" />
+                        <ui:Label name="inventory-inspector-rarity" text="[LEGENDARY]" style="font-size: 8px; color: var(--cyber-cyan); letter-spacing: 1px;" />
+                    </ui:VisualElement>
+                    <ui:Label name="inventory-inspector-name" text="SANDEVISTAN MK.4" class="fui-inspector-name" />
+                    <ui:Label name="inventory-inspector-power" text="TIME_DILATION // +85%" class="fui-inspector-power" />
+                    <ui:Label name="inventory-inspector-desc" text="Operating system cyberware slowing down time by 85% for 16 seconds while increasing all critical damage." class="fui-inspector-desc" />
+                </ui:VisualElement>
+
+                <ui:Button name="btn-inventory-modal-inspect" text="INSPECT IN MODAL [04]" style="height: 32px; border-width: 1px; border-color: var(--fg-primary); background-color: var(--fg-primary); color: #050507; font-size: 9px; -unity-font-style: bold; letter-spacing: 1px; margin-top: 12px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+

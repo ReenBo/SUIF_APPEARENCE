@@ -13,7 +13,14 @@
 - [x] Connected `com.reenbo.suif` (`file:../../SUIF`) and Golden Stack (`UniTask`, `VContainer`, `R3`, `ObservableCollections`, `ZString`, `Addressables`, `NuGetForUnity`) in `Packages/manifest.json`.
 - [x] Resolved Unity 6000 compilation: restored NuGet assemblies for R3/ObservableCollections, updated Addressables to 4.1.2, fixed SUIF.R3 assembly definition and USS properties.
 - [x] Integrated official Unity CLI (`1.0.0-beta.13`) & `com.unity.pipeline` for live editor introspection, configured Antigravity MCP server (`unity mcp configure antigravity`), and verified 2.5s live EditMode tests.
-- [ ] **Next**: Build first SUIF showcase window/scene.
+- [x] **[feature/showcase-hub-foundation]**: Implemented Decoupled Cyberpunk FUI Showcase Hub strictly matching HTML prototype:
+  - Addressables group `[UI]` configured with all 7 modular views (`ShowcaseFrameView`, `LifecycleWindowView`, `ReactiveCounterView`, `RecycledListWindowView`, `ModalDialogView`, `InventoryWindowView`, `ThemeMatrixWindowView`).
+  - Strict SOLID & Open/Closed Principle: decomposed monolithic view into independent POCO services, ViewModels, and UXML templates.
+  - SUIF `AddressablesUIAssetProvider` robust handle caching & error handling.
+  - Verified live runtime execution in warm Unity 6 Editor via Unity CLI (0 compilation errors, clean transitions across all 6 navigation modules and modal popup overlay).
+  - Resolved window close defect: added `[ X ]` header buttons + `btn-main-close` integration + official Standby state (`ALL BASE WINDOWS CLOSED // STANDBY`).
+  - Resolved modal text overflow defect: applied `white-space: normal;` with flex-shrink constraints.
+- [ ] **Next**: Push `feature/showcase-hub-foundation` upon user approval and open PR to `develop`.
 
 ---
 

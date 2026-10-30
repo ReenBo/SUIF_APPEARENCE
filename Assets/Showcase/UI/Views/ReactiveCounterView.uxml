@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="ReactiveCounterWindowRoot" class="fui-content-window">
+        <ui:VisualElement class="fui-stage-header">
+            <ui:VisualElement>
+                <ui:Label text="MODULE_02 // ZERO_ALLOC_BINDING" class="fui-stage-tag" style="color: var(--cyber-red);" />
+                <ui:Label text="MVVM &amp; R3 Reactive Counter" class="fui-stage-title" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label text="ReactiveProperty&lt;int&gt;" class="fui-stage-badge" style="margin-right: 8px;" />
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="fui-counter-grid">
+            <ui:VisualElement class="fui-counter-display">
+                <ui:Label text="LIVE_VALUE // R3_STREAM" class="fui-counter-label" />
+                <ui:Label name="label-counter-value" text="000" class="fui-counter-val" />
+                <ui:Label text="GC_ALLOC: 0 BYTES" class="fui-counter-alloc" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="fui-counter-controls">
+                <ui:VisualElement class="fui-counter-btn-row">
+                    <ui:Button name="btn-counter-dec" text="[ -1 DEC ]" class="fui-counter-btn" />
+                    <ui:Button name="btn-counter-inc" text="[ +1 INC ]" class="fui-counter-btn" style="background-color: var(--fg-primary); color: #050507;" />
+                    <ui:Button name="btn-counter-boost" text="[ +10 BOOST ]" class="fui-counter-btn" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="fui-marble-box">
+                    <ui:VisualElement class="fui-marble-header">
+                        <ui:Label text="R3_OBSERVABLE_MARBLE_HISTORY" class="fui-marble-title" />
+                        <ui:Button name="btn-counter-reset" text="RESET_STREAM" class="fui-marble-reset" style="background-color: transparent; border-width: 0;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="counter-marbles-container" class="fui-marble-stream" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+

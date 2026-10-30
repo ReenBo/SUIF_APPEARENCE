@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="RecycledListWindowRoot" class="fui-content-window">
+        <ui:VisualElement class="fui-stage-header">
+            <ui:VisualElement>
+                <ui:Label text="MODULE_03 // VIRTUALIZED_VIEWPORT" class="fui-stage-tag" />
+                <ui:Label text="Virtualized Recycled List (10,000 Rows // 6 DOM Nodes)" class="fui-stage-title" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:VisualElement style="border-width: 1px; border-color: rgba(244, 244, 246, 0.5); padding: 2px 8px; background-color: var(--fg-primary);">
+                    <ui:Label text="ACTIVE_POOL: 6" style="font-size: 9px; -unity-font-style: bold; color: #050507; letter-spacing: 1px;" />
+                </ui:VisualElement>
+                <ui:Button name="btn-window-close" text="[ X ]" class="fui-stage-close-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:ScrollView name="list-nodes-container" class="fui-recycled-scroll" />
+    </ui:VisualElement>
+</ui:UXML>
+

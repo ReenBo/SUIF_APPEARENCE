@@ -1,0 +1,25 @@
+{
+    "name": "Showcase",
+    "rootNamespace": "SUIF.Showcase",
+    "references": [
+        "SUIF.Core",
+        "SUIF.VContainer",
+        "SUIF.R3",
+        "SUIF.Addressables",
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "VContainer",
+        "UniTask",
+        "ZString",
+        "R3.Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

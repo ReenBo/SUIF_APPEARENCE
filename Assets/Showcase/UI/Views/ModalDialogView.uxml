@@ -1,0 +1,45 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="ModalDialogOverlayRoot" class="fui-modal-overlay">
+        <ui:VisualElement class="fui-modal-dialog">
+            <ui:VisualElement class="fui-modal-banner">
+                <ui:VisualElement class="fui-modal-banner-left">
+                    <ui:Label text="MODAL_04" class="fui-modal-tag" />
+                    <ui:VisualElement>
+                        <ui:Label text="Modals/Popups // OVERLAY_STACK" class="fui-modal-heading" />
+                        <ui:Label text="RENDERED ABOVE BASE WINDOW // MODAL OVERLAY" class="fui-modal-underlying" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Button name="btn-modal-close" text="[ X ]" class="fui-modal-x-btn" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="fui-modal-danger-box">
+                <ui:VisualElement class="fui-modal-danger-top">
+                    <ui:Label text="!" class="fui-modal-warning-icon" />
+                    <ui:VisualElement class="fui-modal-danger-content">
+                        <ui:VisualElement class="fui-modal-danger-title-row">
+                            <ui:Label name="modal-alert-title" text="DANGER // POPUP_INTERCEPT" class="fui-modal-danger-title" />
+                            <ui:Label name="modal-stack-counter" text="DEPTH: 1" class="fui-modal-depth-badge" />
+                        </ui:VisualElement>
+                        <ui:Label name="modal-body-message" text="This modal layer is non-destructively mounted over the active base window. Underlying reactive streams and lifecycle states remain preserved in memory." class="fui-modal-body-msg" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="fui-modal-danger-stripe" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="fui-modal-action-row">
+                <ui:Button name="btn-modal-push" text="+ PUSH SUB-POPUP" class="fui-modal-btn" />
+                <ui:Button name="btn-modal-cycle" text="↻ SWITCH PAYLOAD" class="fui-modal-btn" />
+                <ui:Button name="btn-modal-dismiss" text="DISMISS OVERLAY" class="fui-modal-btn is-dismiss" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="fui-modal-footer">
+                <ui:Label text="BACKDROP_BLUR: ACTIVE" class="fui-modal-footer-tag" />
+                <ui:Label text="Z_INDEX: 999 // MODAL_QUEUE" class="fui-modal-footer-tag" />
+                <ui:Label text="&gt;&gt;&gt;&gt;&gt;" class="fui-modal-footer-tag" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+
