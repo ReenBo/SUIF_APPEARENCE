@@ -1,8 +1,16 @@
+using SUIF.Addressables;
 using SUIF.API;
+using SUIF.Showcase.Common;
+using SUIF.Showcase.Frame;
+using SUIF.Showcase.Windows.Counter;
+using SUIF.Showcase.Windows.Inventory;
+using SUIF.Showcase.Windows.Lifecycle;
+using SUIF.Showcase.Windows.Modals;
+using SUIF.Showcase.Windows.RecycledList;
+using SUIF.Showcase.Windows.ThemeMatrix;
 using SUIF.VContainer;
 using SUIF.ViewSystems;
 using UnityEngine;
-using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
@@ -11,7 +19,6 @@ namespace SUIF.Showcase
     public sealed class ShowcaseLifetimeScope : SUIFLifetimeScope
     {
         [SerializeField] private UIRoot _sceneUiRoot;
-        [SerializeField] private VisualTreeAsset _showcaseHubAsset;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -28,28 +35,26 @@ namespace SUIF.Showcase
                 }
             }
 
-            builder.RegisterDirectAssetProvider();
+            builder.Register<AddressablesUIAssetProvider>(Lifetime.Singleton).As<IUIAssetProvider>();
 
             base.Configure(builder);
         }
 
         protected override void ConfigureWindows(IContainerBuilder builder)
         {
-            builder.Register<ShowcaseHubViewModel>(Lifetime.Transient);
+            builder.Register<ShowcaseThemeService>(Lifetime.Singleton);
 
-            if (_showcaseHubAsset != null)
-            {
-                builder.Register<ShowcaseEntryPoint>(Lifetime.Singleton)
-                    .WithParameter(_showcaseHubAsset)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-            }
-            else
-            {
-                builder.Register<ShowcaseEntryPoint>(Lifetime.Singleton)
-                    .AsImplementedInterfaces()
-                    .AsSelf();
-            }
+            builder.Register<ShowcaseFrameViewModel>(Lifetime.Singleton);
+            builder.Register<LifecycleWindowViewModel>(Lifetime.Transient);
+            builder.Register<ReactiveCounterViewModel>(Lifetime.Transient);
+            builder.Register<RecycledListWindowViewModel>(Lifetime.Transient);
+            builder.Register<ModalDialogViewModel>(Lifetime.Transient);
+            builder.Register<InventoryWindowViewModel>(Lifetime.Transient);
+            builder.Register<ThemeMatrixWindowViewModel>(Lifetime.Transient);
+
+            builder.Register<AppEntryPoint>(Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
         }
     }
 }

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UI
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: UI
+  m_GUID: 08ec461d60792c84b8dfe58392e3f103
+  m_SerializeEntries:
+  - m_GUID: 1f0da7fb53d81a94e8a906876f2b6975
+    m_Address: ModalDialogView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43a02ca9f4da76944b86309ce9c1ba0a
+    m_Address: ReactiveCounterView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45d860ad501790d48ad9463c59089797
+    m_Address: ThemeMatrixWindowView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4dd42abf235ba5c4fb8ffa894203eea9
+    m_Address: InventoryWindowView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53666d433ba21b841a6544e0fa58cded
+    m_Address: RecycledListWindowView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59dbbea1768b2ec4f9fed3468b3130e0
+    m_Address: LifecycleWindowView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fab9b8e3728592a42bace097bf7acb64
+    m_Address: ShowcaseFrameView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b36e86ceff3c7dd49a695f6f24cc6767, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6b9b6fb4041ecd6428dc6f8afbe3c8da, type: 2}
+    - {fileID: 11400000, guid: afbd917bd9553794eab0ec6de0db6650, type: 2}
+    m_SchemaDisplayOrder:
+    - UI_BundledAssetGroupSchema
+    - UI_ContentUpdateGroupSchema
+  m_IncludeInBuild: 1
+  m_IncludeInBuildMigrated: 1

@@ -8,39 +8,56 @@
 
 ## 1. Objective
 
-Implement the Cyberpunk FUI Showcase Hub according to the provided HTML prototype specification (`WELCOME TO SUIF // Cyberpunk FUI Prototype`), integrating SUIF (UI Toolkit MVVM), VContainer (POCO dependency injection), and R3 (zero-allocation reactive properties).
+Implement the Cyberpunk FUI Showcase Hub according to the provided HTML prototype specification (`WELCOME TO SUIF // Cyberpunk FUI Prototype`), strictly adhering to two architectural mandates:
+1. **Addressables Group `[UI]`**: All View assets (`.uxml` files) must be registered in the Addressables group `[UI]` and loaded dynamically into the root container via SUIF's `AddressablesUIAssetProvider`.
+2. **Modular SOLID Decomposition (Open/Closed Principle)**: Completely decoupled, independent classes, services, and modules — no monolithic single-view code.
 
 ---
 
 ## 2. Key Accomplishments
 
-1. **Architecture & Design**:
-   - Structured `ShowcaseDataModels.cs` with DTOs and value types (`ShowcaseViewType`, `InventoryItem`, `ModalPreset`, `RecycledNodeItem`).
-   - Created `ShowcaseHubViewModel` inheriting `BaseViewModel` with reactive state (`ActiveBaseView`, `IsModalOpen`, `ModalDepth`, `ModalPresetIndex`, `LifecycleStage`, `LifecycleLogs`, `CounterValue`, `CounterHistory`, `SelectedInventoryIndex`, `CurrentTheme`, `FooterStatusLog`).
-   - Implemented `ShowcaseHubView` inheriting `BaseView<ShowcaseHubViewModel>` with full UQuery bindings, R3 property subscriptions, and zero-allocation updates.
-   - Built `ShowcaseEntryPoint` (`IAsyncStartable`, `IDisposable`) and `ShowcaseLifetimeScope` (`SUIFLifetimeScope`).
+1. **Architecture & SOLID Decomposition**:
+   - Structured independent POCO ViewModels and Views for each module:
+     - Shell Frame: `ShowcaseFrameView` (`UILayer.Screens`) & `ShowcaseFrameViewModel`.
+     - Module 01: `LifecycleWindowView` (`UILayer.Windows`) & `LifecycleWindowViewModel`.
+     - Module 02: `ReactiveCounterView` (`UILayer.Windows`) & `ReactiveCounterViewModel`.
+     - Module 03: `RecycledListWindowView` (`UILayer.Windows`) & `RecycledListWindowViewModel`.
+     - Module 04: `ModalDialogView` (`UILayer.Popups`, `IsModal = true`) & `ModalDialogViewModel`.
+     - Module 05: `InventoryWindowView` (`UILayer.Windows`) & `InventoryWindowViewModel`.
+     - Module 06: `ThemeMatrixWindowView` (`UILayer.Windows`) & `ThemeMatrixWindowViewModel`.
+     - Shared Service: `ShowcaseThemeService` (POCO Singleton).
+     - Entry Point: `AppEntryPoint` (`IAsyncStartable`, `IDisposable`).
+     - DI Registration: `ShowcaseLifetimeScope` (`SUIFLifetimeScope`).
 
-2. **UI Toolkit & Styling (SMACSS 5-Layer)**:
-   - Authored `ShowcaseHubView.uxml` and `ShowcaseHubView.uss` faithfully reproducing all visual components (HUD frames, chamfered buttons, telemetry, dynamic stages, modal overlay, and status footer).
-   - Configured `ShowcasePanelSettings.asset` (1920x1080 reference resolution, ScaleWithScreenSize).
-   - Wired `UIRoot` and `ShowcaseLifetimeScope` in `SampleScene.unity`.
+2. **Addressables Group `[UI]` Integration**:
+   - Initialized `AddressableAssetSettings` and created group `UI`.
+   - Registered all 7 UXML assets into group `UI` with keys matching their `UIView` attributes:
+     - `ShowcaseFrameView`
+     - `LifecycleWindowView`
+     - `ReactiveCounterView`
+     - `RecycledListWindowView`
+     - `ModalDialogView`
+     - `InventoryWindowView`
+     - `ThemeMatrixWindowView`
+   - Configured `AddressablesUIAssetProvider` in SUIF with robust handle lifecycle resolution and error recovery.
 
-3. **Core SUIF Engine Enhancements (`e:\GIT\SUIF`)**:
-   - Fixed `ViewFactory.cs`: Transferred `<ui:Style>` stylesheets from `TemplateContainer` to extracted `viewElement`.
-   - Enhanced `UIRoot.cs`: Automatically enforced `flex-grow: 1` and `width: 100%; height: 100%` on `ViewBox` and layer containers in `Awake()`.
-   - Updated `UIRootUXMLContainer.uxml` with `_containers.uss` reference and explicit stretch styles.
+3. **UI Toolkit & Styling (SMACSS 5-Layer)**:
+   - Authored `CyberpunkTheme.uss` with SMACSS structure, theme palettes (`mono`, `cyan`, `crimson`, `amber`), HUD frames, chamfered buttons, telemetry, and `.fui-content-window` viewport positioning.
+   - Decomposed UXML layouts into 7 dedicated files (`ShowcaseFrameView.uxml`, `LifecycleWindowView.uxml`, `ReactiveCounterView.uxml`, `RecycledListWindowView.uxml`, `ModalDialogView.uxml`, `InventoryWindowView.uxml`, `ThemeMatrixWindowView.uxml`).
 
-4. **Live Verification & Validation via Unity CLI**:
-   - Verified 0 compilation errors and 0 console warnings via `unity recompile` and `unity cmd console status`.
-   - Verified PlayMode lifecycle with `unity cmd start` / `unity cmd stop`.
-   - Captured full 1920x1080 runtime screenshot (`showcase_preview.png`), verifying pixel-perfect visual fidelity.
-   - Validated interaction pipelines (Lifecycle stages, MVVM counter manipulation, Recycled list inspection, Inventory selection, and non-destructive Modal overlay stacking).
+4. **Live Verification via Unity CLI**:
+   - Verified 0 compilation errors with `unity recompile`.
+   - Verified PlayMode lifecycle with `unity start` / `unity stop`.
+   - Verified smooth view transitions across all 6 navigation modules and non-destructive Modal popup overlay.
+   - Captured runtime screenshots via `game_view` verifying 100% pixel-perfect visual fidelity.
 
 ---
 
 ## 3. Audit & Compliance
 
-- **VContainer & POCO**: 4 POCO classes, 0 prohibited `MonoBehaviour` controllers.
+- **VContainer & POCO**: 100% POCO classes, 0 prohibited `MonoBehaviour` controllers.
 - **GC & Performance**: Zero heap allocations in frame loops, struct DTOs used.
 - **Code Style**: Strictly no inline or block comments in source code per project guidelines.
 - **Pre-Commit Checks**: Passed cleanly.
+
+

@@ -1,0 +1,49 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="ThemeMatrixWindowRoot" class="fui-content-window">
+        <ui:VisualElement class="fui-stage-header">
+            <ui:VisualElement>
+                <ui:Label text="MODULE_06 // GLOBAL_PALETTE_ENGINE" class="fui-stage-tag" />
+                <ui:Label text="Dynamic Theme Switcher Matrix" class="fui-stage-title" />
+            </ui:VisualElement>
+            <ui:VisualElement style="border-width: 1px; border-color: rgba(244, 244, 246, 0.5); padding: 2px 8px;">
+                <ui:Label text="4 COLOR PROFILES" style="font-size: 9px; color: var(--fg-primary); letter-spacing: 1px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="fui-theme-grid">
+            <ui:Button name="btn-theme-mono" class="fui-theme-card">
+                <ui:VisualElement class="fui-theme-card-header">
+                    <ui:Label text="ABER_MONO // HIGH_CONTRAST" class="fui-theme-card-name" />
+                    <ui:VisualElement class="fui-theme-card-accent" style="background-color: #f4f4f6;" />
+                </ui:VisualElement>
+                <ui:Label text="Default pure white vector FUI with cyan/crimson chromatic accents." class="fui-theme-card-desc" />
+            </ui:Button>
+
+            <ui:Button name="btn-theme-cyan" class="fui-theme-card">
+                <ui:VisualElement class="fui-theme-card-header">
+                    <ui:Label text="NETRUNNER // CYBER_CYAN" class="fui-theme-card-name" />
+                    <ui:VisualElement class="fui-theme-card-accent" style="background-color: #00f0ff;" />
+                </ui:VisualElement>
+                <ui:Label text="Ice-blue ocular HUD projection optimized for subnet telemetry." class="fui-theme-card-desc" />
+            </ui:Button>
+
+            <ui:Button name="btn-theme-crimson" class="fui-theme-card">
+                <ui:VisualElement class="fui-theme-card-header">
+                    <ui:Label text="ARASAKA // TACTICAL_RED" class="fui-theme-card-name" />
+                    <ui:VisualElement class="fui-theme-card-accent" style="background-color: #ff2a54;" />
+                </ui:VisualElement>
+                <ui:Label text="High-alert crimson combat visor palette with inverted laser edge." class="fui-theme-card-desc" />
+            </ui:Button>
+
+            <ui:Button name="btn-theme-amber" class="fui-theme-card">
+                <ui:VisualElement class="fui-theme-card-header">
+                    <ui:Label text="RETRO_CRT // PHOSPHOR_AMBER" class="fui-theme-card-name" />
+                    <ui:VisualElement class="fui-theme-card-accent" style="background-color: #ffb800;" />
+                </ui:VisualElement>
+                <ui:Label text="Industrial orbital terminal amber monochrome spectrum." class="fui-theme-card-desc" />
+            </ui:Button>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
