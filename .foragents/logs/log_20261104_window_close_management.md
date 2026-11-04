@@ -40,9 +40,14 @@ Resolve intermittent base window closing failures across the Showcase Hub where 
      - `CloseBaseWindow_WithModalOpen_DirectlyClosesBaseWindow`
    - Verified 100% pass rate (`7/7 passed in 2.79 seconds`) via warm editor `unity cmd test run`.
 
-3. **Live PlayMode & MCP `game_view` Visual Verification**:
+3. **Modal Overlay Fullscreen Backdrop Fix (`CyberpunkTheme.uss`)**:
+   - Refactored `.fui-modal-overlay` from hardcoded viewport coordinates (`left: 632px; top: 276px; width: 1008px; height: 710px;`) to full-screen coverage (`left: 0; top: 0; right: 0; bottom: 0; width: 100%; height: 100%;`).
+   - Modal background dimming now stretches seamlessly across the entire screen (100% width and 100% height) with the dialog centered, ensuring complete focus on the modal popup.
+   - Verified live in PlayMode with visual verification via MCP `game_view` (`fullscreen_modal_backdrop.png`).
+
+4. **Live PlayMode & MCP `game_view` Visual Verification**:
    - Executed live PlayMode interaction: tested rapid switching across modules, closing via window header `[ X ]`, and verified clean unmounting of all views with instant return to `ALL BASE WINDOWS CLOSED // STANDBY`.
-   - Captured visual proof `window_closed_standby.png` via MCP `game_view`.
+   - Captured visual proof `window_closed_standby.png` and `fullscreen_modal_backdrop.png` via MCP `game_view`.
 
 ---
 
@@ -52,3 +57,4 @@ Resolve intermittent base window closing failures across the Showcase Hub where 
 - **GC & Performance**: Zero allocations in state transitions.
 - **Code Style**: Strictly 0 inline/block comments in source code per `rules/code-style-no-comments.md`.
 - **Pre-Commit Checks**: Passed cleanly.
+
