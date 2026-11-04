@@ -21,6 +21,7 @@
   - Resolved window close defect: added `[ X ]` header buttons + `btn-main-close` integration + official Standby state (`ALL BASE WINDOWS CLOSED // STANDBY`).
   - Resolved modal text overflow defect: applied `white-space: normal;` with flex-shrink constraints.
 - [x] Merged `feature/showcase-hub-foundation` into `develop` and pushed to remote `origin/develop`.
+- [x] Formalized Unity CLI & MCP Tools Standard (v1.3.1) in unity6-ai-workflow with mandatory game_view scene verification, authored architectural whitepaper (docs/unity_cli_mcp_developer_whitepaper.md), and updated .agents submodule.
 - [ ] **Next**: Ready for next feature / task.
 
 ---
