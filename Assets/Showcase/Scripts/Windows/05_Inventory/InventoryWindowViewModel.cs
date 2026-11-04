@@ -73,7 +73,7 @@ namespace SUIF.Showcase.Windows.Inventory
 
         public void Close()
         {
-            _frameViewModel.CloseActiveWindow();
+            _frameViewModel.CloseBaseWindow();
         }
 
         public InventoryItemData GetCurrentItem()
@@ -82,4 +82,3 @@ namespace SUIF.Showcase.Windows.Inventory
         }
     }
 }
-

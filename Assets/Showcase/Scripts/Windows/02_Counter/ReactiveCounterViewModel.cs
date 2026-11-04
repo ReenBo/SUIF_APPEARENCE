@@ -45,8 +45,7 @@ namespace SUIF.Showcase.Windows.Counter
 
         public void Close()
         {
-            _frameViewModel.CloseActiveWindow();
+            _frameViewModel.CloseBaseWindow();
         }
     }
 }
-
