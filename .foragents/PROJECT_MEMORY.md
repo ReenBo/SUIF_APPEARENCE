@@ -22,6 +22,7 @@
   - Resolved modal text overflow defect: applied `white-space: normal;` with flex-shrink constraints.
 - [x] Merged `feature/showcase-hub-foundation` into `develop` and pushed to remote `origin/develop`.
 - [x] Formalized Unity CLI & MCP Tools Standard (v1.3.1) in unity6-ai-workflow with mandatory game_view scene verification, authored architectural whitepaper (docs/unity_cli_mcp_developer_whitepaper.md), and updated .agents submodule.
+- [x] **[fix/window-close-management]**: Resolved base window closing defects across all 5 window modules; added CloseAllBaseWindows() and CloseBaseWindow(); created automated test suite (7/7 passed via warm editor unity cmd test run); verified live with MCP game_view.
 - [ ] **Next**: Ready for next feature / task.
 
 ---

@@ -55,8 +55,7 @@ namespace SUIF.Showcase.Windows.RecycledList
 
         public void Close()
         {
-            _frameViewModel.CloseActiveWindow();
+            _frameViewModel.CloseBaseWindow();
         }
     }
 }
-

@@ -15,7 +15,7 @@ namespace SUIF.Showcase.Windows.Lifecycle
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseFrameViewModel _frameViewModel;
 
-        public ReactiveProperty<string> LifecycleStage { get; } = new("OnShow");
+        public ReactiveProperty<string> LifecycleStage { get; } = new("OnInitialize");
         public ObservableList<string> LifecycleLogs { get; } = new();
 
         public LifecycleWindowViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
@@ -49,8 +49,7 @@ namespace SUIF.Showcase.Windows.Lifecycle
 
         public void Close()
         {
-            _frameViewModel.CloseActiveWindow();
+            _frameViewModel.CloseBaseWindow();
         }
     }
 }
-

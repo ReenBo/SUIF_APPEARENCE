@@ -26,8 +26,7 @@ namespace SUIF.Showcase.Windows.ThemeMatrix
 
         public void Close()
         {
-            _frameViewModel.CloseActiveWindow();
+            _frameViewModel.CloseBaseWindow();
         }
     }
 }
-

@@ -38,6 +38,12 @@ namespace SUIF.Showcase.Frame
 
         public void OpenLifecycleWindow()
         {
+            if (ActiveNavIndex.Value == 1)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
             ActiveNavIndex.Value = 1;
             ActiveTitle.Value = "Basic Window Lifecycle";
             FooterStatus.Value = "OPENED // LIFECYCLE_WINDOW";
@@ -46,6 +52,12 @@ namespace SUIF.Showcase.Frame
 
         public void OpenCounterWindow()
         {
+            if (ActiveNavIndex.Value == 2)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
             ActiveNavIndex.Value = 2;
             ActiveTitle.Value = "MVVM & R3 Reactive Counter";
             FooterStatus.Value = "OPENED // COUNTER_WINDOW";
@@ -54,6 +66,12 @@ namespace SUIF.Showcase.Frame
 
         public void OpenRecycledListWindow()
         {
+            if (ActiveNavIndex.Value == 3)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
             ActiveNavIndex.Value = 3;
             ActiveTitle.Value = "Virtualized Recycled List";
             FooterStatus.Value = "OPENED // RECYCLED_LIST_WINDOW";
@@ -78,6 +96,12 @@ namespace SUIF.Showcase.Frame
 
         public void OpenInventoryWindow()
         {
+            if (ActiveNavIndex.Value == 5)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
             ActiveNavIndex.Value = 5;
             ActiveTitle.Value = "INVENTORY";
             FooterStatus.Value = "OPENED // INVENTORY_WINDOW";
@@ -86,10 +110,24 @@ namespace SUIF.Showcase.Frame
 
         public void OpenThemeMatrixWindow()
         {
+            if (ActiveNavIndex.Value == 6)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
             ActiveNavIndex.Value = 6;
             ActiveTitle.Value = "Dynamic Theme Switcher";
             FooterStatus.Value = "OPENED // THEME_MATRIX_WINDOW";
             _uiFlow.OpenAsync<ThemeMatrixWindowView>().Forget();
+        }
+
+        public void CloseBaseWindow()
+        {
+            ActiveNavIndex.Value = 0;
+            ActiveTitle.Value = "[ NO_ACTIVE_VIEW // IDLE ]";
+            FooterStatus.Value = "CLOSED // BASE_WINDOW";
+            CloseAllBaseWindows();
         }
 
         public void CloseActiveWindow()
@@ -102,19 +140,16 @@ namespace SUIF.Showcase.Frame
                 return;
             }
 
-            var currentIndex = ActiveNavIndex.Value;
-            ActiveNavIndex.Value = 0;
-            ActiveTitle.Value = "[ NO_ACTIVE_VIEW // IDLE ]";
-            FooterStatus.Value = "CLOSED // BASE_WINDOW";
+            CloseBaseWindow();
+        }
 
-            switch (currentIndex)
-            {
-                case 1: _uiFlow.Close<LifecycleWindowView>(); break;
-                case 2: _uiFlow.Close<ReactiveCounterView>(); break;
-                case 3: _uiFlow.Close<RecycledListWindowView>(); break;
-                case 5: _uiFlow.Close<InventoryWindowView>(); break;
-                case 6: _uiFlow.Close<ThemeMatrixWindowView>(); break;
-            }
+        public void CloseAllBaseWindows()
+        {
+            _uiFlow.Close<LifecycleWindowView>();
+            _uiFlow.Close<ReactiveCounterView>();
+            _uiFlow.Close<RecycledListWindowView>();
+            _uiFlow.Close<InventoryWindowView>();
+            _uiFlow.Close<ThemeMatrixWindowView>();
         }
 
         public void SetModalState(bool isOpen)
@@ -123,4 +158,3 @@ namespace SUIF.Showcase.Frame
         }
     }
 }
-
