@@ -46,3 +46,4 @@ Implement high-fidelity Cyberpunk FUI button animations across the Showcase Hub 
 - **Pre-Commit Checks**: Passed cleanly (18 POCO classes, 0 prohibited `MonoBehaviour` controllers, zero GC allocations in hot loops).
 - **Code Style**: Strictly zero comments in code per `rules/code-style-no-comments.md`.
 - **Layout & Interaction**: Element IDs and types (`Button`) preserved 100%, with zero disruption to VContainer and SUIF ViewModel bindings.
+

@@ -47,3 +47,4 @@ Resolve two visual defects reported on Cyberpunk button animations:
 
 - Verified geometry calculations: $Y_{top} = 24 - (140 - 52) = -64px < 0$, guaranteeing 100% fill coverage across all four corners.
 - Pre-commit audit passed cleanly (18 POCO classes, 0 MonoBehaviour controllers, zero GC allocations in frame loops).
+
