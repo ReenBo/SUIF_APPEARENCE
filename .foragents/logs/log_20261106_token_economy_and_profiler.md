@@ -50,4 +50,5 @@ Upgrade the `unity6-ai-workflow` ecosystem (v1.4.0) with comprehensive token eco
 - Tested `.agents/scripts/get-task-cost.ps1` against live active session transcript: successfully parsed 30+ planner calls, evaluated ~90% prompt cache efficiency, and generated real-time ASCII table.
 - Tested `.agents/skills/token-cost-profiler/scripts/analyze-token-bottlenecks.ps1`: successfully isolated top model spikes, heavy file read payloads, and generated actionable recommendations.
 - Verified fast-path announcement string formatting:
-  `⚡ [Auto Mode] Обнаружена микро-правка стилей/конфигурации. Включаю Fast-Path (Tier 0). 🚫 Использование субагентов заблокировано для экономии токенов и времени.`
+  `⚡ [Auto Mode] Micro-fix or styling update detected. Activating Fast-Path (Tier 0). 🚫 Subagent dispatch is prohibited to optimize token budget and latency.`
+
