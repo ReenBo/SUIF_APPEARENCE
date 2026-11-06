@@ -38,6 +38,9 @@
   - Added tactile content shift (`translate: 3px 0;` at 0.24s) and instant color inversion (`#050507` at 0.18s).
   - Added press bounce scale (`scale: 0.985;` at 0.12s) on `:active`.
   - Added close button red wipe (`#ff2a54`) with scale `1.08`.
+- [x] **[fix/button-wipe-artifacts]**: Resolved top-left triangular corner clipping and active-button re-hover flash:
+  - Expanded wipe quad bounds from 130px to 280px (`height: 280px; top: -116px; width: 560px;`) with vertical centering ($y_{center}=24px$), providing >60px margin of safety to eliminate top-left rotation cutoff.
+  - Locked active wipe state (`display: none` on `.fui-btn-wipe-edge`, `transition-duration: 0s` on `.fui-btn-wipe-fill` for `.is-active` and `.is-active-modal`), completely eliminating the re-hover flash glitch.
 - [ ] **Next**: Ready for next feature / task.
 
 ---
