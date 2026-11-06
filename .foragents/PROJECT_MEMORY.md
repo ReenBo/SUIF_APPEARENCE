@@ -23,6 +23,12 @@
 - [x] Merged `feature/showcase-hub-foundation` into `develop` and pushed to remote `origin/develop`.
 - [x] Formalized Unity CLI & MCP Tools Standard (v1.3.1) in unity6-ai-workflow with mandatory game_view scene verification, authored architectural whitepaper (docs/unity_cli_mcp_developer_whitepaper.md), and updated .agents submodule.
 - [x] **[fix/window-close-management]**: Resolved base window closing defects across all 5 window modules (added `CloseAllBaseWindows()` and `CloseBaseWindow()`); fixed modal overlay backdrop to stretch across full screen (100% width and height); created automated test suite (8/8 passed via warm editor `unity cmd test run`); verified live with MCP `game_view`.
+- [x] **[workflow/token-economy-and-profiler]**: Upgraded `unity6-ai-workflow` to v1.4.0:
+  - Implemented 4-Tier Task Complexity Architecture (`Tier 0: Micro-Fix`, `Tier 1: Prototype / Spike`, `Tier 2: Standard`, `Tier 3: Mission-Critical`).
+  - Added strict subagent blocking in Tier 0 (Fast-Path) for styles and minor fixes, reducing token usage by up to 90%.
+  - Added `Task Analyzer` Auto Mode classifier with deterministic keyword and file type detection.
+  - Implemented mandatory Pre-Push Cost Summary widget (`.agents/scripts/get-task-cost.ps1`) tracking uncached tokens, prompt cache read, cache hit %, duration, and estimated USD cost.
+  - Added `token-cost-profiler` subagent and skill (`.agents/skills/token-cost-profiler/`) with automated background trigger on single-request/task token usage exceeding 25,000 tokens.
 - [ ] **Next**: Ready for next feature / task.
 
 ---
@@ -57,6 +63,6 @@
 
 ## 📜 4. Last Session Log
 
-* **Date**: 2026-10-30
+* **Date**: 2026-11-06
 * **Role**: Primary Agent / Orchestrator
-* **Summary**: Configured full Unity CLI (`1.0.0-beta.13`) and `com.unity.pipeline` workflow integration, configured Antigravity MCP server, updated `.agents` submodule to 1.3.0 with Dual-Mode test runner (`unity cmd test run`), resolved all 417 compilation errors with NuGet restoration, and synchronized `develop` branch across `SUIF_APPEARENCE`, `SUIF`, and `unity6-ai-workflow`.
+* **Summary**: Implemented v1.4.0 Token Economy & Profiler upgrade across unity6-ai-workflow: added Task Complexity Tiers (Tier 0-3), strict subagent blocking on Tier 0 (Fast-Path), mandatory Pre-Push Cost Summary widget (.agents/scripts/get-task-cost.ps1), Token & Cost Profiler subagent and skill with 25k budget alert triggers (.agents/skills/token-cost-profiler/).
