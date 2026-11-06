@@ -33,6 +33,11 @@
   - Formulated GPU-Driven Vertex Injection Pattern for 1-Draw-Call dynamic batching across animated chamfers and wipes.
   - Prohibited DOM `overflow: hidden` + rotated pseudo-elements due to Stencil/Scissor batch destruction.
   - Documented subpixel anti-aliased mathematical fragment equations and zero-alloc struct lerpers.
+- [x] **[feature/cyberpunk-button-animations]**: Implemented dual-layer diagonal wipe button animations in SUIF_APPEARENCE strictly matching HTML prototype:
+  - Added `.fui-btn-wipe-edge` (Cyan `#00f0ff`, 0.32s) and `.fui-btn-wipe-fill` (`#f4f4f6`, 0.36s) at `-18deg` across all 6 navigation buttons.
+  - Added tactile content shift (`translate: 3px 0;` at 0.24s) and instant color inversion (`#050507` at 0.18s).
+  - Added press bounce scale (`scale: 0.985;` at 0.12s) on `:active`.
+  - Added close button red wipe (`#ff2a54`) with scale `1.08`.
 - [ ] **Next**: Ready for next feature / task.
 
 ---

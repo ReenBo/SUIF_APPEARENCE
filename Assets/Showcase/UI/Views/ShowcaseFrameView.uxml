@@ -77,43 +77,53 @@
 
                         <ui:VisualElement class="fui-nav-stack">
                             <ui:Button name="nav-btn-lifecycle" class="fui-nav-btn is-active">
-                                <ui:VisualElement class="fui-nav-btn-left">
+                                <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                     <ui:Label text="01" class="fui-btn-tag" />
                                     <ui:Label text="Basic Window Lifecycle" class="fui-btn-label" />
                                 </ui:VisualElement>
-                                <ui:Label text="+" class="fui-btn-arrow" />
+                                <ui:Label text="+" class="fui-btn-arrow" picking-mode="Ignore" />
                             </ui:Button>
 
                             <ui:Button name="nav-btn-mvvm" class="fui-nav-btn">
-                                <ui:VisualElement class="fui-nav-btn-left">
+                                <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                     <ui:Label text="02" class="fui-btn-tag" />
                                     <ui:Label text="MVVM &amp; R3 Reactive Counter" class="fui-btn-label" />
                                 </ui:VisualElement>
-                                <ui:Label text="›" class="fui-btn-arrow" />
+                                <ui:Label text="›" class="fui-btn-arrow" picking-mode="Ignore" />
                             </ui:Button>
 
                             <ui:Button name="nav-btn-list" class="fui-nav-btn">
-                                <ui:VisualElement class="fui-nav-btn-left">
+                                <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                     <ui:Label text="03" class="fui-btn-tag" />
                                     <ui:Label text="Virtualized Recycled List" class="fui-btn-label" />
                                 </ui:VisualElement>
-                                <ui:Label text="|||" class="fui-btn-arrow" />
+                                <ui:Label text="|||" class="fui-btn-arrow" picking-mode="Ignore" />
                             </ui:Button>
 
-                            <ui:Button name="nav-btn-modals" class="fui-nav-btn">
-                                <ui:VisualElement class="fui-nav-btn-left">
+                            <ui:Button name="nav-btn-modals" class="fui-nav-btn is-modal-btn">
+                                <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                     <ui:Label text="04" class="fui-btn-tag" />
                                     <ui:Label text="Modals/Popups" class="fui-btn-label" />
                                 </ui:VisualElement>
-                                <ui:Label text="&gt;&gt;&gt;" class="fui-btn-arrow" />
+                                <ui:Label text="&gt;&gt;&gt;" class="fui-btn-arrow" picking-mode="Ignore" />
                             </ui:Button>
 
                             <ui:Button name="nav-btn-inventory" class="fui-nav-btn">
-                                <ui:VisualElement class="fui-nav-btn-left">
+                                <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                                <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                     <ui:Label text="05" class="fui-btn-tag" />
                                     <ui:Label text="INVENTORY" class="fui-btn-label" />
                                 </ui:VisualElement>
-                                <ui:Label text="×" class="fui-btn-arrow" />
+                                <ui:Label text="×" class="fui-btn-arrow" picking-mode="Ignore" />
                             </ui:Button>
                         </ui:VisualElement>
 
@@ -128,11 +138,13 @@
 
                     <ui:VisualElement class="fui-sidebar-bottom">
                         <ui:Button name="nav-btn-theme" class="fui-nav-btn">
-                            <ui:VisualElement class="fui-nav-btn-left">
+                            <ui:VisualElement class="fui-btn-wipe-edge" picking-mode="Ignore" />
+                            <ui:VisualElement class="fui-btn-wipe-fill" picking-mode="Ignore" />
+                            <ui:VisualElement class="fui-nav-btn-left" picking-mode="Ignore">
                                 <ui:Label text="06" class="fui-btn-tag" />
                                 <ui:Label text="Dynamic Theme Switcher" class="fui-btn-label" />
                             </ui:VisualElement>
-                            <ui:Label text="■" class="fui-btn-arrow" />
+                            <ui:Label text="■" class="fui-btn-arrow" picking-mode="Ignore" />
                         </ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>
@@ -179,7 +191,11 @@
                             </ui:VisualElement>
 
                             <ui:VisualElement class="fui-close-btn-wrapper">
-                                <ui:Button name="btn-main-close" text="X" class="fui-close-btn" />
+                                <ui:Button name="btn-main-close" class="fui-close-btn">
+                                    <ui:VisualElement class="fui-close-btn-wipe-edge" picking-mode="Ignore" />
+                                    <ui:VisualElement class="fui-close-btn-wipe-fill" picking-mode="Ignore" />
+                                    <ui:Label text="X" class="fui-close-btn-text" picking-mode="Ignore" />
+                                </ui:Button>
                                 <ui:Label name="close-btn-hint" text="CLS // WIN" class="fui-close-btn-hint" picking-mode="Ignore" />
                             </ui:VisualElement>
                         </ui:VisualElement>

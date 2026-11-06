@@ -384,24 +384,85 @@
     border-color: var(--fg-primary);
     background-color: var(--bg-card);
     margin-bottom: 10px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 14px;
+    padding-right: 14px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    transition-duration: 0.15s;
+    overflow: hidden;
+    position: relative;
+    transition-property: scale, border-color;
+    transition-duration: 0.12s, 0.2s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-nav-btn:active {
+    scale: 0.985;
+}
+
+.fui-btn-wipe-edge {
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 480px;
+    height: 130px;
+    background-color: var(--cyber-cyan);
+    rotate: -18deg;
+    translate: -125% 0;
+    transition-property: translate;
+    transition-duration: 0.32s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-btn-wipe-fill {
+    position: absolute;
+    top: -40px;
+    left: -50px;
+    width: 480px;
+    height: 130px;
+    background-color: var(--fg-primary);
+    rotate: -18deg;
+    translate: -118% 0;
+    transition-property: translate;
+    transition-duration: 0.36s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-nav-btn:hover .fui-btn-wipe-edge {
+    translate: 0 0;
+}
+
+.fui-nav-btn:hover .fui-btn-wipe-fill {
+    translate: 0 0;
 }
 
 .fui-nav-btn:hover {
-    background-color: var(--bg-card-hover);
     border-color: var(--cyber-cyan);
+}
+
+.fui-nav-btn.is-modal-btn .fui-btn-wipe-edge {
+    background-color: var(--cyber-red);
+}
+
+.fui-nav-btn.is-modal-btn .fui-btn-wipe-fill {
+    background-color: var(--cyber-cyan);
+}
+
+.fui-nav-btn.is-modal-btn:hover {
+    border-color: var(--cyber-red);
 }
 
 .fui-nav-btn.is-active {
     background-color: var(--fg-primary);
+    border-color: var(--fg-primary);
 }
 
-.fui-nav-btn.is-active .fui-btn-label {
+.fui-nav-btn.is-active .fui-btn-wipe-fill {
+    translate: 0 0;
+}
+
+.fui-nav-btn.is-active .fui-btn-label,
+.fui-nav-btn.is-active .fui-btn-arrow {
     color: #050507;
 }
 
@@ -411,14 +472,14 @@
     border-color: #050507;
 }
 
-.fui-nav-btn.is-active .fui-btn-arrow {
-    color: #050507;
-}
-
 .fui-nav-btn.is-active-modal {
     background-color: var(--fg-primary);
     border-color: var(--cyber-cyan);
     border-width: 2px;
+}
+
+.fui-nav-btn.is-active-modal .fui-btn-wipe-fill {
+    translate: 0 0;
 }
 
 .fui-nav-btn.is-active-modal .fui-btn-label {
@@ -434,6 +495,13 @@
 .fui-nav-btn-left {
     flex-direction: row;
     align-items: center;
+    transition-property: translate;
+    transition-duration: 0.24s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-nav-btn:hover .fui-nav-btn-left {
+    translate: 3px 0;
 }
 
 .fui-btn-tag {
@@ -447,6 +515,38 @@
     padding-bottom: 1px;
     color: rgba(244, 244, 246, 0.8);
     margin-right: 8px;
+    transition-property: background-color, color, border-color;
+    transition-duration: 0.18s;
+}
+
+.fui-btn-label {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: var(--fg-primary);
+    letter-spacing: 0.5px;
+    transition-property: color;
+    transition-duration: 0.18s;
+}
+
+.fui-btn-arrow {
+    font-size: 11px;
+    color: rgba(244, 244, 246, 0.5);
+    transition-property: color;
+    transition-duration: 0.18s;
+}
+
+.fui-nav-btn:hover .fui-btn-label {
+    color: #050507;
+}
+
+.fui-nav-btn:hover .fui-btn-arrow {
+    color: #050507;
+}
+
+.fui-nav-btn:hover .fui-btn-tag {
+    background-color: #050507;
+    color: var(--fg-primary);
+    border-color: #050507;
 }
 
 .fui-btn-label {
@@ -673,29 +773,68 @@
 }
 
 .fui-close-btn {
-    width: 44px;
-    height: 32px;
+    width: 48px;
+    height: 34px;
     border-width: 1.5px;
     border-color: var(--fg-primary);
     background-color: #0e0e14;
-    color: var(--fg-primary);
-    font-size: 14px;
-    -unity-font-style: bold;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition-property: scale, border-color;
     transition-duration: 0.15s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-close-btn-wipe-edge {
+    position: absolute;
+    top: -25px;
+    left: -20px;
+    width: 140px;
+    height: 90px;
+    background-color: var(--cyber-cyan);
+    rotate: -18deg;
+    translate: -130% 0;
+    transition-property: translate;
+    transition-duration: 0.28s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-close-btn-wipe-fill {
+    position: absolute;
+    top: -25px;
+    left: -25px;
+    width: 140px;
+    height: 90px;
+    background-color: var(--cyber-red);
+    rotate: -18deg;
+    translate: -120% 0;
+    transition-property: translate;
+    transition-duration: 0.32s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.fui-close-btn:hover .fui-close-btn-wipe-edge,
+.fui-close-btn:hover .fui-close-btn-wipe-fill {
+    translate: 0 0;
 }
 
 .fui-close-btn:hover {
-    background-color: var(--cyber-red);
+    scale: 1.08;
     border-color: var(--cyber-red);
-    color: #ffffff;
 }
 
 .fui-close-btn-text {
     font-size: 14px;
     -unity-font-style: bold;
     color: var(--fg-primary);
+    transition-property: color;
+    transition-duration: 0.18s;
+}
+
+.fui-close-btn:hover .fui-close-btn-text {
+    color: #ffffff;
 }
 
 .fui-close-btn-hint {
@@ -714,13 +853,16 @@
     -unity-font-style: bold;
     padding: 3px 8px;
     margin-left: 8px;
+    transition-property: background-color, border-color, color, scale;
     transition-duration: 0.15s;
+    transition-timing-function: ease-out-cubic;
 }
 
 .fui-stage-close-btn:hover {
     background-color: var(--cyber-red);
     border-color: var(--cyber-red);
     color: #ffffff;
+    scale: 1.05;
 }
 
 .fui-standby-box {
@@ -815,11 +957,18 @@
     font-size: 9px;
     -unity-font-style: bold;
     letter-spacing: 1px;
+    transition-property: background-color, color, scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-cubic;
 }
 
 .fui-modal-test-btn:hover {
     background-color: var(--cyber-cyan);
     color: #050507;
+}
+
+.fui-modal-test-btn:active {
+    scale: 0.98;
 }
 
 .fui-lifecycle-grid {
@@ -966,11 +1115,18 @@
     -unity-font-style: bold;
     margin-right: 6px;
     letter-spacing: 1px;
+    transition-property: background-color, color, scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-cubic;
 }
 
 .fui-counter-btn:hover {
     background-color: var(--fg-primary);
     color: #050507;
+}
+
+.fui-counter-btn:active {
+    scale: 0.98;
 }
 
 .fui-marble-box {
@@ -1415,11 +1571,18 @@
     font-size: 9px;
     -unity-font-style: bold;
     letter-spacing: 1px;
+    transition-property: background-color, color, scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-cubic;
 }
 
 .fui-modal-btn:hover {
     background-color: var(--fg-primary);
     color: #050507;
+}
+
+.fui-modal-btn:active {
+    scale: 0.98;
 }
 
 .fui-modal-btn.is-dismiss {
