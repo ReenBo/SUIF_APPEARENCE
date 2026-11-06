@@ -29,6 +29,10 @@
   - Added `Task Analyzer` Auto Mode classifier with deterministic keyword and file type detection.
   - Implemented mandatory Pre-Push Cost Summary widget (`.agents/scripts/get-task-cost.ps1`) tracking uncached tokens, prompt cache read, cache hit %, duration, and estimated USD cost.
   - Added `token-cost-profiler` subagent and skill (`.agents/skills/token-cost-profiler/`) with automated background trigger on single-request/task token usage exceeding 25,000 tokens.
+- [x] **[rules/suif-effects-and-animations]**: Standardized SUIF UI Effects & Animation Architecture (v1.4.1):
+  - Formulated GPU-Driven Vertex Injection Pattern for 1-Draw-Call dynamic batching across animated chamfers and wipes.
+  - Prohibited DOM `overflow: hidden` + rotated pseudo-elements due to Stencil/Scissor batch destruction.
+  - Documented subpixel anti-aliased mathematical fragment equations and zero-alloc struct lerpers.
 - [ ] **Next**: Ready for next feature / task.
 
 ---
@@ -47,6 +51,7 @@
   * **Zero-Alloc Strings**: **ZString** (`com.cysharp.zstring`).
   * **Asset Streaming**: **Addressables** (`com.unity.addressables`).
   * **Automation & Diagnostics**: **Unity CLI** (`unity` + `com.unity.pipeline`) — mandatory for live recompile and warm test execution.
+  * **UI Effects & Batching Standard**: Single static Material Asset per shader type; per-element animation parameters injected via `Vertex.tint`; DOM `overflow: hidden` + rotated pseudo-elements strictly prohibited in hot lists/buttons.
 * **Git Policy**:
   * `develop` is the default active branch; all commits and feature work target `develop`.
   * **Mandatory Pre-Push Rule**: Always ask the user `"Push? Да или нет?"` before executing any `git push`.
