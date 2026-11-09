@@ -75,14 +75,14 @@ jobs:
           command: pages deploy ${{ github.workspace }}/Builds/WebGL --project-name=suif-showcase --branch=${{ github.ref_name }}
 
       - name: Deploy to Itch.io (Release Tags Only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        if: startsWith(github.ref, 'refs/tags/v') && env.BUTLER_CREDENTIALS != ''
         env:
           BUTLER_CREDENTIALS: ${{ secrets.ITCH_BUTLER_TOKEN }}
-          CHANNEL: html5
-          ITCH_GAME: suif-appearance
-          ITCH_USER: reenbo
-          PACKAGE: ${{ github.workspace }}/Builds/WebGL
+        run: |
+          curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip
+          chmod +x butler
+          ./butler push ${{ github.workspace }}/Builds/WebGL reenbo/suif-appearance:html5
 
   benchmark-performance:
     name: Headless WebGL Performance Benchmark
