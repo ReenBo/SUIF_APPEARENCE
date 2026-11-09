@@ -25,6 +25,7 @@ jobs:
       - name: Run CI Audits
         shell: powershell
         run: |
+          $env:PYTHONIOENCODING = "utf-8"
           .\.agents\ci\run-all-checks.ps1 -ProjectPath .
 
   build-and-deploy:
