@@ -16,6 +16,10 @@ namespace SUIF.Showcase.Frame
 
         [UQuery("telemetry-base-readout")] private Label _telemetryBaseReadout;
         [UQuery("telemetry-modal-readout")] private Label _telemetryModalReadout;
+        [UQuery("telemetry-fps-readout")] private Label _telemetryFpsReadout;
+        [UQuery("telemetry-dc-readout")] private Label _telemetryDcReadout;
+        [UQuery("btn-run-benchmark")] private Button _btnRunBenchmark;
+
         [UQuery("header-open-state")] private Label _headerOpenState;
         [UQuery("header-base-title")] private Label _headerBaseTitle;
         [UQuery("header-overlay-badge")] private VisualElement _headerOverlayBadge;
@@ -51,11 +55,38 @@ namespace SUIF.Showcase.Frame
             if (_navBtnTheme != null) Binder.Bind(_navBtnTheme).ToClick(ViewModel.OpenThemeMatrixWindow);
 
             if (_btnMainClose != null) Binder.Bind(_btnMainClose).ToClick(ViewModel.CloseActiveWindow);
+            if (_btnRunBenchmark != null) Binder.Bind(_btnRunBenchmark).ToClick(ViewModel.TriggerBenchmark);
 
             AddDisposable(ViewModel.ActiveNavIndex.Subscribe(OnNavIndexChanged));
             AddDisposable(ViewModel.ActiveTitle.Subscribe(OnTitleChanged));
             AddDisposable(ViewModel.IsModalOpen.Subscribe(OnModalStateChanged));
             AddDisposable(ViewModel.CurrentTheme.Subscribe(OnThemeChanged));
+
+            if (_telemetryFpsReadout != null)
+            {
+                AddDisposable(ViewModel.CurrentFps.Subscribe(fps => 
+                {
+                    _telemetryFpsReadout.text = ZString.Format("{0:F1} FPS", fps);
+                }));
+            }
+
+            if (_telemetryDcReadout != null)
+            {
+                AddDisposable(ViewModel.DrawCalls.Subscribe(dc => 
+                {
+                    _telemetryDcReadout.text = ZString.Format("[{0} DC]", dc);
+                }));
+            }
+
+            if (_btnRunBenchmark != null)
+            {
+                AddDisposable(ViewModel.IsBenchmarkRecording.Subscribe(isRecording => 
+                {
+                    _btnRunBenchmark.text = isRecording ? "TESTING..." : "RUN BENCHMARK";
+                    if (isRecording) _btnRunBenchmark.AddToClassList("is-active");
+                    else _btnRunBenchmark.RemoveFromClassList("is-active");
+                }));
+            }
 
             if (_footerStatusLog != null)
             {

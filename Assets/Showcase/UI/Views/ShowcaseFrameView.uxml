@@ -38,6 +38,12 @@
                             <ui:Label text="OVERLAY_STACK:" class="fui-telemetry-label" />
                             <ui:Label name="telemetry-modal-readout" text="STANDBY [0]" class="fui-telemetry-badge" />
                         </ui:VisualElement>
+                        <ui:VisualElement class="fui-telemetry-row">
+                            <ui:Label text="PERF_TELEMETRY:" class="fui-telemetry-label" />
+                            <ui:Label name="telemetry-fps-readout" text="60 FPS" class="fui-telemetry-value" />
+                            <ui:Label name="telemetry-dc-readout" text="[1 DC]" class="fui-telemetry-badge" />
+                        </ui:VisualElement>
+                        <ui:Button name="btn-run-benchmark" text="RUN BENCHMARK" class="fui-benchmark-btn" />
                         <ui:VisualElement class="fui-segmented-bar">
                             <ui:VisualElement class="fui-segment-block" />
                             <ui:VisualElement class="fui-segment-block" />

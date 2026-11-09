@@ -1,0 +1,109 @@
+name: WebGL Build & Deploy Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Architecture & Security Audit
+    runs-on: windows-latest
+    steps:
+      - name: Checkout SUIF_APPEARENCE
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run CI Audits
+        shell: powershell
+        run: |
+          .\.agents\ci\run-all-checks.ps1 -ProjectPath .
+
+  build-and-deploy:
+    name: Build WebGL & Deploy
+    needs: [audit]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SUIF_APPEARENCE
+        uses: actions/checkout@v4
+        with:
+          path: SUIF_APPEARENCE
+          submodules: recursive
+
+      - name: Checkout SUIF Framework
+        uses: actions/checkout@v4
+        with:
+          repository: ReenBo/SUIF
+          path: SUIF
+          token: ${{ secrets.GH_PAT_SUIF || secrets.GITHUB_TOKEN }}
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: SUIF_APPEARENCE/Library
+          key: Library-WebGL-${{ hashFiles('SUIF_APPEARENCE/Assets/**', 'SUIF_APPEARENCE/Packages/**', 'SUIF/**') }}
+          restore-keys: |
+            Library-WebGL-
+
+      - name: Build WebGL via GameCI
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: SUIF_APPEARENCE
+          targetPlatform: WebGL
+          buildMethod: SUIF.Editor.Build.WebGLBuilder.BuildFromCommandLine
+          customParameters: -outputFolder ${{ github.workspace }}/Builds/WebGL
+
+      - name: Deploy to Cloudflare Pages
+        id: cloudflare_deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ${{ github.workspace }}/Builds/WebGL --project-name=suif-showcase --branch=${{ github.ref_name }}
+
+      - name: Deploy to Itch.io (Release Tags Only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_BUTLER_TOKEN }}
+          CHANNEL: html5
+          ITCH_GAME: suif-appearance
+          ITCH_USER: reenbo
+          PACKAGE: ${{ github.workspace }}/Builds/WebGL
+
+  benchmark-performance:
+    name: Headless WebGL Performance Benchmark
+    needs: [build-and-deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run WebGL Stress Benchmark
+        env:
+          WEBGL_URL: "https://${{ github.ref_name }}.suif-showcase.pages.dev/?autotest=true"
+        run: |
+          npx playwright test -c tests/e2e/playwright.config.js tests/e2e/benchmark.spec.js

@@ -1,5 +1,6 @@
 using SUIF.Addressables;
 using SUIF.API;
+using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Counter;
@@ -36,6 +37,14 @@ namespace SUIF.Showcase
             }
 
             builder.Register<AddressablesUIAssetProvider>(Lifetime.Singleton).As<IUIAssetProvider>();
+
+            builder.Register<BenchmarkTelemetryService>(Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
+
+            builder.Register<BenchmarkRunnerService>(Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
 
             base.Configure(builder);
         }

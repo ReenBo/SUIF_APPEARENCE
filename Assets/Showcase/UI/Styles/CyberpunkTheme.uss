@@ -229,6 +229,34 @@
     letter-spacing: 1px;
 }
 
+.fui-benchmark-btn {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-color: rgba(0, 240, 255, 0.1);
+    border-color: var(--cyber-cyan);
+    border-width: 1px;
+    color: var(--cyber-cyan);
+    font-size: 9px;
+    letter-spacing: 1px;
+    -unity-font-style: bold;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.fui-benchmark-btn:hover {
+    background-color: var(--cyber-cyan);
+    color: #050507;
+}
+
+.fui-benchmark-btn.is-active {
+    background-color: var(--cyber-red);
+    border-color: var(--cyber-red);
+    color: #f4f4f6;
+}
+
 .fui-segmented-bar {
     width: 130px;
     height: 8px;

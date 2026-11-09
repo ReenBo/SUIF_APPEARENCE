@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using global::R3;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
@@ -17,6 +18,11 @@ namespace SUIF.Showcase.Frame
     {
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseThemeService _themeService;
+        private readonly BenchmarkTelemetryService _telemetryService;
+        private readonly Subject<Unit> _benchmarkRequestedSubject = new();
+        private readonly ReactiveProperty<float> _fallbackFps = new(60f);
+        private readonly ReactiveProperty<long> _fallbackDrawCalls = new(0);
+        private readonly ReactiveProperty<bool> _fallbackRecording = new(false);
 
         public ReactiveProperty<int> ActiveNavIndex { get; } = new(0);
         public ReactiveProperty<string> ActiveTitle { get; } = new("[ NO_ACTIVE_VIEW // IDLE ]");
@@ -24,16 +30,33 @@ namespace SUIF.Showcase.Frame
         public ReactiveProperty<string> FooterStatus { get; } = new("STATE_SYNC // READY");
 
         public ReadOnlyReactiveProperty<string> CurrentTheme => _themeService.CurrentTheme;
+        public ReadOnlyReactiveProperty<float> CurrentFps => _telemetryService != null ? _telemetryService.CurrentFps : _fallbackFps;
+        public ReadOnlyReactiveProperty<long> DrawCalls => _telemetryService != null ? _telemetryService.DrawCalls : _fallbackDrawCalls;
+        public ReadOnlyReactiveProperty<bool> IsBenchmarkRecording => _telemetryService != null ? _telemetryService.IsRecording : _fallbackRecording;
+        public Observable<Unit> BenchmarkRequested => _benchmarkRequestedSubject;
 
-        public ShowcaseFrameViewModel(IUIFlow uiFlow, ShowcaseThemeService themeService)
+        public ShowcaseFrameViewModel(
+            IUIFlow uiFlow, 
+            ShowcaseThemeService themeService,
+            BenchmarkTelemetryService telemetryService = null)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+            _telemetryService = telemetryService;
 
             AddDisposable(ActiveNavIndex);
             AddDisposable(ActiveTitle);
             AddDisposable(IsModalOpen);
             AddDisposable(FooterStatus);
+            AddDisposable(_benchmarkRequestedSubject);
+            AddDisposable(_fallbackFps);
+            AddDisposable(_fallbackDrawCalls);
+            AddDisposable(_fallbackRecording);
+        }
+
+        public void TriggerBenchmark()
+        {
+            _benchmarkRequestedSubject.OnNext(Unit.Default);
         }
 
         public void OpenLifecycleWindow()
