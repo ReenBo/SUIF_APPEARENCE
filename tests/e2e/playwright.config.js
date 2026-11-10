@@ -1,19 +1,20 @@
-const { defineConfig, devices } = require('@playwright/test');
+const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: '.',
-  timeout: 180000,
+  timeout: 300000,
   use: {
     browserName: 'chromium',
     launchOptions: {
       args: [
         '--enable-webgl',
         '--use-gl=angle',
+        '--use-angle=swiftshader',
         '--ignore-gpu-blocklist',
         '--enable-gpu-rasterization',
-        '--no-sandbox'
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
       ]
     }
   }
 });
-

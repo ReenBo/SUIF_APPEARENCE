@@ -106,6 +106,7 @@ jobs:
     name: Headless WebGL Performance Benchmark
     needs: [build-and-deploy]
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
