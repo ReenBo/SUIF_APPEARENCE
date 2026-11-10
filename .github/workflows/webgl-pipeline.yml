@@ -64,16 +64,30 @@ jobs:
           projectPath: SUIF_APPEARENCE
           targetPlatform: WebGL
           buildMethod: SUIF.Editor.Build.WebGLBuilder.BuildFromCommandLine
-          customParameters: -outputFolder ${{ github.workspace }}/Builds/WebGL
+          customParameters: -outputFolder Builds/WebGL
+
+      - name: Prepare & Verify WebGL Build Directory
+        run: |
+          echo "=== Locating WebGL Build Output ==="
+          if [ -d "${{ github.workspace }}/SUIF_APPEARENCE/Builds/WebGL" ]; then
+            echo "Found build in SUIF_APPEARENCE/Builds/WebGL"
+            mkdir -p ${{ github.workspace }}/Builds
+            cp -r ${{ github.workspace }}/SUIF_APPEARENCE/Builds/WebGL ${{ github.workspace }}/Builds/
+          elif [ -d "${{ github.workspace }}/build/WebGL/WebGL" ]; then
+            echo "Found build in build/WebGL/WebGL"
+            mkdir -p ${{ github.workspace }}/Builds
+            cp -r ${{ github.workspace }}/build/WebGL/WebGL ${{ github.workspace }}/Builds/
+          fi
+          echo "Listing ${{ github.workspace }}/Builds/WebGL:"
+          ls -la ${{ github.workspace }}/Builds/WebGL || find ${{ github.workspace }} -name "index.html"
 
       - name: Deploy to Cloudflare Workers Static Assets
         id: cloudflare_deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: SUIF_APPEARENCE
-          command: deploy --assets=${{ github.workspace }}/Builds/WebGL --name=suif-showcase
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx -y wrangler deploy --assets=${{ github.workspace }}/Builds/WebGL --name=suif-showcase
 
       - name: Deploy to Itch.io (Release Tags Only)
         if: startsWith(github.ref, 'refs/tags/v') && env.BUTLER_CREDENTIALS != ''
