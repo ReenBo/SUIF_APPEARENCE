@@ -76,7 +76,9 @@ jobs:
           elif [ -d "${{ github.workspace }}/build/WebGL/WebGL" ]; then
             echo "Found build in build/WebGL/WebGL"
             mkdir -p ${{ github.workspace }}/Builds
+            mkdir -p ${{ github.workspace }}/SUIF_APPEARENCE/Builds
             cp -r ${{ github.workspace }}/build/WebGL/WebGL ${{ github.workspace }}/Builds/
+            cp -r ${{ github.workspace }}/build/WebGL/WebGL ${{ github.workspace }}/SUIF_APPEARENCE/Builds/
           fi
           echo "Listing ${{ github.workspace }}/Builds/WebGL:"
           ls -la ${{ github.workspace }}/Builds/WebGL || find ${{ github.workspace }} -name "index.html"
@@ -86,8 +88,9 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        working-directory: SUIF_APPEARENCE
         run: |
-          npx -y wrangler deploy --assets=${{ github.workspace }}/Builds/WebGL --name=suif-showcase
+          npx -y wrangler deploy
 
       - name: Deploy to Itch.io (Release Tags Only)
         if: startsWith(github.ref, 'refs/tags/v') && env.BUTLER_CREDENTIALS != ''
