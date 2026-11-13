@@ -41,7 +41,13 @@
 - [x] **[fix/button-wipe-artifacts]**: Resolved top-left triangular corner clipping and active-button re-hover flash:
   - Expanded wipe quad bounds from 130px to 280px (`height: 280px; top: -116px; width: 560px;`) with vertical centering ($y_{center}=24px$), providing >60px margin of safety to eliminate top-left rotation cutoff.
   - Locked active wipe state (`display: none` on `.fui-btn-wipe-edge`, `transition-duration: 0s` on `.fui-btn-wipe-fill` for `.is-active` and `.is-active-modal`), completely eliminating the re-hover flash glitch.
-- [ ] **Next**: Ready for next feature / task.
+- [x] **[perf/draw-calls-optimization]**: Eliminated UI Toolkit stencil/transform batch breakers and empty-scene URP overhead without visual changes (`ddc7bc9`, `483f661`, `47a6944`):
+  - Replaced 14 rotated/translated child wipe elements + `overflow: hidden` across `.fui-nav-btn`, `.fui-close-btn`, and `.fui-viewport-frame` with zero-stencil `DiagonalWipeEffect` (`MeshGenerationContext.Allocate` + stack-only Sutherland-Hodgman clipping on default UITK shader; `0` vertices in idle/active states).
+  - Disabled unused `Main Camera` culling, HDR, MSAA, shadows, depth/opaque copies, PostProcessing, and `PC_Renderer` SSAO on the UI-only `SampleScene`.
+  - Reduced Editor DX12 PlayMode Draw Calls from `14–31 DC` down to `5–8 DC` (`7 / 7` EditMode tests passed, `game_view` verified) and Chrome WebGL2 Draw Calls from `76–118 DC` down to `45–66 DC`.
+- [ ] **[backlog/suif-batched-effects]** & **[backlog/workflow-evolution]**: Tracked in [backlog.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/backlog.md) (generalize `DiagonalWipeEffect` into `com.reenbo.suif` after upcoming animation tasks and tests; evolve `.agents` rules/checklists in `unity6-ai-workflow`).
+- [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (profile remaining WebGL2 `45–66 DC` floor vs DX12 `5–8 DC` once `npx`/Spector.js or Development WebGL Profiler is available; assign explicit `PanelTextSettings` + embedded font asset).
+- [ ] **Next**: Proceed to next animation feature/test tasks or address [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) items.
 
 ---
 
@@ -76,6 +82,6 @@
 
 ## 📜 4. Last Session Log
 
-* **Date**: 2026-11-06
+* **Date**: 2026-11-13
 * **Role**: Primary Agent / Orchestrator
-* **Summary**: Implemented v1.4.0 Token Economy & Profiler upgrade across unity6-ai-workflow: added Task Complexity Tiers (Tier 0-3), strict subagent blocking on Tier 0 (Fast-Path), mandatory Pre-Push Cost Summary widget (.agents/scripts/get-task-cost.ps1), Token & Cost Profiler subagent and skill with 25k budget alert triggers (.agents/skills/token-cost-profiler/).
+* **Summary**: Eliminated UI Toolkit stencil/transform batch breakers (`DiagonalWipeEffect` using zero-stencil `MeshGenerationContext.Allocate` clipping) and empty-scene URP/SSAO/PostProcessing camera passes (`ddc7bc9`, `483f661`, `47a6944`), reducing Editor DX12 PlayMode Draw Calls from `14–31` down to `5–8 DC` and Chrome WebGL2 from `76–118` down to `45–66 DC` without visual changes.
