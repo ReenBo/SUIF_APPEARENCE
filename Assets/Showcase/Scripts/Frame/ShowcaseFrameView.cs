@@ -3,6 +3,7 @@ using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Common;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Frame
@@ -56,6 +57,14 @@ namespace SUIF.Showcase.Frame
 
             if (_btnMainClose != null) Binder.Bind(_btnMainClose).ToClick(ViewModel.CloseActiveWindow);
             if (_btnRunBenchmark != null) Binder.Bind(_btnRunBenchmark).ToClick(ViewModel.TriggerBenchmark);
+
+            AttachWipe(_navBtnLifecycle, DiagonalWipeStyle.Navigation);
+            AttachWipe(_navBtnMvvm, DiagonalWipeStyle.Navigation);
+            AttachWipe(_navBtnList, DiagonalWipeStyle.Navigation);
+            AttachWipe(_navBtnModals, DiagonalWipeStyle.ModalNavigation);
+            AttachWipe(_navBtnInventory, DiagonalWipeStyle.Navigation);
+            AttachWipe(_navBtnTheme, DiagonalWipeStyle.Navigation);
+            AttachWipe(_btnMainClose, DiagonalWipeStyle.Close);
 
             AddDisposable(ViewModel.ActiveNavIndex.Subscribe(OnNavIndexChanged));
             AddDisposable(ViewModel.ActiveTitle.Subscribe(OnTitleChanged));
@@ -213,6 +222,14 @@ namespace SUIF.Showcase.Frame
             VisualElement.RemoveFromClassList("theme-amber");
 
             VisualElement.AddToClassList(ZString.Concat("theme-", themeId));
+        }
+
+        private void AttachWipe(Button btn, DiagonalWipeStyle style)
+        {
+            if (btn != null)
+            {
+                AddDisposable(new DiagonalWipeEffect(btn, style));
+            }
         }
 
         private void UpdateBtn(Button btn, bool isActive)
