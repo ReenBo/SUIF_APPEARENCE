@@ -13,9 +13,8 @@
   - Extract a parameterized zero-stencil effect / `ViewBinder` extension into `com.reenbo.suif` with configurable wipe angle, enter/exit durations, CSS custom property names, and active-state predicate.
   - Keep only Cyberpunk theme tokens and bindings inside `SUIF_APPEARENCE`.
 
-### 2. `[backlog/workflow-evolution]` Evolve `unity6-ai-workflow` (`.agents`) Rules & Checklists
-- **Status:** Deferred (to be applied in `e:\GIT\unity6-ai-workflow`, branch `develop`, and synced via `.agents` submodule).
-- **Context:** Draw calls optimization and live MCP introspection surfaced gaps in `.agents` rules and subagent checklists.
-- **Proposed Scope:**
-  - Update [suif-effects-and-animations.md](file:///e:/GIT/SUIF_APPEARENCE/.agents/rules/suif-effects-and-animations.md) to note that custom `Material` (`unityMaterial`) breaks batching against default `Internal-UIRDefault` elements, document the default-shader `MeshGenerationContext.Allocate` + stack-only polygon clipping pattern (`0` stencil buffers, `0` `overflow: hidden`, `0` idle vertices), add a UI-only URP/Camera checklist across all `QualitySettings` platforms (`PC` + `WebGL`), and remove `//` comments from snippets to comply with [code-style-no-comments.md](file:///e:/GIT/SUIF_APPEARENCE/.agents/rules/code-style-no-comments.md).
-  - Update [unity-cli-standard.md](file:///e:/GIT/SUIF_APPEARENCE/.agents/rules/unity-cli-standard.md) and [code-reviewer.md](file:///e:/GIT/SUIF_APPEARENCE/.agents/subagents/code-reviewer.md) with UI Toolkit MCP `eval` batching inspection (`GatherDrawStatistics()`, `RenderTree.m_FirstCommand`, `TextureRegistry`), method-body compilation scope (no top-level `using`), `scratch/` screenshot path discipline (never inside `Assets/`), and checklist alignment.
+---
+
+## Completed from Backlog
+- [x] **`[backlog/workflow-evolution]`** (`2026-11-13`): Updated `unity6-ai-workflow` (`.agents` `v1.4.3`) with default-shader `MeshGenerationContext.Allocate` clipping rules, multi-platform URP UI-only checklist, MCP `eval` batching audit, and `code-reviewer.md` checklist alignment.
+
