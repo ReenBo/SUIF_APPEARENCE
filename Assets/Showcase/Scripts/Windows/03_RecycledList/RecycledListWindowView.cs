@@ -1,7 +1,9 @@
-using Cysharp.Text;
 using SUIF.Attributes;
 using SUIF.Base;
+using SUIF.Controls;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.RecycledList
@@ -20,48 +22,60 @@ namespace SUIF.Showcase.Windows.RecycledList
         {
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
             if (_listContainer == null) return;
+
             _listContainer.Clear();
             var nodes = RecycledListWindowViewModel.Nodes;
             for (var i = 0; i < nodes.Length; i++)
             {
-                var node = nodes[i];
-                var row = new VisualElement();
-                row.AddToClassList("fui-recycled-row");
-
-                var left = new VisualElement();
-                left.AddToClassList("fui-recycled-row__left");
-
-                var indexLabel = new Label(ZString.Concat("#", node.Index.ToString("D4")));
-                indexLabel.AddToClassList("fui-recycled-row__index");
-                var nameLabel = new Label(node.PoolNode);
-                nameLabel.AddToClassList("fui-recycled-row__name");
-                var addrLabel = new Label(ZString.Concat("MEM: ", node.Address));
-                addrLabel.AddToClassList("fui-recycled-row__addr");
-
-                left.Add(indexLabel);
-                left.Add(nameLabel);
-                left.Add(addrLabel);
-
-                var right = new VisualElement();
-                right.AddToClassList("fui-recycled-row__right");
-
-                var statusLabel = new Label(node.Status);
-                statusLabel.AddToClassList("fui-recycled-row__status");
-                if (node.Status == "HOT_SWAP")
-                {
-                    statusLabel.AddToClassList("is-hot");
-                }
-                var latLabel = new Label(node.Latency);
-                latLabel.AddToClassList("fui-recycled-row__latency");
-
-                right.Add(statusLabel);
-                right.Add(latLabel);
-
-                row.Add(left);
-                row.Add(right);
-                _listContainer.Add(row);
+                _listContainer.Add(CreateNodeRow(nodes[i]));
             }
+        }
+
+        private static VisualElement CreateNodeRow(RecycledNodeDto node)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("fui-recycled-row");
+
+            var left = new VisualElement();
+            left.AddToClassList("fui-recycled-row__left");
+
+            var indexLabel = new FixedSlotLabel { Capacity = 8 };
+            indexLabel.AddToClassList("fui-recycled-row__index");
+            indexLabel.SetFixedWritten(node.Index, ShowcaseTextFormatter.WriteRecycledNodeIndex);
+
+            var nameLabel = new FixedSlotLabel { Capacity = 10 };
+            nameLabel.AddToClassList("fui-recycled-row__name");
+            nameLabel.SetFixedWritten(node.PoolSlot, ShowcaseTextFormatter.WriteRecycledNodePool);
+
+            var addrLabel = new FixedSlotLabel { Capacity = 16 };
+            addrLabel.AddToClassList("fui-recycled-row__addr");
+            addrLabel.SetFixedWritten(node.MemoryAddress, ShowcaseTextFormatter.WriteRecycledNodeAddress);
+
+            left.Add(indexLabel);
+            left.Add(nameLabel);
+            left.Add(addrLabel);
+
+            var right = new VisualElement();
+            right.AddToClassList("fui-recycled-row__right");
+
+            var statusLabel = new FixedSlotLabel { Capacity = 10 };
+            statusLabel.AddToClassList("fui-recycled-row__status");
+            if (node.Status == RecycledNodeStatus.HotSwap)
+            {
+                statusLabel.AddToClassList("is-hot");
+            }
+            statusLabel.SetFixedWritten(node.Status, ShowcaseTextFormatter.WriteRecycledNodeStatus);
+
+            var latLabel = new FixedSlotLabel { Capacity = 8 };
+            latLabel.AddToClassList("fui-recycled-row__latency");
+            latLabel.SetFixedWritten(node.LatencyMs, ShowcaseTextFormatter.WriteRecycledNodeLatency);
+
+            right.Add(statusLabel);
+            right.Add(latLabel);
+
+            row.Add(left);
+            row.Add(right);
+            return row;
         }
     }
 }
-

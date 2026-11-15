@@ -1,8 +1,9 @@
-using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Modals
@@ -37,8 +38,7 @@ namespace SUIF.Showcase.Windows.Modals
             _alertTitleSlot = RegisterFixedSlot(_alertTitle, 40);
             _bodyMessageSlot = RegisterFixedSlot(_bodyMessage, 176);
 
-            AddDisposable(ViewModel.Depth.Subscribe(OnDepthChanged));
-            AddDisposable(ViewModel.PresetIndex.Subscribe(OnPresetChanged));
+            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
         private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
@@ -53,16 +53,11 @@ namespace SUIF.Showcase.Windows.Modals
             return slot;
         }
 
-        private void OnDepthChanged(int depth)
+        private void ApplyState(ModalViewDto dto)
         {
-            _stackCounterSlot?.SetFormat("DEPTH: {0}", depth);
-        }
-
-        private void OnPresetChanged(int index)
-        {
-            var preset = ViewModel.GetCurrentPreset();
-            _alertTitleSlot?.SetText(preset.Title);
-            _bodyMessageSlot?.SetText(preset.Message);
+            _stackCounterSlot?.SetWritten(dto.Depth, ShowcaseTextFormatter.WriteModalDepth);
+            _alertTitleSlot?.SetWritten(dto.Preset, ShowcaseTextFormatter.WriteModalTitle);
+            _bodyMessageSlot?.SetWritten(dto.Preset, ShowcaseTextFormatter.WriteModalBody);
         }
     }
 }

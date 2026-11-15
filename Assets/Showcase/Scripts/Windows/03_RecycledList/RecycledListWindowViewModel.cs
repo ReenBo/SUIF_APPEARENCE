@@ -1,51 +1,34 @@
 using System;
 using SUIF.Base;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
 
 namespace SUIF.Showcase.Windows.RecycledList
 {
-    public readonly struct RecycledNodeData
-    {
-        public readonly int Index;
-        public readonly string PoolNode;
-        public readonly string Address;
-        public readonly string Status;
-        public readonly string Latency;
-
-        public RecycledNodeData(int index, string poolNode, string address, string status, string latency)
-        {
-            Index = index;
-            PoolNode = poolNode;
-            Address = address;
-            Status = status;
-            Latency = latency;
-        }
-    }
-
     public sealed class RecycledListWindowViewModel : BaseViewModel
     {
         private readonly ShowcaseFrameViewModel _frameViewModel;
 
-        public static readonly RecycledNodeData[] Nodes =
+        public static readonly RecycledNodeDto[] Nodes =
         {
-            new(1, "NODE_01", "0x00F410", "HOT_SWAP", "0.12ms"),
-            new(2, "NODE_02", "0x00F411", "RECYCLED", "0.15ms"),
-            new(3, "NODE_03", "0x00F412", "RECYCLED", "0.18ms"),
-            new(4, "NODE_04", "0x00F413", "RECYCLED", "0.21ms"),
-            new(5, "NODE_05", "0x00F414", "HOT_SWAP", "0.12ms"),
-            new(6, "NODE_06", "0x00F415", "RECYCLED", "0.15ms"),
-            new(7, "NODE_01", "0x00F416", "RECYCLED", "0.18ms"),
-            new(8, "NODE_02", "0x00F417", "RECYCLED", "0.21ms"),
-            new(9, "NODE_03", "0x00F418", "HOT_SWAP", "0.12ms"),
-            new(10, "NODE_04", "0x00F419", "RECYCLED", "0.15ms"),
-            new(11, "NODE_05", "0x00F41A", "RECYCLED", "0.18ms"),
-            new(12, "NODE_06", "0x00F41B", "RECYCLED", "0.21ms"),
-            new(13, "NODE_01", "0x00F41C", "HOT_SWAP", "0.12ms"),
-            new(14, "NODE_02", "0x00F41D", "RECYCLED", "0.15ms"),
-            new(15, "NODE_03", "0x00F41E", "RECYCLED", "0.18ms"),
-            new(16, "NODE_04", "0x00F41F", "RECYCLED", "0.21ms"),
-            new(17, "NODE_05", "0x00F420", "HOT_SWAP", "0.12ms"),
-            new(18, "NODE_06", "0x00F421", "RECYCLED", "0.15ms")
+            new(1, 1, 0x00F410u, RecycledNodeStatus.HotSwap, 0.12f),
+            new(2, 2, 0x00F411u, RecycledNodeStatus.Recycled, 0.15f),
+            new(3, 3, 0x00F412u, RecycledNodeStatus.Recycled, 0.18f),
+            new(4, 4, 0x00F413u, RecycledNodeStatus.Recycled, 0.21f),
+            new(5, 5, 0x00F414u, RecycledNodeStatus.HotSwap, 0.12f),
+            new(6, 6, 0x00F415u, RecycledNodeStatus.Recycled, 0.15f),
+            new(7, 1, 0x00F416u, RecycledNodeStatus.Recycled, 0.18f),
+            new(8, 2, 0x00F417u, RecycledNodeStatus.Recycled, 0.21f),
+            new(9, 3, 0x00F418u, RecycledNodeStatus.HotSwap, 0.12f),
+            new(10, 4, 0x00F419u, RecycledNodeStatus.Recycled, 0.15f),
+            new(11, 5, 0x00F41Au, RecycledNodeStatus.Recycled, 0.18f),
+            new(12, 6, 0x00F41Bu, RecycledNodeStatus.Recycled, 0.21f),
+            new(13, 1, 0x00F41Cu, RecycledNodeStatus.HotSwap, 0.12f),
+            new(14, 2, 0x00F41Du, RecycledNodeStatus.Recycled, 0.15f),
+            new(15, 3, 0x00F41Eu, RecycledNodeStatus.Recycled, 0.18f),
+            new(16, 4, 0x00F41Fu, RecycledNodeStatus.Recycled, 0.21f),
+            new(17, 5, 0x00F420u, RecycledNodeStatus.HotSwap, 0.12f),
+            new(18, 6, 0x00F421u, RecycledNodeStatus.Recycled, 0.15f)
         };
 
         public RecycledListWindowViewModel(ShowcaseFrameViewModel frameViewModel)
