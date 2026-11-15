@@ -189,75 +189,55 @@ namespace SUIF.Showcase.Common
             }
         }
 
+        private const int MaxPolygonVertices = 6;
+        private const int FixedVertexCount = MaxPolygonVertices * 2;
+        private const int MaxPolygonTriangles = MaxPolygonVertices - 2;
+        private const int FixedIndexCount = MaxPolygonTriangles * 3 * 2;
+
         private void OnGenerateVisualContent(MeshGenerationContext mgc)
         {
+            var fillCount = 0;
+            var edgeCount = 0;
+
+            Span<Vector2> fillPoly = stackalloc Vector2[MaxPolygonVertices];
+            Span<Vector2> edgePoly = stackalloc Vector2[MaxPolygonVertices];
+            GetWipeColors(out var edgeColor, out var fillColor);
+
             if (IsLockedActive())
             {
                 _edgeProgress = 0f;
                 _fillProgress = 0f;
-                return;
             }
-
-            if (_edgeProgress <= 0f && _fillProgress <= 0f)
+            else if (_edgeProgress > 0f || _fillProgress > 0f)
             {
-                return;
+                var layout = _target.layout;
+                var style = _target.resolvedStyle;
+                var left = style.borderLeftWidth;
+                var top = style.borderTopWidth;
+                var right = layout.width - style.borderRightWidth;
+                var bottom = layout.height - style.borderBottomWidth;
+                var height = bottom - top;
+
+                if (right > left && height > 0f)
+                {
+                    var slant = height * Tangent18Deg;
+                    var fillT = EaseOutCubic(_fillProgress);
+                    var edgeT = EaseOutCubic(_edgeProgress);
+
+                    var fillXTop = Mathf.Lerp(left - slant - EdgeLeadWidth, right, fillT);
+                    var edgeXTop = Mathf.Lerp(left - slant, right + EdgeLeadWidth, edgeT);
+
+                    fillCount = _fillProgress > 0f
+                        ? ClipBand(left, top, right, bottom, float.NegativeInfinity, fillXTop, slant, fillPoly)
+                        : 0;
+                    edgeCount = _edgeProgress > 0f && edgeXTop > fillXTop
+                        ? ClipBand(left, top, right, bottom, fillXTop, edgeXTop, slant, edgePoly)
+                        : 0;
+                }
             }
 
-            var layout = _target.layout;
-            var style = _target.resolvedStyle;
-            var left = style.borderLeftWidth;
-            var top = style.borderTopWidth;
-            var right = layout.width - style.borderRightWidth;
-            var bottom = layout.height - style.borderBottomWidth;
-            var height = bottom - top;
-
-            if (right <= left || height <= 0f)
-            {
-                return;
-            }
-
-            var slant = height * Tangent18Deg;
-            var fillT = EaseOutCubic(_fillProgress);
-            var edgeT = EaseOutCubic(_edgeProgress);
-
-            var fillXTop = Mathf.Lerp(left - slant - EdgeLeadWidth, right, fillT);
-            var edgeXTop = Mathf.Lerp(left - slant, right + EdgeLeadWidth, edgeT);
-
-            Span<Vector2> fillPoly = stackalloc Vector2[6];
-            Span<Vector2> edgePoly = stackalloc Vector2[6];
-
-            var fillCount = _fillProgress > 0f
-                ? ClipBand(left, top, right, bottom, float.NegativeInfinity, fillXTop, slant, fillPoly)
-                : 0;
-            var edgeCount = _edgeProgress > 0f && edgeXTop > fillXTop
-                ? ClipBand(left, top, right, bottom, fillXTop, edgeXTop, slant, edgePoly)
-                : 0;
-
-            var totalVerts = fillCount + edgeCount;
-            if (totalVerts == 0)
-            {
-                return;
-            }
-
-            var totalIndices = (fillCount >= 3 ? (fillCount - 2) * 3 : 0) +
-                               (edgeCount >= 3 ? (edgeCount - 2) * 3 : 0);
-            if (totalIndices == 0)
-            {
-                return;
-            }
-
-            GetWipeColors(out var edgeColor, out var fillColor);
-            var mesh = mgc.Allocate(totalVerts, totalIndices);
-
-            if (fillCount >= 3)
-            {
-                WritePolygon(mesh, fillPoly, fillCount, fillColor, 0);
-            }
-
-            if (edgeCount >= 3)
-            {
-                WritePolygon(mesh, edgePoly, edgeCount, edgeColor, fillCount);
-            }
+            var mesh = mgc.Allocate(FixedVertexCount, FixedIndexCount);
+            WriteFixedMesh(mesh, fillPoly, fillCount, fillColor, edgePoly, edgeCount, edgeColor);
         }
 
         private void GetWipeColors(out Color32 edgeColor, out Color32 fillColor)
@@ -285,22 +265,67 @@ namespace SUIF.Showcase.Common
             return 1f - inv * inv * inv;
         }
 
-        private static void WritePolygon(MeshWriteData mesh, Span<Vector2> poly, int count, Color32 color, int baseVertex)
+        private static void WriteFixedMesh(
+            MeshWriteData mesh,
+            Span<Vector2> fillPoly,
+            int fillCount,
+            Color32 fillColor,
+            Span<Vector2> edgePoly,
+            int edgeCount,
+            Color32 edgeColor)
         {
-            for (var i = 0; i < count; i++)
+            var activeFillVerts = fillCount >= 3 ? fillCount : 0;
+            var activeEdgeVerts = edgeCount >= 3 ? edgeCount : 0;
+
+            for (var i = 0; i < activeFillVerts; i++)
             {
                 mesh.SetNextVertex(new Vertex
                 {
-                    position = new Vector3(poly[i].x, poly[i].y, Vertex.nearZ),
-                    tint = color
+                    position = new Vector3(fillPoly[i].x, fillPoly[i].y, Vertex.nearZ),
+                    tint = fillColor
                 });
             }
 
-            for (var i = 1; i < count - 1; i++)
+            var edgeBaseVertex = activeFillVerts;
+            for (var i = 0; i < activeEdgeVerts; i++)
             {
-                mesh.SetNextIndex((ushort)baseVertex);
-                mesh.SetNextIndex((ushort)(baseVertex + i));
-                mesh.SetNextIndex((ushort)(baseVertex + i + 1));
+                mesh.SetNextVertex(new Vertex
+                {
+                    position = new Vector3(edgePoly[i].x, edgePoly[i].y, Vertex.nearZ),
+                    tint = edgeColor
+                });
+            }
+
+            var writtenVerts = activeFillVerts + activeEdgeVerts;
+            for (var i = writtenVerts; i < FixedVertexCount; i++)
+            {
+                mesh.SetNextVertex(new Vertex
+                {
+                    position = Vector3.zero,
+                    tint = default
+                });
+            }
+
+            var writtenIndices = 0;
+            for (var i = 1; i < activeFillVerts - 1; i++)
+            {
+                mesh.SetNextIndex(0);
+                mesh.SetNextIndex((ushort)i);
+                mesh.SetNextIndex((ushort)(i + 1));
+                writtenIndices += 3;
+            }
+
+            for (var i = 1; i < activeEdgeVerts - 1; i++)
+            {
+                mesh.SetNextIndex((ushort)edgeBaseVertex);
+                mesh.SetNextIndex((ushort)(edgeBaseVertex + i));
+                mesh.SetNextIndex((ushort)(edgeBaseVertex + i + 1));
+                writtenIndices += 3;
+            }
+
+            for (var i = writtenIndices; i < FixedIndexCount; i++)
+            {
+                mesh.SetNextIndex(0);
             }
         }
 
