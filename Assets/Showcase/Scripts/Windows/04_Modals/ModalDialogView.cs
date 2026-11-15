@@ -1,7 +1,7 @@
-using Cysharp.Text;
 using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
+using SUIF.Binding;
 using SUIF.R3.Extensions;
 using UnityEngine.UIElements;
 
@@ -18,6 +18,10 @@ namespace SUIF.Showcase.Windows.Modals
         [UQuery("btn-modal-dismiss")] private Button _btnDismiss;
         [UQuery("btn-modal-close")] private Button _btnClose;
 
+        private FixedTextSlot _stackCounterSlot;
+        private FixedTextSlot _alertTitleSlot;
+        private FixedTextSlot _bodyMessageSlot;
+
         public ModalDialogView(VisualElement root) : base(root)
         {
         }
@@ -29,23 +33,36 @@ namespace SUIF.Showcase.Windows.Modals
             if (_btnDismiss != null) Binder.Bind(_btnDismiss).ToClick(ViewModel.Dismiss);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Dismiss);
 
+            _stackCounterSlot = RegisterFixedSlot(_stackCounter, 14);
+            _alertTitleSlot = RegisterFixedSlot(_alertTitle, 40);
+            _bodyMessageSlot = RegisterFixedSlot(_bodyMessage, 176);
+
             AddDisposable(ViewModel.Depth.Subscribe(OnDepthChanged));
             AddDisposable(ViewModel.PresetIndex.Subscribe(OnPresetChanged));
         }
 
+        private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
+        {
+            if (element == null)
+            {
+                return null;
+            }
+
+            var slot = new FixedTextSlot(element, capacity);
+            AddDisposable(slot);
+            return slot;
+        }
+
         private void OnDepthChanged(int depth)
         {
-            if (_stackCounter != null)
-            {
-                _stackCounter.text = ZString.Concat("DEPTH: ", depth);
-            }
+            _stackCounterSlot?.SetFormat("DEPTH: {0}", depth);
         }
 
         private void OnPresetChanged(int index)
         {
             var preset = ViewModel.GetCurrentPreset();
-            if (_alertTitle != null) _alertTitle.text = preset.Title;
-            if (_bodyMessage != null) _bodyMessage.text = preset.Message;
+            _alertTitleSlot?.SetText(preset.Title);
+            _bodyMessageSlot?.SetText(preset.Message);
         }
     }
 }
