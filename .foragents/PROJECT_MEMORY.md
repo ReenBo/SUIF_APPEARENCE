@@ -46,9 +46,14 @@
   - Disabled unused `Main Camera` culling, HDR, MSAA, shadows, depth/opaque copies, PostProcessing, and `PC_Renderer` SSAO on the UI-only `SampleScene`.
   - Reduced Editor DX12 PlayMode Draw Calls from `14–31 DC` down to `5–8 DC` (`7 / 7` EditMode tests passed, `game_view` verified) and Chrome WebGL2 Draw Calls from `76–118 DC` down to `45–66 DC`.
 - [x] **[workflow/effects-and-cli-v1.4.3]**: Evolved `.agents` (`unity6-ai-workflow` `develop`, `v1.4.3`) with default-shader `MeshGenerationContext.Allocate` batching pattern, multi-platform UI-only URP checklist, MCP `eval` `GatherDrawStatistics()` audit, comment-free snippet cleanup, and expanded `code-reviewer.md` checklist.
+- [x] **[perf/uitk-1-5-draw-calls]**: Standardized SUIF DTO & Zero-Realloc UI across `com.reenbo.suif` and `SUIF_APPEARENCE`:
+  - Implemented `FixedTextSlot`, `FixedSlotLabel`, `FixedElementPool<TElement>`, `IViewDto`, `BaseDtoView<TViewModel, TDto>`, `FixedTextWriter<TState>`, `DtoBindingExtensions.ToDto`, and fixed `12-vertex / 24-index` `DiagonalWipeEffect`.
+  - Migrated Showcase `Frame`, `ThemeService`, `01_Lifecycle`, `02_Counter`, `03_RecycledList`, `04_Modals`, `05_Inventory`, and `06_ThemeMatrix` to typed DTO structs (`ShowcaseDtoContracts.cs`) + `ShowcaseTextFormatter`.
+  - Verified settled Play Mode DX12 Draw Calls at `2–4 DC`, `8s` benchmark `457.3 FPS` / `0.007 MB` GC across `3,663` frames, and `15/15` EditMode tests passing.
+  - Published official human & AI guidelines in `SUIF/Documentation~/DTO_Standard_And_ZeroAlloc_UI.md` and `SUIF/Documentation~/AI_Guidelines_DTO_And_ZeroAlloc.md`, and updated `.agents/rules/unity6-ui-framework.md`.
 - [ ] **[backlog/suif-batched-effects]**: Tracked in [backlog.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/backlog.md) (generalize `DiagonalWipeEffect` into `com.reenbo.suif` after upcoming animation tasks and tests).
 - [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (profile remaining WebGL2 `45–66 DC` floor vs DX12 `5–8 DC` once `npx`/Spector.js or Development WebGL Profiler is available; assign explicit `PanelTextSettings` + embedded font asset).
-- [ ] **Next**: Proceed to next animation feature/test tasks or address [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) items.
+- [ ] **Next**: Redesign the Showcase theme and dynamic text switching inside formatter methods cleanly on top of the DTO architecture.
 
 ---
 
@@ -83,6 +88,6 @@
 
 ## 📜 4. Last Session Log
 
-* **Date**: 2026-11-13
+* **Date**: 2026-11-15
 * **Role**: Primary Agent / Orchestrator
-* **Summary**: Eliminated UI Toolkit stencil/transform batch breakers (`DiagonalWipeEffect` using zero-stencil `MeshGenerationContext.Allocate` clipping) and empty-scene URP/SSAO/PostProcessing camera passes (`ddc7bc9`, `483f661`, `47a6944`), reducing Editor DX12 PlayMode Draw Calls from `14–31` down to `5–8 DC` and Chrome WebGL2 from `76–118` down to `45–66 DC` without visual changes.
+* **Summary**: Completed P1/P2 `AllocPage` zero-realloc optimization and full DTO migration across all Showcase views (`ShowcaseDtoContracts`, `ShowcaseTextFormatter`), reducing settled DX12 Draw Calls to `2–4 DC` (`15/15` EditMode tests passing), and authored official human & AI documentation for the SUIF DTO Standard.
