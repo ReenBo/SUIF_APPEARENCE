@@ -1,10 +1,10 @@
-using Cysharp.Text;
-using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
 using SUIF.Controls;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Counter
@@ -59,14 +59,13 @@ namespace SUIF.Showcase.Windows.Counter
                 AddDisposable(_marblePool);
             }
 
-            AddDisposable(ViewModel.CounterValue.Subscribe(OnValueChanged));
-            RefreshMarbles();
+            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
-        private void OnValueChanged(int value)
+        private void ApplyState(CounterViewDto dto)
         {
-            _valueSlot?.SetFormat("{0:D3}", value);
-            RefreshMarbles();
+            _valueSlot?.SetWritten(dto.CurrentValue, ShowcaseTextFormatter.WriteCounterValue);
+            _marblePool?.Render(dto.HistoryCount, this, BindMarbleSlot);
         }
 
         private VisualElement CreateMarbleSlot(int index)
@@ -91,26 +90,13 @@ namespace SUIF.Showcase.Windows.Counter
             return row;
         }
 
-        private void RefreshMarbles()
-        {
-            if (_marblePool == null)
-            {
-                return;
-            }
-
-            var count = ViewModel.CounterHistory.Count;
-            _marblePool.Render(count, this, BindMarbleSlot);
-        }
-
         private static void BindMarbleSlot(VisualElement slot, int index, ReactiveCounterView view)
         {
             var history = view.ViewModel.CounterHistory;
             var pill = view._marblePills[index];
             var arrow = view._marbleArrows[index];
 
-            using var builder = ZString.CreateStringBuilder(true);
-            builder.Append(history[index]);
-            pill.SetFixedText(builder.AsSpan());
+            pill.SetFixedFormat("{0}", history[index]);
 
             bool isLast = index == history.Count - 1;
             if (isLast)

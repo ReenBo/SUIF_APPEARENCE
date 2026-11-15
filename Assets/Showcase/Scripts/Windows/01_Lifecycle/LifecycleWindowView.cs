@@ -1,10 +1,11 @@
-using Cysharp.Text;
-using global::R3;
+using ObservableCollections;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
 using SUIF.Controls;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Lifecycle
@@ -34,11 +35,11 @@ namespace SUIF.Showcase.Windows.Lifecycle
 
         protected override void Bind()
         {
-            if (_btnStageInit != null) Binder.Bind(_btnStageInit).ToClick(() => ViewModel.TriggerStage("OnInitialize"));
-            if (_btnStageOpen != null) Binder.Bind(_btnStageOpen).ToClick(() => ViewModel.TriggerStage("OnOpen"));
-            if (_btnStageShow != null) Binder.Bind(_btnStageShow).ToClick(() => ViewModel.TriggerStage("OnShow"));
-            if (_btnStageHide != null) Binder.Bind(_btnStageHide).ToClick(() => ViewModel.TriggerStage("OnHide"));
-            if (_btnStageClose != null) Binder.Bind(_btnStageClose).ToClick(() => ViewModel.TriggerStage("OnClose"));
+            if (_btnStageInit != null) Binder.Bind(_btnStageInit).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Initialize));
+            if (_btnStageOpen != null) Binder.Bind(_btnStageOpen).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Open));
+            if (_btnStageShow != null) Binder.Bind(_btnStageShow).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Show));
+            if (_btnStageHide != null) Binder.Bind(_btnStageHide).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Hide));
+            if (_btnStageClose != null) Binder.Bind(_btnStageClose).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Close));
             if (_btnModalTest != null) Binder.Bind(_btnModalTest).ToClick(ViewModel.OpenModal);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
@@ -53,21 +54,21 @@ namespace SUIF.Showcase.Windows.Lifecycle
                 AddDisposable(_logPool);
             }
 
-            AddDisposable(ViewModel.LifecycleStage.Subscribe(OnStageChanged));
-            RefreshLogs();
+            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
-        private void OnStageChanged(string stage)
+        private void ApplyState(LifecycleViewDto dto)
         {
-            UpdateBtn(_btnStageInit, stage == "OnInitialize");
-            UpdateBtn(_btnStageOpen, stage == "OnOpen");
-            UpdateBtn(_btnStageShow, stage == "OnShow");
-            UpdateBtn(_btnStageHide, stage == "OnHide");
-            UpdateBtn(_btnStageClose, stage == "OnClose");
-            RefreshLogs();
+            UpdateBtn(_btnStageInit, dto.CurrentStage == LifecycleStageId.Initialize);
+            UpdateBtn(_btnStageOpen, dto.CurrentStage == LifecycleStageId.Open);
+            UpdateBtn(_btnStageShow, dto.CurrentStage == LifecycleStageId.Show);
+            UpdateBtn(_btnStageHide, dto.CurrentStage == LifecycleStageId.Hide);
+            UpdateBtn(_btnStageClose, dto.CurrentStage == LifecycleStageId.Close);
+
+            _logPool?.Render(dto.LogCount, ViewModel.LifecycleLogs, BindLogSlot);
         }
 
-        private void UpdateBtn(Button btn, bool isActive)
+        private static void UpdateBtn(Button btn, bool isActive)
         {
             if (btn == null) return;
             if (isActive) btn.AddToClassList(ActiveClass);
@@ -98,22 +99,9 @@ namespace SUIF.Showcase.Windows.Lifecycle
             slot.style.marginBottom = 0f;
         }
 
-        private void RefreshLogs()
+        private static void BindLogSlot(FixedSlotLabel slot, int index, ObservableList<LifecycleLogEntryDto> logs)
         {
-            if (_logPool == null)
-            {
-                return;
-            }
-
-            _logPool.Render(ViewModel.LifecycleLogs.Count, ViewModel.LifecycleLogs, BindLogSlot);
-        }
-
-        private static void BindLogSlot(FixedSlotLabel slot, int index, ObservableCollections.ObservableList<string> logs)
-        {
-            using var builder = ZString.CreateStringBuilder(true);
-            builder.Append("> ");
-            builder.Append(logs[index]);
-            slot.SetFixedText(builder.AsSpan());
+            slot.SetFixedWritten(logs[index], ShowcaseTextFormatter.WriteLifecycleLogEntry);
         }
     }
 }

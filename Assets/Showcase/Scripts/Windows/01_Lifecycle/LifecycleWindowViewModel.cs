@@ -1,10 +1,10 @@
 using System;
-using Cysharp.Text;
 using Cysharp.Threading.Tasks;
 using global::R3;
 using ObservableCollections;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Modals;
 
@@ -12,33 +12,43 @@ namespace SUIF.Showcase.Windows.Lifecycle
 {
     public sealed class LifecycleWindowViewModel : BaseViewModel
     {
+        private const int MaxLogs = 10;
+
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseFrameViewModel _frameViewModel;
 
-        public ReactiveProperty<string> LifecycleStage { get; } = new("OnInitialize");
-        public ObservableList<string> LifecycleLogs { get; } = new();
+        public ReactiveProperty<LifecycleViewDto> State { get; }
+        public ObservableList<LifecycleLogEntryDto> LifecycleLogs { get; } = new();
 
         public LifecycleWindowViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
 
-            AddDisposable(LifecycleStage);
+            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 2, 0, LifecycleStageId.Initialize, true));
+            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 5, 0, LifecycleStageId.Open, true));
+            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 9, 0, LifecycleStageId.Show, true));
 
-            LifecycleLogs.Add("[00:00.02] OnInitialize() -> Memory blocks pre-warmed");
-            LifecycleLogs.Add("[00:00.05] OnOpen()       -> View hierarchy attached to SUIF Root");
-            LifecycleLogs.Add("[00:00.09] OnShow()       -> Transition animation completed [ACTIVE]");
+            State = new ReactiveProperty<LifecycleViewDto>(new LifecycleViewDto(LifecycleStageId.Initialize, LifecycleLogs.Count));
+            AddDisposable(State);
         }
 
-        public void TriggerStage(string stageName)
+        public void TriggerStage(LifecycleStageId stage)
         {
-            LifecycleStage.Value = stageName;
-            var timeStamp = DateTime.UtcNow.ToString("HH:mm:ss.ff");
-            LifecycleLogs.Insert(0, ZString.Concat("[", timeStamp, "] ", stageName, "() -> State transition executed"));
-            if (LifecycleLogs.Count > 10)
+            var now = DateTime.UtcNow;
+            LifecycleLogs.Insert(0, new LifecycleLogEntryDto(
+                now.Hour,
+                now.Minute,
+                now.Second,
+                now.Millisecond / 10,
+                stage));
+
+            if (LifecycleLogs.Count > MaxLogs)
             {
                 LifecycleLogs.RemoveAt(LifecycleLogs.Count - 1);
             }
+
+            State.Value = new LifecycleViewDto(stage, LifecycleLogs.Count);
         }
 
         public void OpenModal()
