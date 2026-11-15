@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Modals
 {
-    [UIView("ModalDialogView", SUIF.API.UILayer.Popups, UILoadingMode.Destroy, false, true)]
+    [UIView("ModalDialogView", SUIF.API.UILayer.Popups, UILoadingMode.Cached, false, true)]
     public sealed class ModalDialogView : BaseView<ModalDialogViewModel>
     {
         [UQuery("modal-stack-counter")] private Label _stackCounter;

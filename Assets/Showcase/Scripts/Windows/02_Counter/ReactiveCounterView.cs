@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Counter
 {
-    [UIView("ReactiveCounterView", SUIF.API.UILayer.Windows)]
+    [UIView("ReactiveCounterView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
     public sealed class ReactiveCounterView : BaseView<ReactiveCounterViewModel>
     {
         private const string ActiveClass = "is-active";

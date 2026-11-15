@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.ThemeMatrix
 {
-    [UIView("ThemeMatrixWindowView", SUIF.API.UILayer.Windows)]
+    [UIView("ThemeMatrixWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
     public sealed class ThemeMatrixWindowView : BaseView<ThemeMatrixWindowViewModel>
     {
         [UQuery("btn-theme-mono")] private Button _btnMono;

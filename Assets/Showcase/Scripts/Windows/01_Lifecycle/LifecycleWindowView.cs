@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Lifecycle
 {
-    [UIView("LifecycleWindowView", SUIF.API.UILayer.Windows)]
+    [UIView("LifecycleWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
     public sealed class LifecycleWindowView : BaseView<LifecycleWindowViewModel>
     {
         private const string ActiveClass = "is-active";

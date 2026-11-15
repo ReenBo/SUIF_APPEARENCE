@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.RecycledList
 {
-    [UIView("RecycledListWindowView", SUIF.API.UILayer.Windows)]
+    [UIView("RecycledListWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
     public sealed class RecycledListWindowView : BaseView<RecycledListWindowViewModel>
     {
         [UQuery("list-nodes-container")] private ScrollView _listContainer;

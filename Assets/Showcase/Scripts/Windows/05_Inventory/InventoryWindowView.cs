@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Inventory
 {
-    [UIView("InventoryWindowView", SUIF.API.UILayer.Windows)]
+    [UIView("InventoryWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
     public sealed class InventoryWindowView : BaseView<InventoryWindowViewModel>
     {
         private const string SelectedClass = "is-selected";
