@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using SUIF.API;
 using SUIF.Showcase.Common;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
@@ -40,19 +41,20 @@ namespace SUIF.Showcase.Tests
         [Test]
         public void InitialState_StartsInStandbyWithNoActiveWindows()
         {
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(0));
-            Assert.That(_viewModel.ActiveTitle.Value, Is.EqualTo("[ NO_ACTIVE_VIEW // IDLE ]"));
-            Assert.That(_viewModel.IsModalOpen.Value, Is.False);
-            Assert.That(_viewModel.FooterStatus.Value, Is.EqualTo("STATE_SYNC // READY"));
+            var nav = _viewModel.Navigation.Value;
+            Assert.That(nav.ActiveModule, Is.EqualTo(ShowcaseModuleId.Standby));
+            Assert.That(nav.IsModalOpen, Is.False);
+            Assert.That(nav.LastStatus, Is.EqualTo(FrameActionStatus.Ready));
         }
 
         [Test]
-        public void OpenLifecycleWindow_SetsActiveNavIndexAndOpensView()
+        public void OpenLifecycleWindow_SetsActiveModuleAndOpensView()
         {
             _viewModel.OpenLifecycleWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(1));
-            Assert.That(_viewModel.ActiveTitle.Value, Is.EqualTo("Basic Window Lifecycle"));
+            var nav = _viewModel.Navigation.Value;
+            Assert.That(nav.ActiveModule, Is.EqualTo(ShowcaseModuleId.Lifecycle));
+            Assert.That(nav.LastStatus, Is.EqualTo(FrameActionStatus.ModuleOpened));
             Assert.That(_flow.OpenedTypes, Contains.Item(typeof(LifecycleWindowView)));
         }
 
@@ -62,8 +64,9 @@ namespace SUIF.Showcase.Tests
             _viewModel.OpenLifecycleWindow();
             _viewModel.OpenCounterWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(2));
-            Assert.That(_viewModel.ActiveTitle.Value, Is.EqualTo("MVVM & R3 Reactive Counter"));
+            var nav = _viewModel.Navigation.Value;
+            Assert.That(nav.ActiveModule, Is.EqualTo(ShowcaseModuleId.Counter));
+            Assert.That(nav.LastStatus, Is.EqualTo(FrameActionStatus.ModuleOpened));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(LifecycleWindowView)));
             Assert.That(_flow.OpenedTypes, Contains.Item(typeof(ReactiveCounterView)));
         }
@@ -77,7 +80,7 @@ namespace SUIF.Showcase.Tests
             _viewModel.OpenInventoryWindow();
             _viewModel.OpenThemeMatrixWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(6));
+            Assert.That(_viewModel.Navigation.Value.ActiveModule, Is.EqualTo(ShowcaseModuleId.ThemeMatrix));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(LifecycleWindowView)));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(ReactiveCounterView)));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(RecycledListWindowView)));
@@ -85,8 +88,8 @@ namespace SUIF.Showcase.Tests
 
             _viewModel.CloseActiveWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(0));
-            Assert.That(_viewModel.ActiveTitle.Value, Is.EqualTo("[ NO_ACTIVE_VIEW // IDLE ]"));
+            Assert.That(_viewModel.Navigation.Value.ActiveModule, Is.EqualTo(ShowcaseModuleId.Standby));
+            Assert.That(_viewModel.Navigation.Value.LastStatus, Is.EqualTo(FrameActionStatus.ModuleClosed));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(ThemeMatrixWindowView)));
         }
 
@@ -96,9 +99,9 @@ namespace SUIF.Showcase.Tests
             _viewModel.OpenRecycledListWindow();
             _viewModel.CloseBaseWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(0));
-            Assert.That(_viewModel.ActiveTitle.Value, Is.EqualTo("[ NO_ACTIVE_VIEW // IDLE ]"));
-            Assert.That(_viewModel.FooterStatus.Value, Is.EqualTo("CLOSED // BASE_WINDOW"));
+            var nav = _viewModel.Navigation.Value;
+            Assert.That(nav.ActiveModule, Is.EqualTo(ShowcaseModuleId.Standby));
+            Assert.That(nav.LastStatus, Is.EqualTo(FrameActionStatus.ModuleClosed));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(RecycledListWindowView)));
         }
 
@@ -108,17 +111,17 @@ namespace SUIF.Showcase.Tests
             _viewModel.OpenLifecycleWindow();
             _viewModel.ToggleModal();
 
-            Assert.That(_viewModel.IsModalOpen.Value, Is.True);
+            Assert.That(_viewModel.Navigation.Value.IsModalOpen, Is.True);
 
             _viewModel.CloseActiveWindow();
 
-            Assert.That(_viewModel.IsModalOpen.Value, Is.False);
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(1));
+            Assert.That(_viewModel.Navigation.Value.IsModalOpen, Is.False);
+            Assert.That(_viewModel.Navigation.Value.ActiveModule, Is.EqualTo(ShowcaseModuleId.Lifecycle));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(ModalDialogView)));
 
             _viewModel.CloseActiveWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(0));
+            Assert.That(_viewModel.Navigation.Value.ActiveModule, Is.EqualTo(ShowcaseModuleId.Standby));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(LifecycleWindowView)));
         }
 
@@ -130,7 +133,7 @@ namespace SUIF.Showcase.Tests
 
             _viewModel.CloseBaseWindow();
 
-            Assert.That(_viewModel.ActiveNavIndex.Value, Is.EqualTo(0));
+            Assert.That(_viewModel.Navigation.Value.ActiveModule, Is.EqualTo(ShowcaseModuleId.Standby));
             Assert.That(_flow.ClosedTypes, Contains.Item(typeof(LifecycleWindowView)));
         }
 
@@ -167,4 +170,3 @@ namespace SUIF.Showcase.Tests
         }
     }
 }
-

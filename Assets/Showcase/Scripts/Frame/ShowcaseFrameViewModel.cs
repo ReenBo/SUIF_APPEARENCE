@@ -5,6 +5,7 @@ using SUIF.API;
 using SUIF.Base;
 using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -24,19 +25,17 @@ namespace SUIF.Showcase.Frame
         private readonly ReactiveProperty<long> _fallbackDrawCalls = new(0);
         private readonly ReactiveProperty<bool> _fallbackRecording = new(false);
 
-        public ReactiveProperty<int> ActiveNavIndex { get; } = new(0);
-        public ReactiveProperty<string> ActiveTitle { get; } = new("[ NO_ACTIVE_VIEW // IDLE ]");
-        public ReactiveProperty<bool> IsModalOpen { get; } = new(false);
-        public ReactiveProperty<string> FooterStatus { get; } = new("STATE_SYNC // READY");
+        public ReactiveProperty<FrameNavigationDto> Navigation { get; } =
+            new(new FrameNavigationDto(ShowcaseModuleId.Standby, false, FrameActionStatus.Ready));
 
-        public ReadOnlyReactiveProperty<string> CurrentTheme => _themeService.CurrentTheme;
+        public ReadOnlyReactiveProperty<ShowcaseThemeDto> CurrentTheme => _themeService.CurrentTheme;
         public ReadOnlyReactiveProperty<float> CurrentFps => _telemetryService != null ? _telemetryService.CurrentFps : _fallbackFps;
         public ReadOnlyReactiveProperty<long> DrawCalls => _telemetryService != null ? _telemetryService.DrawCalls : _fallbackDrawCalls;
         public ReadOnlyReactiveProperty<bool> IsBenchmarkRecording => _telemetryService != null ? _telemetryService.IsRecording : _fallbackRecording;
         public Observable<Unit> BenchmarkRequested => _benchmarkRequestedSubject;
 
         public ShowcaseFrameViewModel(
-            IUIFlow uiFlow, 
+            IUIFlow uiFlow,
             ShowcaseThemeService themeService,
             BenchmarkTelemetryService telemetryService = null)
         {
@@ -44,10 +43,7 @@ namespace SUIF.Showcase.Frame
             _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
             _telemetryService = telemetryService;
 
-            AddDisposable(ActiveNavIndex);
-            AddDisposable(ActiveTitle);
-            AddDisposable(IsModalOpen);
-            AddDisposable(FooterStatus);
+            AddDisposable(Navigation);
             AddDisposable(_benchmarkRequestedSubject);
             AddDisposable(_fallbackFps);
             AddDisposable(_fallbackDrawCalls);
@@ -61,104 +57,56 @@ namespace SUIF.Showcase.Frame
 
         public void OpenLifecycleWindow()
         {
-            if (ActiveNavIndex.Value == 1)
-            {
-                return;
-            }
-
-            CloseAllBaseWindows();
-            ActiveNavIndex.Value = 1;
-            ActiveTitle.Value = "Basic Window Lifecycle";
-            FooterStatus.Value = "OPENED // LIFECYCLE_WINDOW";
-            _uiFlow.OpenAsync<LifecycleWindowView>().Forget();
+            OpenBaseModule<LifecycleWindowView>(ShowcaseModuleId.Lifecycle);
         }
 
         public void OpenCounterWindow()
         {
-            if (ActiveNavIndex.Value == 2)
-            {
-                return;
-            }
-
-            CloseAllBaseWindows();
-            ActiveNavIndex.Value = 2;
-            ActiveTitle.Value = "MVVM & R3 Reactive Counter";
-            FooterStatus.Value = "OPENED // COUNTER_WINDOW";
-            _uiFlow.OpenAsync<ReactiveCounterView>().Forget();
+            OpenBaseModule<ReactiveCounterView>(ShowcaseModuleId.Counter);
         }
 
         public void OpenRecycledListWindow()
         {
-            if (ActiveNavIndex.Value == 3)
-            {
-                return;
-            }
-
-            CloseAllBaseWindows();
-            ActiveNavIndex.Value = 3;
-            ActiveTitle.Value = "Virtualized Recycled List";
-            FooterStatus.Value = "OPENED // RECYCLED_LIST_WINDOW";
-            _uiFlow.OpenAsync<RecycledListWindowView>().Forget();
-        }
-
-        public void ToggleModal()
-        {
-            if (IsModalOpen.Value)
-            {
-                IsModalOpen.Value = false;
-                FooterStatus.Value = "UNMOUNTED // MODAL_OVERLAY";
-                _uiFlow.Close<ModalDialogView>();
-            }
-            else
-            {
-                IsModalOpen.Value = true;
-                FooterStatus.Value = "MOUNTED // MODAL_OVERLAY";
-                _uiFlow.OpenAsync<ModalDialogView>().Forget();
-            }
+            OpenBaseModule<RecycledListWindowView>(ShowcaseModuleId.RecycledList);
         }
 
         public void OpenInventoryWindow()
         {
-            if (ActiveNavIndex.Value == 5)
-            {
-                return;
-            }
-
-            CloseAllBaseWindows();
-            ActiveNavIndex.Value = 5;
-            ActiveTitle.Value = "INVENTORY";
-            FooterStatus.Value = "OPENED // INVENTORY_WINDOW";
-            _uiFlow.OpenAsync<InventoryWindowView>().Forget();
+            OpenBaseModule<InventoryWindowView>(ShowcaseModuleId.Inventory);
         }
 
         public void OpenThemeMatrixWindow()
         {
-            if (ActiveNavIndex.Value == 6)
+            OpenBaseModule<ThemeMatrixWindowView>(ShowcaseModuleId.ThemeMatrix);
+        }
+
+        public void ToggleModal()
+        {
+            var current = Navigation.Value;
+            if (current.IsModalOpen)
             {
+                Navigation.Value = new FrameNavigationDto(current.ActiveModule, false, FrameActionStatus.ModalUnmounted);
+                _uiFlow.Close<ModalDialogView>();
                 return;
             }
 
-            CloseAllBaseWindows();
-            ActiveNavIndex.Value = 6;
-            ActiveTitle.Value = "Dynamic Theme Switcher";
-            FooterStatus.Value = "OPENED // THEME_MATRIX_WINDOW";
-            _uiFlow.OpenAsync<ThemeMatrixWindowView>().Forget();
+            Navigation.Value = new FrameNavigationDto(current.ActiveModule, true, FrameActionStatus.ModalMounted);
+            _uiFlow.OpenAsync<ModalDialogView>().Forget();
         }
 
         public void CloseBaseWindow()
         {
-            ActiveNavIndex.Value = 0;
-            ActiveTitle.Value = "[ NO_ACTIVE_VIEW // IDLE ]";
-            FooterStatus.Value = "CLOSED // BASE_WINDOW";
+            var current = Navigation.Value;
+            Navigation.Value = new FrameNavigationDto(ShowcaseModuleId.Standby, current.IsModalOpen, FrameActionStatus.ModuleClosed);
             CloseAllBaseWindows();
         }
 
         public void CloseActiveWindow()
         {
-            if (IsModalOpen.Value)
+            var current = Navigation.Value;
+            if (current.IsModalOpen)
             {
-                IsModalOpen.Value = false;
-                FooterStatus.Value = "CLOSED // MODAL_OVERLAY";
+                Navigation.Value = new FrameNavigationDto(current.ActiveModule, false, FrameActionStatus.ModalUnmounted);
                 _uiFlow.Close<ModalDialogView>();
                 return;
             }
@@ -177,7 +125,29 @@ namespace SUIF.Showcase.Frame
 
         public void SetModalState(bool isOpen)
         {
-            IsModalOpen.Value = isOpen;
+            var current = Navigation.Value;
+            if (current.IsModalOpen == isOpen)
+            {
+                return;
+            }
+
+            Navigation.Value = new FrameNavigationDto(
+                current.ActiveModule,
+                isOpen,
+                isOpen ? FrameActionStatus.ModalMounted : FrameActionStatus.ModalUnmounted);
+        }
+
+        private void OpenBaseModule<TView>(ShowcaseModuleId module) where TView : class, IView
+        {
+            var current = Navigation.Value;
+            if (current.ActiveModule == module)
+            {
+                return;
+            }
+
+            CloseAllBaseWindows();
+            Navigation.Value = new FrameNavigationDto(module, current.IsModalOpen, FrameActionStatus.ModuleOpened);
+            _uiFlow.OpenAsync<TView>().Forget();
         }
     }
 }

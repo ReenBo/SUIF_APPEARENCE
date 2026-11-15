@@ -1,10 +1,11 @@
-using Cysharp.Text;
 using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Common;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Frame
@@ -15,6 +16,14 @@ namespace SUIF.Showcase.Frame
         private const string ActiveClass = "is-active";
         private const string ActiveModalClass = "is-active-modal";
         private const string HiddenClass = "is-hidden";
+
+        private static readonly ShowcaseThemeId[] AllThemes =
+        {
+            ShowcaseThemeId.Mono,
+            ShowcaseThemeId.Cyan,
+            ShowcaseThemeId.Crimson,
+            ShowcaseThemeId.Amber
+        };
 
         [UQuery("telemetry-base-readout")] private Label _telemetryBaseReadout;
         [UQuery("telemetry-modal-readout")] private Label _telemetryModalReadout;
@@ -53,6 +62,7 @@ namespace SUIF.Showcase.Frame
         private FixedTextSlot _viewportIdSlot;
         private FixedTextSlot _viewportSubSlot;
         private FixedTextSlot _viewportCoordsSlot;
+        private FixedTextSlot _footerStatusSlot;
 
         public ShowcaseFrameView(VisualElement root) : base(root)
         {
@@ -88,11 +98,10 @@ namespace SUIF.Showcase.Frame
             _viewportIdSlot = RegisterFixedSlot(_viewportIdBadge, 16);
             _viewportSubSlot = RegisterFixedSlot(_viewportSubBadge, 32);
             _viewportCoordsSlot = RegisterFixedSlot(_viewportCoords, 32);
+            _footerStatusSlot = RegisterFixedSlot(_footerStatusLog, 48);
 
-            AddDisposable(ViewModel.ActiveNavIndex.Subscribe(OnNavIndexChanged));
-            AddDisposable(ViewModel.ActiveTitle.Subscribe(OnTitleChanged));
-            AddDisposable(ViewModel.IsModalOpen.Subscribe(OnModalStateChanged));
-            AddDisposable(ViewModel.CurrentTheme.Subscribe(OnThemeChanged));
+            Binder.ToDto(ViewModel.Navigation, this, static (dto, view) => view.ApplyNavigation(dto));
+            Binder.ToDto(ViewModel.CurrentTheme, this, static (dto, view) => view.ApplyTheme(dto));
 
             if (_telemetryFpsReadout != null)
             {
@@ -106,17 +115,12 @@ namespace SUIF.Showcase.Frame
 
             if (_btnRunBenchmark != null)
             {
-                AddDisposable(ViewModel.IsBenchmarkRecording.Subscribe(isRecording =>
+                AddDisposable(ViewModel.IsBenchmarkRecording.Subscribe(this, static (isRecording, view) =>
                 {
-                    _runBenchmarkSlot?.SetText(isRecording ? "TESTING..." : "RUN BENCHMARK");
-                    if (isRecording) _btnRunBenchmark.AddToClassList("is-active");
-                    else _btnRunBenchmark.RemoveFromClassList("is-active");
+                    view._runBenchmarkSlot?.SetWritten(isRecording, ShowcaseTextFormatter.WriteBenchmarkButtonText);
+                    if (isRecording) view._btnRunBenchmark.AddToClassList(ActiveClass);
+                    else view._btnRunBenchmark.RemoveFromClassList(ActiveClass);
                 }));
-            }
-
-            if (_footerStatusLog != null)
-            {
-                Binder.Bind(_footerStatusLog).ToFixedText(ViewModel.FooterStatus, 48);
             }
         }
 
@@ -132,62 +136,30 @@ namespace SUIF.Showcase.Frame
             return slot;
         }
 
-        private void OnNavIndexChanged(int index)
+        private void ApplyNavigation(FrameNavigationDto dto)
         {
-            UpdateBtn(_navBtnLifecycle, index == 1);
-            UpdateBtn(_navBtnMvvm, index == 2);
-            UpdateBtn(_navBtnList, index == 3);
-            UpdateBtn(_navBtnInventory, index == 5);
-            UpdateBtn(_navBtnTheme, index == 6);
+            UpdateBtn(_navBtnLifecycle, dto.ActiveModule == ShowcaseModuleId.Lifecycle);
+            UpdateBtn(_navBtnMvvm, dto.ActiveModule == ShowcaseModuleId.Counter);
+            UpdateBtn(_navBtnList, dto.ActiveModule == ShowcaseModuleId.RecycledList);
+            UpdateBtn(_navBtnInventory, dto.ActiveModule == ShowcaseModuleId.Inventory);
+            UpdateBtn(_navBtnTheme, dto.ActiveModule == ShowcaseModuleId.ThemeMatrix);
 
-            _viewportIdSlot?.SetFormat("VIEWPORT_0{0}", index);
-
-            _viewportSubSlot?.SetText(index switch
+            if (_navBtnModals != null)
             {
-                1 => "// LIFECYCLE_STATE_MACHINE",
-                2 => "// REACTIVE_PROPERTY_STREAM",
-                3 => "// ZERO_ALLOC_SCROLL_POOL",
-                5 => "// TACTICAL_GRID_STORAGE",
-                6 => "// GLOBAL_SHADER_PALETTE",
-                _ => "// STANDBY_BUFFER"
-            });
-
-            _telemetryBaseSlot?.SetText(index switch
-            {
-                1 => "01_LIFECYCLE",
-                2 => "02_R3_MVVM",
-                3 => "03_RECYCLED_LIST",
-                5 => "05_INVENTORY",
-                6 => "06_THEME_MATRIX",
-                _ => "NONE // IDLE"
-            });
-
-            _viewportCoordsSlot?.SetText(index == 0 ? "BASE_STATE: STANDBY" : "BASE_STATE: ACTIVE");
+                if (dto.IsModalOpen) _navBtnModals.AddToClassList(ActiveModalClass);
+                else _navBtnModals.RemoveFromClassList(ActiveModalClass);
+            }
 
             if (_standbyBox != null)
             {
-                _standbyBox.style.display = index == 0 ? DisplayStyle.Flex : DisplayStyle.None;
-            }
-
-            _headerOpenStateSlot?.SetText(index == 0 && !ViewModel.IsModalOpen.Value ? "closed" : "open");
-        }
-
-        private void OnTitleChanged(string title)
-        {
-            _headerBaseTitleSlot?.SetText(title);
-        }
-
-        private void OnModalStateChanged(bool isOpen)
-        {
-            if (_navBtnModals != null)
-            {
-                if (isOpen) _navBtnModals.AddToClassList(ActiveModalClass);
-                else _navBtnModals.RemoveFromClassList(ActiveModalClass);
+                _standbyBox.style.display = dto.ActiveModule == ShowcaseModuleId.Standby
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
             }
 
             if (_headerOverlayBadge != null)
             {
-                if (isOpen)
+                if (dto.IsModalOpen)
                 {
                     _headerOverlayBadge.RemoveFromClassList(HiddenClass);
                     _headerOverlayBadge.style.display = DisplayStyle.Flex;
@@ -199,27 +171,26 @@ namespace SUIF.Showcase.Frame
                 }
             }
 
-            _closeBtnHintSlot?.SetText(isOpen ? "CLS // OVR" : "CLS // WIN");
-            _telemetryModalSlot?.SetText(isOpen ? "MOUNTED [1]" : "STANDBY [0]");
-
-            var index = ViewModel.ActiveNavIndex.Value;
-            _headerLayerTagSlot?.SetText(isOpen
-                ? ZString.Concat("LAYER_Z // ", index, "_BASE + MODAL_999")
-                : ZString.Concat("LAYER_Z // ", index, "_BASE_100"));
-
-            _viewportCoordsSlot?.SetText(isOpen
-                ? ZString.Concat("BASE: ", index, " // OVERLAY: MODALS_04")
-                : ZString.Concat("BASE_STATE: ", (index == 0 ? "UNMOUNTED" : "ACTIVE")));
+            _telemetryBaseSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteModuleBaseReadout);
+            _telemetryModalSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteModalTelemetry);
+            _headerOpenStateSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteFrameOpenState);
+            _headerBaseTitleSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteModuleTitle);
+            _headerLayerTagSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteLayerTag);
+            _closeBtnHintSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteCloseButtonHint);
+            _viewportIdSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteViewportIdBadge);
+            _viewportSubSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteViewportSubBadge);
+            _viewportCoordsSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteViewportCoords);
+            _footerStatusSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteFooterStatus);
         }
 
-        private void OnThemeChanged(string themeId)
+        private void ApplyTheme(ShowcaseThemeDto dto)
         {
-            VisualElement.RemoveFromClassList("theme-mono");
-            VisualElement.RemoveFromClassList("theme-cyan");
-            VisualElement.RemoveFromClassList("theme-crimson");
-            VisualElement.RemoveFromClassList("theme-amber");
+            for (int i = 0; i < AllThemes.Length; i++)
+            {
+                VisualElement.RemoveFromClassList(ShowcaseTextFormatter.GetThemeCssClass(AllThemes[i]));
+            }
 
-            VisualElement.AddToClassList(ZString.Concat("theme-", themeId));
+            VisualElement.AddToClassList(ShowcaseTextFormatter.GetThemeCssClass(dto.Id));
         }
 
         private void AttachWipe(Button btn, DiagonalWipeStyle style)
@@ -230,7 +201,7 @@ namespace SUIF.Showcase.Frame
             }
         }
 
-        private void UpdateBtn(Button btn, bool isActive)
+        private static void UpdateBtn(Button btn, bool isActive)
         {
             if (btn == null) return;
             if (isActive) btn.AddToClassList(ActiveClass);

@@ -2,6 +2,7 @@ using System;
 using global::R3;
 using SUIF.Base;
 using SUIF.Showcase.Common;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
 
 namespace SUIF.Showcase.Windows.ThemeMatrix
@@ -11,7 +12,7 @@ namespace SUIF.Showcase.Windows.ThemeMatrix
         private readonly ShowcaseThemeService _themeService;
         private readonly ShowcaseFrameViewModel _frameViewModel;
 
-        public ReadOnlyReactiveProperty<string> CurrentTheme => _themeService.CurrentTheme;
+        public ReadOnlyReactiveProperty<ShowcaseThemeDto> CurrentTheme => _themeService.CurrentTheme;
 
         public ThemeMatrixWindowViewModel(ShowcaseThemeService themeService, ShowcaseFrameViewModel frameViewModel)
         {
@@ -19,7 +20,7 @@ namespace SUIF.Showcase.Windows.ThemeMatrix
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
         }
 
-        public void ApplyTheme(string themeId)
+        public void ApplyTheme(ShowcaseThemeId themeId)
         {
             _themeService.ApplyTheme(themeId);
         }
