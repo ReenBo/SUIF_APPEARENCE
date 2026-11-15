@@ -1,6 +1,9 @@
+using Cysharp.Text;
 using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
+using SUIF.Binding;
+using SUIF.Controls;
 using SUIF.R3.Extensions;
 using UnityEngine.UIElements;
 
@@ -10,6 +13,10 @@ namespace SUIF.Showcase.Windows.Counter
     public sealed class ReactiveCounterView : BaseView<ReactiveCounterViewModel>
     {
         private const string ActiveClass = "is-active";
+        private const string MarblePillClass = "fui-marble-pill";
+        private const string MarbleArrowClass = "fui-marble-arrow";
+        private const int MaxMarbleSlots = 7;
+        private const int MarbleCharCapacity = 8;
 
         [UQuery("label-counter-value")] private Label _labelValue;
         [UQuery("btn-counter-dec")] private Button _btnDec;
@@ -18,6 +25,11 @@ namespace SUIF.Showcase.Windows.Counter
         [UQuery("btn-counter-reset")] private Button _btnReset;
         [UQuery("btn-window-close")] private Button _btnClose;
         [UQuery("counter-marbles-container")] private VisualElement _marblesContainer;
+
+        private readonly FixedSlotLabel[] _marblePills = new FixedSlotLabel[MaxMarbleSlots];
+        private readonly Label[] _marbleArrows = new Label[MaxMarbleSlots];
+        private FixedElementPool<VisualElement> _marblePool;
+        private FixedTextSlot _valueSlot;
 
         public ReactiveCounterView(VisualElement root) : base(root)
         {
@@ -31,42 +43,86 @@ namespace SUIF.Showcase.Windows.Counter
             if (_btnReset != null) Binder.Bind(_btnReset).ToClick(ViewModel.ResetCounter);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
+            if (_labelValue != null)
+            {
+                _valueSlot = new FixedTextSlot(_labelValue, 8);
+                AddDisposable(_valueSlot);
+            }
+
+            if (_marblesContainer != null)
+            {
+                _marblesContainer.Clear();
+                _marblePool = new FixedElementPool<VisualElement>(
+                    _marblesContainer,
+                    MaxMarbleSlots,
+                    CreateMarbleSlot);
+                AddDisposable(_marblePool);
+            }
+
             AddDisposable(ViewModel.CounterValue.Subscribe(OnValueChanged));
             RefreshMarbles();
         }
 
         private void OnValueChanged(int value)
         {
-            if (_labelValue != null)
-            {
-                _labelValue.text = value.ToString("D3");
-            }
+            _valueSlot?.SetFormat("{0:D3}", value);
             RefreshMarbles();
+        }
+
+        private VisualElement CreateMarbleSlot(int index)
+        {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.alignItems = Align.Center;
+
+            var pill = new FixedSlotLabel
+            {
+                Capacity = MarbleCharCapacity
+            };
+            pill.AddToClassList(MarblePillClass);
+            _marblePills[index] = pill;
+            row.Add(pill);
+
+            var arrow = new Label("->");
+            arrow.AddToClassList(MarbleArrowClass);
+            _marbleArrows[index] = arrow;
+            row.Add(arrow);
+
+            return row;
         }
 
         private void RefreshMarbles()
         {
-            if (_marblesContainer == null) return;
-            _marblesContainer.Clear();
-            for (var i = 0; i < ViewModel.CounterHistory.Count; i++)
+            if (_marblePool == null)
             {
-                var val = ViewModel.CounterHistory[i];
-                var pill = new Label(val.ToString());
-                pill.AddToClassList("fui-marble-pill");
-                if (i == ViewModel.CounterHistory.Count - 1)
-                {
-                    pill.AddToClassList(ActiveClass);
-                }
-                _marblesContainer.Add(pill);
-
-                if (i < ViewModel.CounterHistory.Count - 1)
-                {
-                    var arrow = new Label("->");
-                    arrow.AddToClassList("fui-marble-arrow");
-                    _marblesContainer.Add(arrow);
-                }
+                return;
             }
+
+            var count = ViewModel.CounterHistory.Count;
+            _marblePool.Render(count, this, BindMarbleSlot);
+        }
+
+        private static void BindMarbleSlot(VisualElement slot, int index, ReactiveCounterView view)
+        {
+            var history = view.ViewModel.CounterHistory;
+            var pill = view._marblePills[index];
+            var arrow = view._marbleArrows[index];
+
+            using var builder = ZString.CreateStringBuilder(true);
+            builder.Append(history[index]);
+            pill.SetFixedText(builder.AsSpan());
+
+            bool isLast = index == history.Count - 1;
+            if (isLast)
+            {
+                pill.AddToClassList(ActiveClass);
+            }
+            else
+            {
+                pill.RemoveFromClassList(ActiveClass);
+            }
+
+            arrow.style.display = isLast ? DisplayStyle.None : StyleKeyword.Null;
         }
     }
 }
-
