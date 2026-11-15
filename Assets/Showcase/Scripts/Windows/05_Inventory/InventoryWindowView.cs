@@ -1,9 +1,10 @@
-using Cysharp.Text;
-using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
+using SUIF.Controls;
 using SUIF.R3.Extensions;
+using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Windows.Inventory
@@ -56,7 +57,7 @@ namespace SUIF.Showcase.Windows.Inventory
                 _slotPool.Render(items.Length, items, BindInventorySlot);
             }
 
-            AddDisposable(ViewModel.SelectedIndex.Subscribe(OnSelectionChanged));
+            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
         private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
@@ -79,17 +80,17 @@ namespace SUIF.Showcase.Windows.Inventory
             var header = new VisualElement();
             header.AddToClassList("fui-inventory-slot__header");
 
-            var codeLabel = new Label();
+            var codeLabel = new FixedSlotLabel { Capacity = 10 };
             codeLabel.AddToClassList("fui-inventory-slot__code");
-            var weightLabel = new Label();
+            var weightLabel = new FixedSlotLabel { Capacity = 10 };
             weightLabel.AddToClassList("fui-inventory-slot__weight");
             header.Add(codeLabel);
             header.Add(weightLabel);
 
-            var nameLabel = new Label();
+            var nameLabel = new FixedSlotLabel { Capacity = 24 };
             nameLabel.AddToClassList("fui-inventory-slot__name");
 
-            var typeLabel = new Label();
+            var typeLabel = new FixedSlotLabel { Capacity = 14 };
             typeLabel.AddToClassList("fui-inventory-slot__type");
 
             slot.Add(header);
@@ -99,37 +100,30 @@ namespace SUIF.Showcase.Windows.Inventory
             return slot;
         }
 
-        private static void BindInventorySlot(Button slot, int index, InventoryItemData[] items)
+        private static void BindInventorySlot(Button slot, int index, InventoryItemDto[] items)
         {
             var item = items[index];
             var header = slot[0];
-            ((Label)header[0]).text = item.Code;
-            ((Label)header[1]).text = item.Weight;
-            ((Label)slot[1]).text = item.Name;
-            ((Label)slot[2]).text = item.Type;
+            ((FixedSlotLabel)header[0]).SetFixedWritten(item.Code, ShowcaseTextFormatter.WriteInventoryCode);
+            ((FixedSlotLabel)header[1]).SetFixedWritten(item.WeightKg, ShowcaseTextFormatter.WriteInventoryWeight);
+            ((FixedSlotLabel)slot[1]).SetFixedWritten(item.Code, ShowcaseTextFormatter.WriteInventoryName);
+            ((FixedSlotLabel)slot[2]).SetFixedWritten(item.Category, ShowcaseTextFormatter.WriteInventoryCategory);
         }
 
-        private void OnSelectionChanged(int index)
+        private void ApplyState(InventoryViewDto dto)
         {
             var item = ViewModel.GetCurrentItem();
-            _inspectorNameSlot?.SetText(item.Name);
-            if (_inspectorRaritySlot != null)
-            {
-                using var rarityBuilder = ZString.CreateStringBuilder(true);
-                rarityBuilder.Append('[');
-                rarityBuilder.Append(item.Rarity);
-                rarityBuilder.Append(']');
-                _inspectorRaritySlot.SetText(rarityBuilder.AsSpan());
-            }
-            _inspectorPowerSlot?.SetText(item.Power);
-            _inspectorDescSlot?.SetText(item.Description);
+            _inspectorNameSlot?.SetWritten(item.Code, ShowcaseTextFormatter.WriteInventoryName);
+            _inspectorRaritySlot?.SetWritten(item.Rarity, ShowcaseTextFormatter.WriteInventoryRarityBadge);
+            _inspectorPowerSlot?.SetWritten(item, ShowcaseTextFormatter.WriteInventoryStat);
+            _inspectorDescSlot?.SetWritten(item.Code, ShowcaseTextFormatter.WriteInventoryDescription);
 
             if (_slotPool != null)
             {
                 for (var i = 0; i < _slotPool.Capacity; i++)
                 {
                     var child = _slotPool.GetSlot(i);
-                    if (i == index) child.AddToClassList(SelectedClass);
+                    if (i == dto.SelectedIndex) child.AddToClassList(SelectedClass);
                     else child.RemoveFromClassList(SelectedClass);
                 }
             }
