@@ -3,9 +3,7 @@ using SUIF.Base;
 using SUIF.Controls;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Windows.RecycledList
 {
@@ -15,22 +13,12 @@ namespace SUIF.Showcase.Windows.RecycledList
         [UQuery("list-nodes-container")] private ScrollView _listContainer;
         [UQuery("btn-window-close")] private Button _btnClose;
 
-        private IShowcaseTextFormatter _formatter;
-
         public RecycledListWindowView(VisualElement root) : base(root)
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void Bind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
             if (_listContainer == null) return;
 
@@ -44,6 +32,8 @@ namespace SUIF.Showcase.Windows.RecycledList
 
         private VisualElement CreateNodeRow(RecycledNodeDto node)
         {
+            var formatter = ViewModel.Formatter;
+
             var row = new VisualElement();
             row.AddToClassList("fui-recycled-row");
 
@@ -51,13 +41,13 @@ namespace SUIF.Showcase.Windows.RecycledList
             left.AddToClassList("fui-recycled-row__left");
 
             var indexLabel = CreateFixedLabel(8, "fui-recycled-row__index");
-            indexLabel.SetFixedWritten(node.Index, _formatter.RecycledNodeIndex);
+            indexLabel.SetFixedWritten(node.Index, formatter.RecycledNodeIndex);
 
             var nameLabel = CreateFixedLabel(10, "fui-recycled-row__name");
-            nameLabel.SetFixedWritten(node.PoolSlot, _formatter.RecycledNodePool);
+            nameLabel.SetFixedWritten(node.PoolSlot, formatter.RecycledNodePool);
 
             var addrLabel = CreateFixedLabel(16, "fui-recycled-row__addr");
-            addrLabel.SetFixedWritten(node.MemoryAddress, _formatter.RecycledNodeAddress);
+            addrLabel.SetFixedWritten(node.MemoryAddress, formatter.RecycledNodeAddress);
 
             left.Add(indexLabel);
             left.Add(nameLabel);
@@ -71,10 +61,10 @@ namespace SUIF.Showcase.Windows.RecycledList
             {
                 statusLabel.AddToClassList("is-hot");
             }
-            statusLabel.SetFixedWritten(node.Status, _formatter.RecycledNodeStatusWriter);
+            statusLabel.SetFixedWritten(node.Status, formatter.RecycledNodeStatusWriter);
 
             var latLabel = CreateFixedLabel(8, "fui-recycled-row__latency");
-            latLabel.SetFixedWritten(node.LatencyMs, _formatter.RecycledNodeLatency);
+            latLabel.SetFixedWritten(node.LatencyMs, formatter.RecycledNodeLatency);
 
             right.Add(statusLabel);
             right.Add(latLabel);

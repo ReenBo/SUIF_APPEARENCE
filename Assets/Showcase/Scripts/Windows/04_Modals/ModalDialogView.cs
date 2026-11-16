@@ -3,9 +3,7 @@ using SUIF.Binding;
 using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Windows.Modals
 {
@@ -20,7 +18,6 @@ namespace SUIF.Showcase.Windows.Modals
         [UQuery("btn-modal-dismiss")] private Button _btnDismiss;
         [UQuery("btn-modal-close")] private Button _btnClose;
 
-        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _stackCounterSlot;
         private FixedTextSlot _alertTitleSlot;
         private FixedTextSlot _bodyMessageSlot;
@@ -29,16 +26,8 @@ namespace SUIF.Showcase.Windows.Modals
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void OnBind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_btnPush != null) Binder.Bind(_btnPush).ToClick(ViewModel.PushSubPopup);
             if (_btnCycle != null) Binder.Bind(_btnCycle).ToClick(ViewModel.CyclePreset);
             if (_btnDismiss != null) Binder.Bind(_btnDismiss).ToClick(ViewModel.Dismiss);
@@ -51,9 +40,10 @@ namespace SUIF.Showcase.Windows.Modals
 
         protected override void RenderData(ModalViewDto dto)
         {
-            _stackCounterSlot?.SetWritten(dto.Depth, _formatter.ModalDepth);
-            _alertTitleSlot?.SetWritten(dto.Preset, _formatter.ModalTitle);
-            _bodyMessageSlot?.SetWritten(dto.Preset, _formatter.ModalBody);
+            var formatter = ViewModel.Formatter;
+            _stackCounterSlot?.SetWritten(dto.Depth, formatter.ModalDepth);
+            _alertTitleSlot?.SetWritten(dto.Preset, formatter.ModalTitle);
+            _bodyMessageSlot?.SetWritten(dto.Preset, formatter.ModalBody);
         }
     }
 }

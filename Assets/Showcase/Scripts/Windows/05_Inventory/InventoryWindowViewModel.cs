@@ -5,6 +5,7 @@ using SUIF.API;
 using SUIF.Base;
 using SUIF.R3.Base;
 using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Modals;
@@ -17,6 +18,7 @@ namespace SUIF.Showcase.Windows.Inventory
         private readonly ShowcaseFrameViewModel _frameViewModel;
         private readonly IInventoryService _inventoryService;
 
+        public IShowcaseTextFormatter Formatter { get; }
         public InventoryItemDto[] Items => _inventoryService.Items;
         public ReadOnlyReactiveProperty<InventoryViewDto> State => _inventoryService.State;
         public Observable<InventoryViewDto> Data => _inventoryService.State;
@@ -24,11 +26,13 @@ namespace SUIF.Showcase.Windows.Inventory
         public InventoryWindowViewModel(
             IUIFlow uiFlow,
             ShowcaseFrameViewModel frameViewModel,
-            IInventoryService inventoryService)
+            IInventoryService inventoryService,
+            IShowcaseTextFormatter formatter)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
             _inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
         }
 
         public void SelectSlot(int index)

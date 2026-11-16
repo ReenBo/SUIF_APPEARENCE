@@ -2,9 +2,7 @@ using SUIF.Attributes;
 using SUIF.Binding;
 using SUIF.R3.Base;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Common
 {
@@ -14,7 +12,6 @@ namespace SUIF.Showcase.Common
         [UQuery("loading-spinner-glyph")] private Label _spinnerGlyph;
         [UQuery("loading-status-label")] private Label _statusLabel;
 
-        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _glyphSlot;
         private FixedTextSlot _statusSlot;
 
@@ -22,23 +19,17 @@ namespace SUIF.Showcase.Common
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void OnBind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
             _glyphSlot = Binder.FixedSlot(_spinnerGlyph, 6);
             _statusSlot = Binder.FixedSlot(_statusLabel, 24);
         }
 
         protected override void RenderData(LoadingStateDto dto)
         {
-            _glyphSlot?.SetWritten(dto.SpinnerStep, _formatter.LoadingSpinnerGlyph);
-            _statusSlot?.SetWritten(dto, _formatter.LoadingStatus);
+            var formatter = ViewModel.Formatter;
+            _glyphSlot?.SetWritten(dto.SpinnerStep, formatter.LoadingSpinnerGlyph);
+            _statusSlot?.SetWritten(dto, formatter.LoadingStatus);
         }
     }
 }

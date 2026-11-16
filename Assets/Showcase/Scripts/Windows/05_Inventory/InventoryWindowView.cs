@@ -4,9 +4,7 @@ using SUIF.Controls;
 using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Windows.Inventory
 {
@@ -23,7 +21,6 @@ namespace SUIF.Showcase.Windows.Inventory
         [UQuery("btn-inventory-modal-inspect")] private Button _btnModalInspect;
         [UQuery("btn-window-close")] private Button _btnClose;
 
-        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _inspectorNameSlot;
         private FixedTextSlot _inspectorRaritySlot;
         private FixedTextSlot _inspectorPowerSlot;
@@ -35,16 +32,8 @@ namespace SUIF.Showcase.Windows.Inventory
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void OnBind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_btnModalInspect != null) Binder.Bind(_btnModalInspect).ToClick(ViewModel.InspectInModal);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
@@ -65,11 +54,12 @@ namespace SUIF.Showcase.Windows.Inventory
 
         protected override void RenderData(InventoryViewDto dto)
         {
+            var formatter = ViewModel.Formatter;
             var item = ViewModel.GetCurrentItem();
-            _inspectorNameSlot?.SetWritten(item.Code, _formatter.InventoryName);
-            _inspectorRaritySlot?.SetWritten(item.Rarity, _formatter.InventoryRarityBadge);
-            _inspectorPowerSlot?.SetWritten(item, _formatter.InventoryStat);
-            _inspectorDescSlot?.SetWritten(item.Code, _formatter.InventoryDescription);
+            _inspectorNameSlot?.SetWritten(item.Code, formatter.InventoryName);
+            _inspectorRaritySlot?.SetWritten(item.Rarity, formatter.InventoryRarityBadge);
+            _inspectorPowerSlot?.SetWritten(item, formatter.InventoryStat);
+            _inspectorDescSlot?.SetWritten(item.Code, formatter.InventoryDescription);
 
             if (_slotPool != null && _lastSelectedIndex != dto.SelectedIndex)
             {
@@ -120,12 +110,13 @@ namespace SUIF.Showcase.Windows.Inventory
 
         private void BindInventorySlot(Button slot, int index)
         {
+            var formatter = ViewModel.Formatter;
             var item = ViewModel.Items[index];
             var header = slot[0];
-            ((FixedSlotLabel)header[0]).SetFixedWritten(item.Code, _formatter.InventoryCode);
-            ((FixedSlotLabel)header[1]).SetFixedWritten(item.WeightKg, _formatter.InventoryWeight);
-            ((FixedSlotLabel)slot[1]).SetFixedWritten(item.Code, _formatter.InventoryName);
-            ((FixedSlotLabel)slot[2]).SetFixedWritten(item.Category, _formatter.InventoryCategory);
+            ((FixedSlotLabel)header[0]).SetFixedWritten(item.Code, formatter.InventoryCode);
+            ((FixedSlotLabel)header[1]).SetFixedWritten(item.WeightKg, formatter.InventoryWeight);
+            ((FixedSlotLabel)slot[1]).SetFixedWritten(item.Code, formatter.InventoryName);
+            ((FixedSlotLabel)slot[2]).SetFixedWritten(item.Category, formatter.InventoryCategory);
         }
     }
 }

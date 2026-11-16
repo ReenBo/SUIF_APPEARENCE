@@ -4,9 +4,7 @@ using SUIF.Binding;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Frame
 {
@@ -44,7 +42,6 @@ namespace SUIF.Showcase.Frame
 
         [UQuery("footer-status-log")] private Label _footerStatusLog;
 
-        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _telemetryBaseSlot;
         private FixedTextSlot _telemetryModalSlot;
         private FixedTextSlot _telemetryFpsSlot;
@@ -63,16 +60,8 @@ namespace SUIF.Showcase.Frame
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void Bind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_navBtnLifecycle != null) Binder.Bind(_navBtnLifecycle).ToClick(ViewModel.OpenLifecycleWindow);
             if (_navBtnMvvm != null) Binder.Bind(_navBtnMvvm).ToClick(ViewModel.OpenCounterWindow);
             if (_navBtnList != null) Binder.Bind(_navBtnList).ToClick(ViewModel.OpenRecycledListWindow);
@@ -112,9 +101,10 @@ namespace SUIF.Showcase.Frame
 
         private void ApplyTelemetry(FrameTelemetryDto dto)
         {
-            _telemetryFpsSlot?.SetWritten(dto, _formatter.TelemetryFps);
-            _telemetryDcSlot?.SetWritten(dto, _formatter.TelemetryDrawCalls);
-            _runBenchmarkSlot?.SetWritten(dto.IsRecording, _formatter.BenchmarkButtonText);
+            var formatter = ViewModel.Formatter;
+            _telemetryFpsSlot?.SetWritten(dto, formatter.TelemetryFps);
+            _telemetryDcSlot?.SetWritten(dto, formatter.TelemetryDrawCalls);
+            _runBenchmarkSlot?.SetWritten(dto.IsRecording, formatter.BenchmarkButtonText);
             UpdateBtn(_btnRunBenchmark, dto.IsRecording);
         }
 
@@ -153,27 +143,29 @@ namespace SUIF.Showcase.Frame
                 }
             }
 
-            _telemetryBaseSlot?.SetWritten(dto.ActiveModule, _formatter.ModuleBaseReadout);
-            _telemetryModalSlot?.SetWritten(dto, _formatter.ModalTelemetry);
-            _headerOpenStateSlot?.SetWritten(dto, _formatter.FrameOpenState);
-            _headerBaseTitleSlot?.SetWritten(dto.ActiveModule, _formatter.ModuleTitle);
-            _headerLayerTagSlot?.SetWritten(dto, _formatter.LayerTag);
-            _closeBtnHintSlot?.SetWritten(dto, _formatter.CloseButtonHint);
-            _viewportIdSlot?.SetWritten(dto.ActiveModule, _formatter.ViewportIdBadge);
-            _viewportSubSlot?.SetWritten(dto.ActiveModule, _formatter.ViewportSubBadge);
-            _viewportCoordsSlot?.SetWritten(dto, _formatter.ViewportCoords);
-            _footerStatusSlot?.SetWritten(dto, _formatter.FooterStatus);
+            var formatter = ViewModel.Formatter;
+            _telemetryBaseSlot?.SetWritten(dto.ActiveModule, formatter.ModuleBaseReadout);
+            _telemetryModalSlot?.SetWritten(dto, formatter.ModalTelemetry);
+            _headerOpenStateSlot?.SetWritten(dto, formatter.FrameOpenState);
+            _headerBaseTitleSlot?.SetWritten(dto.ActiveModule, formatter.ModuleTitle);
+            _headerLayerTagSlot?.SetWritten(dto, formatter.LayerTag);
+            _closeBtnHintSlot?.SetWritten(dto, formatter.CloseButtonHint);
+            _viewportIdSlot?.SetWritten(dto.ActiveModule, formatter.ViewportIdBadge);
+            _viewportSubSlot?.SetWritten(dto.ActiveModule, formatter.ViewportSubBadge);
+            _viewportCoordsSlot?.SetWritten(dto, formatter.ViewportCoords);
+            _footerStatusSlot?.SetWritten(dto, formatter.FooterStatus);
         }
 
         private void ApplyTheme(ShowcaseThemeDto dto)
         {
-            var themes = _formatter.SupportedThemes;
+            var formatter = ViewModel.Formatter;
+            var themes = formatter.SupportedThemes;
             for (int i = 0; i < themes.Length; i++)
             {
-                VisualElement.RemoveFromClassList(_formatter.GetThemeCssClass(themes[i]));
+                VisualElement.RemoveFromClassList(formatter.GetThemeCssClass(themes[i]));
             }
 
-            VisualElement.AddToClassList(_formatter.GetThemeCssClass(dto.Id));
+            VisualElement.AddToClassList(formatter.GetThemeCssClass(dto.Id));
         }
 
         private void AttachWipe(Button btn, DiagonalWipeStyle style)

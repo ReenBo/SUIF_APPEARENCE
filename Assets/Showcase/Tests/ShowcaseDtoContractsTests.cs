@@ -34,8 +34,8 @@ namespace SUIF.Showcase.Tests
         {
             _flow = new MockFlow();
             _themeService = new ShowcaseThemeService();
-            _frameVm = new ShowcaseFrameViewModel(_flow, _themeService);
             _formatter = new ShowcaseTextFormatter();
+            _frameVm = new ShowcaseFrameViewModel(_flow, _themeService, _formatter);
         }
 
         [TearDown]
@@ -76,7 +76,7 @@ namespace SUIF.Showcase.Tests
         public void LifecycleViewModel_TriggersTypedStageEntriesWithoutRawStrings()
         {
             using var service = new LifecycleMonitorService();
-            using var vm = new LifecycleWindowViewModel(_flow, _frameVm, service);
+            using var vm = new LifecycleWindowViewModel(_flow, _frameVm, service, _formatter);
             Assert.That(vm.State.CurrentValue.CurrentStage, Is.EqualTo(LifecycleStageId.Initialize));
             Assert.That(vm.State.CurrentValue.LogCount, Is.EqualTo(3));
 
@@ -95,7 +95,7 @@ namespace SUIF.Showcase.Tests
         public void CounterViewModel_EmitsTypedStateAndFormatsZeroPaddedValue()
         {
             using var service = new CounterService();
-            using var vm = new ReactiveCounterViewModel(_frameVm, service);
+            using var vm = new ReactiveCounterViewModel(_frameVm, service, _formatter);
             Assert.That(vm.State.CurrentValue.CurrentValue, Is.EqualTo(42));
             Assert.That(vm.State.CurrentValue.HistoryCount, Is.EqualTo(5));
 
@@ -114,7 +114,7 @@ namespace SUIF.Showcase.Tests
         public void ModalViewModel_CyclesTypedPresetsAndDepthDto()
         {
             using var service = new ModalStateService();
-            using var vm = new ModalDialogViewModel(_flow, _frameVm, service);
+            using var vm = new ModalDialogViewModel(_flow, _frameVm, service, _formatter);
             Assert.That(vm.State.CurrentValue.Depth, Is.EqualTo(1));
             Assert.That(vm.State.CurrentValue.Preset, Is.EqualTo(ModalPresetId.PopupIntercept));
 
@@ -130,7 +130,7 @@ namespace SUIF.Showcase.Tests
         public void InventoryViewModel_SelectsTypedItemAndFormatsStatsDto()
         {
             using var service = new InventoryService();
-            using var vm = new InventoryWindowViewModel(_flow, _frameVm, service);
+            using var vm = new InventoryWindowViewModel(_flow, _frameVm, service, _formatter);
             Assert.That(vm.State.CurrentValue.SelectedIndex, Is.EqualTo(0));
 
             vm.SelectSlot(5);
@@ -147,7 +147,7 @@ namespace SUIF.Showcase.Tests
         public void RecycledNodes_UseTypedDtoAndFormatAddressHex()
         {
             var service = new RecycledListService();
-            using var vm = new RecycledListWindowViewModel(_frameVm, service);
+            using var vm = new RecycledListWindowViewModel(_frameVm, service, _formatter);
             var first = vm.Nodes[0];
             Assert.That(first.Status, Is.EqualTo(RecycledNodeStatus.HotSwap));
             Assert.That(Format(first.Index, _formatter.RecycledNodeIndex), Is.EqualTo("#0001"));

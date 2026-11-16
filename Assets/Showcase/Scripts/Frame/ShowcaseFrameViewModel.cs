@@ -6,6 +6,7 @@ using SUIF.Base;
 using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -27,6 +28,7 @@ namespace SUIF.Showcase.Frame
         public ReactiveProperty<FrameNavigationDto> Navigation { get; } =
             new(new FrameNavigationDto(ShowcaseModuleId.Standby, false, FrameActionStatus.Ready));
 
+        public IShowcaseTextFormatter Formatter { get; }
         public ReadOnlyReactiveProperty<ShowcaseThemeDto> CurrentTheme => _themeService.CurrentTheme;
         public ReadOnlyReactiveProperty<FrameTelemetryDto> Telemetry =>
             _telemetryService != null ? _telemetryService.Telemetry : _fallbackTelemetry;
@@ -35,10 +37,12 @@ namespace SUIF.Showcase.Frame
         public ShowcaseFrameViewModel(
             IUIFlow uiFlow,
             ShowcaseThemeService themeService,
+            IShowcaseTextFormatter formatter,
             BenchmarkTelemetryService telemetryService = null)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+            Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
             _telemetryService = telemetryService;
 
             AddDisposable(Navigation);

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SUIF.API;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
@@ -28,7 +29,7 @@ namespace SUIF.Showcase.Tests
         {
             _flow = new MockUIFlow();
             _themeService = new ShowcaseThemeService();
-            _viewModel = new ShowcaseFrameViewModel(_flow, _themeService);
+            _viewModel = new ShowcaseFrameViewModel(_flow, _themeService, new ShowcaseTextFormatter());
         }
 
         [TearDown]

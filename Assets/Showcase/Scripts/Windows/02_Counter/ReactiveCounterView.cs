@@ -4,9 +4,7 @@ using SUIF.Controls;
 using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Windows.Counter
 {
@@ -29,7 +27,6 @@ namespace SUIF.Showcase.Windows.Counter
 
         private readonly FixedSlotLabel[] _marblePills = new FixedSlotLabel[MaxMarbleSlots];
         private readonly Label[] _marbleArrows = new Label[MaxMarbleSlots];
-        private IShowcaseTextFormatter _formatter;
         private FixedElementPool<VisualElement> _marblePool;
         private FixedTextSlot _valueSlot;
 
@@ -37,16 +34,8 @@ namespace SUIF.Showcase.Windows.Counter
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void OnBind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_btnDec != null) Binder.Bind(_btnDec).ToClick(() => ViewModel.UpdateCounter(-1));
             if (_btnInc != null) Binder.Bind(_btnInc).ToClick(() => ViewModel.UpdateCounter(1));
             if (_btnBoost != null) Binder.Bind(_btnBoost).ToClick(() => ViewModel.UpdateCounter(10));
@@ -68,7 +57,7 @@ namespace SUIF.Showcase.Windows.Counter
 
         protected override void RenderData(CounterViewDto dto)
         {
-            _valueSlot?.SetWritten(dto.CurrentValue, _formatter.CounterValue);
+            _valueSlot?.SetWritten(dto.CurrentValue, ViewModel.Formatter.CounterValue);
             _marblePool?.Render(dto.HistoryCount, this, static (slot, index, view) => view.BindMarbleSlot(index));
         }
 

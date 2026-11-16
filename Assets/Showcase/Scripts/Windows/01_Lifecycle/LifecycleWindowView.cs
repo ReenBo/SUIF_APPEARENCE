@@ -4,9 +4,7 @@ using SUIF.Controls;
 using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
-using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace SUIF.Showcase.Windows.Lifecycle
 {
@@ -27,23 +25,14 @@ namespace SUIF.Showcase.Windows.Lifecycle
         [UQuery("btn-window-close")] private Button _btnClose;
         [UQuery("lifecycle-logs-container")] private VisualElement _logsContainer;
 
-        private IShowcaseTextFormatter _formatter;
         private FixedElementPool<FixedSlotLabel> _logPool;
 
         public LifecycleWindowView(VisualElement root) : base(root)
         {
         }
 
-        [Inject]
-        public void Construct(IShowcaseTextFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
         protected override void OnBind()
         {
-            _formatter ??= new ShowcaseTextFormatter();
-
             if (_btnStageInit != null) Binder.Bind(_btnStageInit).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Initialize));
             if (_btnStageOpen != null) Binder.Bind(_btnStageOpen).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Open));
             if (_btnStageShow != null) Binder.Bind(_btnStageShow).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Show));
@@ -72,8 +61,8 @@ namespace SUIF.Showcase.Windows.Lifecycle
             UpdateBtn(_btnStageHide, dto.CurrentStage == LifecycleStageId.Hide);
             UpdateBtn(_btnStageClose, dto.CurrentStage == LifecycleStageId.Close);
 
-            _logPool?.Render(dto.LogCount, this, static (slot, index, view) =>
-                slot.SetFixedWritten(view.ViewModel.LifecycleLogs[index], view._formatter.LifecycleLogEntry));
+            _logPool?.Render(dto.LogCount, ViewModel, static (slot, index, vm) =>
+                slot.SetFixedWritten(vm.LifecycleLogs[index], vm.Formatter.LifecycleLogEntry));
         }
 
         private FixedSlotLabel CreateLogSlot(int index)
