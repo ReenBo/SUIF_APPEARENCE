@@ -1,5 +1,3 @@
-using SUIF.API;
-
 namespace SUIF.Showcase.Contracts
 {
     public enum ShowcaseThemeId : byte
@@ -32,7 +30,7 @@ namespace SUIF.Showcase.Contracts
         BenchmarkCompleted
     }
 
-    public readonly struct ShowcaseThemeDto : IViewDto
+    public readonly struct ShowcaseThemeDto
     {
         public readonly ShowcaseThemeId Id;
 
@@ -42,7 +40,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct FrameNavigationDto : IViewDto
+    public readonly struct FrameNavigationDto
     {
         public readonly ShowcaseModuleId ActiveModule;
         public readonly bool IsModalOpen;
@@ -56,7 +54,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct FrameTelemetryDto : IViewDto
+    public readonly struct FrameTelemetryDto
     {
         public readonly float Fps;
         public readonly long DrawCalls;
@@ -83,7 +81,7 @@ namespace SUIF.Showcase.Contracts
         Close
     }
 
-    public readonly struct LifecycleLogEntryDto : IViewDto
+    public readonly struct LifecycleLogEntryDto
     {
         public readonly int Hour;
         public readonly int Minute;
@@ -109,7 +107,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct LifecycleViewDto : IViewDto
+    public readonly struct LifecycleViewDto
     {
         public readonly LifecycleStageId CurrentStage;
         public readonly int LogCount;
@@ -121,7 +119,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct CounterViewDto : IViewDto
+    public readonly struct CounterViewDto
     {
         public readonly int CurrentValue;
         public readonly int HistoryCount;
@@ -139,7 +137,7 @@ namespace SUIF.Showcase.Contracts
         HotSwap
     }
 
-    public readonly struct RecycledNodeDto : IViewDto
+    public readonly struct RecycledNodeDto
     {
         public readonly int Index;
         public readonly byte PoolSlot;
@@ -169,7 +167,7 @@ namespace SUIF.Showcase.Contracts
         OverlayPriority
     }
 
-    public readonly struct ModalViewDto : IViewDto
+    public readonly struct ModalViewDto
     {
         public readonly int Depth;
         public readonly ModalPresetId Preset;
@@ -229,7 +227,7 @@ namespace SUIF.Showcase.Contracts
         ClearanceLevel
     }
 
-    public readonly struct InventoryItemDto : IViewDto
+    public readonly struct InventoryItemDto
     {
         public readonly InventoryItemCode Code;
         public readonly InventoryItemCategory Category;
@@ -255,7 +253,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct InventoryViewDto : IViewDto
+    public readonly struct InventoryViewDto
     {
         public readonly int SelectedIndex;
         public readonly float TotalWeightKg;
@@ -267,7 +265,7 @@ namespace SUIF.Showcase.Contracts
         }
     }
 
-    public readonly struct ThemeMatrixViewDto : IViewDto
+    public readonly struct ThemeMatrixViewDto
     {
         public readonly ShowcaseThemeId ActiveTheme;
 

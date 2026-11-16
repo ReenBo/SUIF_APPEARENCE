@@ -1,17 +1,17 @@
-using ObservableCollections;
 using SUIF.Attributes;
-using SUIF.Base;
 using SUIF.Binding;
 using SUIF.Controls;
+using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Windows.Lifecycle
 {
     [UIView("LifecycleWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
-    public sealed class LifecycleWindowView : BaseView<LifecycleWindowViewModel>
+    public sealed class LifecycleWindowView : BaseReactiveDataView<LifecycleWindowViewModel, LifecycleViewDto>
     {
         private const string ActiveClass = "is-active";
         private const string LogItemClass = "fui-log-item";
@@ -27,14 +27,23 @@ namespace SUIF.Showcase.Windows.Lifecycle
         [UQuery("btn-window-close")] private Button _btnClose;
         [UQuery("lifecycle-logs-container")] private VisualElement _logsContainer;
 
+        private IShowcaseTextFormatter _formatter;
         private FixedElementPool<FixedSlotLabel> _logPool;
 
         public LifecycleWindowView(VisualElement root) : base(root)
         {
         }
 
-        protected override void Bind()
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
         {
+            _formatter = formatter;
+        }
+
+        protected override void OnBind()
+        {
+            _formatter ??= new ShowcaseTextFormatter();
+
             if (_btnStageInit != null) Binder.Bind(_btnStageInit).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Initialize));
             if (_btnStageOpen != null) Binder.Bind(_btnStageOpen).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Open));
             if (_btnStageShow != null) Binder.Bind(_btnStageShow).ToClick(() => ViewModel.TriggerStage(LifecycleStageId.Show));
@@ -53,11 +62,9 @@ namespace SUIF.Showcase.Windows.Lifecycle
                     SetLogSlotActive);
                 AddDisposable(_logPool);
             }
-
-            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
-        private void ApplyState(LifecycleViewDto dto)
+        protected override void RenderData(LifecycleViewDto dto)
         {
             UpdateBtn(_btnStageInit, dto.CurrentStage == LifecycleStageId.Initialize);
             UpdateBtn(_btnStageOpen, dto.CurrentStage == LifecycleStageId.Open);
@@ -65,7 +72,19 @@ namespace SUIF.Showcase.Windows.Lifecycle
             UpdateBtn(_btnStageHide, dto.CurrentStage == LifecycleStageId.Hide);
             UpdateBtn(_btnStageClose, dto.CurrentStage == LifecycleStageId.Close);
 
-            _logPool?.Render(dto.LogCount, ViewModel.LifecycleLogs, BindLogSlot);
+            _logPool?.Render(dto.LogCount, this, static (slot, index, view) =>
+                slot.SetFixedWritten(view.ViewModel.LifecycleLogs[index], view._formatter.LifecycleLogEntry));
+        }
+
+        private FixedSlotLabel CreateLogSlot(int index)
+        {
+            var label = new FixedSlotLabel
+            {
+                Capacity = LogCharCapacity
+            };
+            label.AddToClassList(LogItemClass);
+            Binder.AddDisposable(label);
+            return label;
         }
 
         private static void UpdateBtn(Button btn, bool isActive)
@@ -73,16 +92,6 @@ namespace SUIF.Showcase.Windows.Lifecycle
             if (btn == null) return;
             if (isActive) btn.AddToClassList(ActiveClass);
             else btn.RemoveFromClassList(ActiveClass);
-        }
-
-        private static FixedSlotLabel CreateLogSlot(int index)
-        {
-            var label = new FixedSlotLabel
-            {
-                Capacity = LogCharCapacity
-            };
-            label.AddToClassList(LogItemClass);
-            return label;
         }
 
         private static void SetLogSlotActive(FixedSlotLabel slot, bool isActive)
@@ -97,11 +106,6 @@ namespace SUIF.Showcase.Windows.Lifecycle
             slot.SetFixedText(string.Empty);
             slot.style.height = 0f;
             slot.style.marginBottom = 0f;
-        }
-
-        private static void BindLogSlot(FixedSlotLabel slot, int index, ObservableList<LifecycleLogEntryDto> logs)
-        {
-            slot.SetFixedWritten(logs[index], ShowcaseTextFormatter.WriteLifecycleLogEntry);
         }
     }
 }

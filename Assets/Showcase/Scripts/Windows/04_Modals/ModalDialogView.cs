@@ -1,15 +1,16 @@
 using SUIF.Attributes;
-using SUIF.Base;
 using SUIF.Binding;
+using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Windows.Modals
 {
     [UIView("ModalDialogView", SUIF.API.UILayer.Popups, UILoadingMode.Cached, false, true)]
-    public sealed class ModalDialogView : BaseView<ModalDialogViewModel>
+    public sealed class ModalDialogView : BaseReactiveDataView<ModalDialogViewModel, ModalViewDto>
     {
         [UQuery("modal-stack-counter")] private Label _stackCounter;
         [UQuery("modal-alert-title")] private Label _alertTitle;
@@ -19,6 +20,7 @@ namespace SUIF.Showcase.Windows.Modals
         [UQuery("btn-modal-dismiss")] private Button _btnDismiss;
         [UQuery("btn-modal-close")] private Button _btnClose;
 
+        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _stackCounterSlot;
         private FixedTextSlot _alertTitleSlot;
         private FixedTextSlot _bodyMessageSlot;
@@ -27,37 +29,31 @@ namespace SUIF.Showcase.Windows.Modals
         {
         }
 
-        protected override void Bind()
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
         {
+            _formatter = formatter;
+        }
+
+        protected override void OnBind()
+        {
+            _formatter ??= new ShowcaseTextFormatter();
+
             if (_btnPush != null) Binder.Bind(_btnPush).ToClick(ViewModel.PushSubPopup);
             if (_btnCycle != null) Binder.Bind(_btnCycle).ToClick(ViewModel.CyclePreset);
             if (_btnDismiss != null) Binder.Bind(_btnDismiss).ToClick(ViewModel.Dismiss);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Dismiss);
 
-            _stackCounterSlot = RegisterFixedSlot(_stackCounter, 14);
-            _alertTitleSlot = RegisterFixedSlot(_alertTitle, 40);
-            _bodyMessageSlot = RegisterFixedSlot(_bodyMessage, 176);
-
-            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
+            _stackCounterSlot = Binder.FixedSlot(_stackCounter, 14);
+            _alertTitleSlot = Binder.FixedSlot(_alertTitle, 40);
+            _bodyMessageSlot = Binder.FixedSlot(_bodyMessage, 176);
         }
 
-        private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
+        protected override void RenderData(ModalViewDto dto)
         {
-            if (element == null)
-            {
-                return null;
-            }
-
-            var slot = new FixedTextSlot(element, capacity);
-            AddDisposable(slot);
-            return slot;
-        }
-
-        private void ApplyState(ModalViewDto dto)
-        {
-            _stackCounterSlot?.SetWritten(dto.Depth, ShowcaseTextFormatter.WriteModalDepth);
-            _alertTitleSlot?.SetWritten(dto.Preset, ShowcaseTextFormatter.WriteModalTitle);
-            _bodyMessageSlot?.SetWritten(dto.Preset, ShowcaseTextFormatter.WriteModalBody);
+            _stackCounterSlot?.SetWritten(dto.Depth, _formatter.ModalDepth);
+            _alertTitleSlot?.SetWritten(dto.Preset, _formatter.ModalTitle);
+            _bodyMessageSlot?.SetWritten(dto.Preset, _formatter.ModalBody);
         }
     }
 }

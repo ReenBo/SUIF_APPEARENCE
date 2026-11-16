@@ -1,11 +1,87 @@
 using Cysharp.Text;
+using SUIF.Binding;
 using SUIF.Showcase.Contracts;
 
 namespace SUIF.Showcase.Formatting
 {
-    public static class ShowcaseTextFormatter
+    public sealed class ShowcaseTextFormatter : IShowcaseTextFormatter
     {
-        public static string GetThemeCssClass(ShowcaseThemeId themeId)
+        public ShowcaseThemeId[] SupportedThemes { get; }
+
+        public FixedTextWriter<ShowcaseModuleId> ModuleTitle { get; }
+        public FixedTextWriter<ShowcaseModuleId> ModuleBaseReadout { get; }
+        public FixedTextWriter<ShowcaseModuleId> ViewportIdBadge { get; }
+        public FixedTextWriter<ShowcaseModuleId> ViewportSubBadge { get; }
+        public FixedTextWriter<FrameNavigationDto> FrameOpenState { get; }
+        public FixedTextWriter<FrameNavigationDto> CloseButtonHint { get; }
+        public FixedTextWriter<FrameNavigationDto> ModalTelemetry { get; }
+        public FixedTextWriter<FrameNavigationDto> LayerTag { get; }
+        public FixedTextWriter<FrameNavigationDto> ViewportCoords { get; }
+        public FixedTextWriter<FrameNavigationDto> FooterStatus { get; }
+        public FixedTextWriter<bool> BenchmarkButtonText { get; }
+        public FixedTextWriter<FrameTelemetryDto> TelemetryFps { get; }
+        public FixedTextWriter<FrameTelemetryDto> TelemetryDrawCalls { get; }
+        public FixedTextWriter<LifecycleLogEntryDto> LifecycleLogEntry { get; }
+        public FixedTextWriter<int> CounterValue { get; }
+        public FixedTextWriter<int> RecycledNodeIndex { get; }
+        public FixedTextWriter<byte> RecycledNodePool { get; }
+        public FixedTextWriter<uint> RecycledNodeAddress { get; }
+        public FixedTextWriter<RecycledNodeStatus> RecycledNodeStatusWriter { get; }
+        public FixedTextWriter<float> RecycledNodeLatency { get; }
+        public FixedTextWriter<int> ModalDepth { get; }
+        public FixedTextWriter<ModalPresetId> ModalTitle { get; }
+        public FixedTextWriter<ModalPresetId> ModalBody { get; }
+        public FixedTextWriter<InventoryItemCode> InventoryCode { get; }
+        public FixedTextWriter<InventoryItemCode> InventoryName { get; }
+        public FixedTextWriter<InventoryItemCategory> InventoryCategory { get; }
+        public FixedTextWriter<float> InventoryWeight { get; }
+        public FixedTextWriter<InventoryRarity> InventoryRarityBadge { get; }
+        public FixedTextWriter<InventoryItemDto> InventoryStat { get; }
+        public FixedTextWriter<InventoryItemCode> InventoryDescription { get; }
+
+        public ShowcaseTextFormatter()
+        {
+            SupportedThemes = new[]
+            {
+                ShowcaseThemeId.Mono,
+                ShowcaseThemeId.Cyan,
+                ShowcaseThemeId.Crimson,
+                ShowcaseThemeId.Amber
+            };
+
+            ModuleTitle = WriteModuleTitle;
+            ModuleBaseReadout = WriteModuleBaseReadout;
+            ViewportIdBadge = WriteViewportIdBadge;
+            ViewportSubBadge = WriteViewportSubBadge;
+            FrameOpenState = WriteFrameOpenState;
+            CloseButtonHint = WriteCloseButtonHint;
+            ModalTelemetry = WriteModalTelemetry;
+            LayerTag = WriteLayerTag;
+            ViewportCoords = WriteViewportCoords;
+            FooterStatus = WriteFooterStatus;
+            BenchmarkButtonText = WriteBenchmarkButtonText;
+            TelemetryFps = WriteTelemetryFps;
+            TelemetryDrawCalls = WriteTelemetryDrawCalls;
+            LifecycleLogEntry = WriteLifecycleLogEntry;
+            CounterValue = WriteCounterValue;
+            RecycledNodeIndex = WriteRecycledNodeIndex;
+            RecycledNodePool = WriteRecycledNodePool;
+            RecycledNodeAddress = WriteRecycledNodeAddress;
+            RecycledNodeStatusWriter = WriteRecycledNodeStatus;
+            RecycledNodeLatency = WriteRecycledNodeLatency;
+            ModalDepth = WriteModalDepth;
+            ModalTitle = WriteModalTitle;
+            ModalBody = WriteModalBody;
+            InventoryCode = WriteInventoryCode;
+            InventoryName = WriteInventoryName;
+            InventoryCategory = WriteInventoryCategory;
+            InventoryWeight = WriteInventoryWeight;
+            InventoryRarityBadge = WriteInventoryRarityBadge;
+            InventoryStat = WriteInventoryStat;
+            InventoryDescription = WriteInventoryDescription;
+        }
+
+        public string GetThemeCssClass(ShowcaseThemeId themeId)
         {
             return themeId switch
             {
@@ -16,7 +92,7 @@ namespace SUIF.Showcase.Formatting
             };
         }
 
-        public static void WriteModuleTitle(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
+        public void WriteModuleTitle(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
         {
             sb.Append(module switch
             {
@@ -29,7 +105,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteModuleBaseReadout(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
+        public void WriteModuleBaseReadout(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
         {
             sb.Append(module switch
             {
@@ -42,14 +118,14 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteViewportIdBadge(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
+        public void WriteViewportIdBadge(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
         {
             int navIndex = GetModuleNavNumber(module);
             sb.Append("VIEWPORT_0");
             sb.Append(navIndex);
         }
 
-        public static void WriteViewportSubBadge(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
+        public void WriteViewportSubBadge(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module)
         {
             sb.Append(module switch
             {
@@ -62,23 +138,23 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteFrameOpenState(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteFrameOpenState(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             bool isOpen = dto.ActiveModule != ShowcaseModuleId.Standby || dto.IsModalOpen;
             sb.Append(isOpen ? "open" : "closed");
         }
 
-        public static void WriteCloseButtonHint(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteCloseButtonHint(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             sb.Append(dto.IsModalOpen ? "CLS // OVR" : "CLS // WIN");
         }
 
-        public static void WriteModalTelemetry(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteModalTelemetry(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             sb.Append(dto.IsModalOpen ? "MOUNTED [1]" : "STANDBY [0]");
         }
 
-        public static void WriteLayerTag(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteLayerTag(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             int navIndex = GetModuleNavNumber(dto.ActiveModule);
             sb.Append("LAYER_Z // ");
@@ -86,7 +162,7 @@ namespace SUIF.Showcase.Formatting
             sb.Append(dto.IsModalOpen ? "_BASE + MODAL_999" : "_BASE_100");
         }
 
-        public static void WriteViewportCoords(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteViewportCoords(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             if (dto.IsModalOpen)
             {
@@ -99,7 +175,7 @@ namespace SUIF.Showcase.Formatting
             sb.Append(dto.ActiveModule == ShowcaseModuleId.Standby ? "BASE_STATE: STANDBY" : "BASE_STATE: ACTIVE");
         }
 
-        public static void WriteFooterStatus(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
+        public void WriteFooterStatus(ref Utf16ValueStringBuilder sb, FrameNavigationDto dto)
         {
             switch (dto.LastStatus)
             {
@@ -112,15 +188,13 @@ namespace SUIF.Showcase.Formatting
                         ShowcaseModuleId.RecycledList => "RECYCLED_LIST_WINDOW",
                         ShowcaseModuleId.Inventory => "INVENTORY_WINDOW",
                         ShowcaseModuleId.ThemeMatrix => "THEME_MATRIX_WINDOW",
-                        _ => "STANDBY"
+                        _ => "BASE_WINDOW"
                     });
                     break;
                 case FrameActionStatus.ModuleClosed:
                     sb.Append("CLOSED // BASE_WINDOW");
                     break;
                 case FrameActionStatus.ModalMounted:
-                    sb.Append("MOUNTED // MODAL_OVERLAY");
-                    break;
                 case FrameActionStatus.ModalUnmounted:
                     sb.Append(dto.IsModalOpen ? "MOUNTED // MODAL_OVERLAY" : "UNMOUNTED // MODAL_OVERLAY");
                     break;
@@ -136,25 +210,25 @@ namespace SUIF.Showcase.Formatting
             }
         }
 
-        public static void WriteBenchmarkButtonText(ref Utf16ValueStringBuilder sb, bool isRecording)
+        public void WriteBenchmarkButtonText(ref Utf16ValueStringBuilder sb, bool isRecording)
         {
             sb.Append(isRecording ? "TESTING..." : "RUN BENCHMARK");
         }
 
-        public static void WriteTelemetryFps(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        public void WriteTelemetryFps(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
         {
             sb.AppendFormat("{0:F1}", dto.Fps);
             sb.Append(" FPS");
         }
 
-        public static void WriteTelemetryDrawCalls(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        public void WriteTelemetryDrawCalls(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
         {
             sb.Append('[');
             sb.Append(dto.DrawCalls);
             sb.Append(" DC]");
         }
 
-        public static void WriteLifecycleLogEntry(ref Utf16ValueStringBuilder sb, LifecycleLogEntryDto entry)
+        public void WriteLifecycleLogEntry(ref Utf16ValueStringBuilder sb, LifecycleLogEntryDto entry)
         {
             sb.Append("> [");
             AppendTwoDigits(ref sb, entry.Hour);
@@ -186,46 +260,46 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteCounterValue(ref Utf16ValueStringBuilder sb, int value)
+        public void WriteCounterValue(ref Utf16ValueStringBuilder sb, int value)
         {
             sb.AppendFormat("{0:D3}", value);
         }
 
-        public static void WriteRecycledNodeIndex(ref Utf16ValueStringBuilder sb, int index)
+        public void WriteRecycledNodeIndex(ref Utf16ValueStringBuilder sb, int index)
         {
             sb.Append('#');
             sb.AppendFormat("{0:D4}", index);
         }
 
-        public static void WriteRecycledNodePool(ref Utf16ValueStringBuilder sb, byte slot)
+        public void WriteRecycledNodePool(ref Utf16ValueStringBuilder sb, byte slot)
         {
             sb.Append("NODE_");
             AppendTwoDigits(ref sb, slot);
         }
 
-        public static void WriteRecycledNodeAddress(ref Utf16ValueStringBuilder sb, uint address)
+        public void WriteRecycledNodeAddress(ref Utf16ValueStringBuilder sb, uint address)
         {
             sb.Append("MEM: 0x");
             sb.AppendFormat("{0:X6}", address);
         }
 
-        public static void WriteRecycledNodeStatus(ref Utf16ValueStringBuilder sb, RecycledNodeStatus status)
+        public void WriteRecycledNodeStatus(ref Utf16ValueStringBuilder sb, RecycledNodeStatus status)
         {
             sb.Append(status == RecycledNodeStatus.HotSwap ? "HOT_SWAP" : "RECYCLED");
         }
 
-        public static void WriteRecycledNodeLatency(ref Utf16ValueStringBuilder sb, float latencyMs)
+        public void WriteRecycledNodeLatency(ref Utf16ValueStringBuilder sb, float latencyMs)
         {
             sb.AppendFormat("{0:F2}ms", latencyMs);
         }
 
-        public static void WriteModalDepth(ref Utf16ValueStringBuilder sb, int depth)
+        public void WriteModalDepth(ref Utf16ValueStringBuilder sb, int depth)
         {
             sb.Append("DEPTH: ");
             sb.Append(depth);
         }
 
-        public static void WriteModalTitle(ref Utf16ValueStringBuilder sb, ModalPresetId preset)
+        public void WriteModalTitle(ref Utf16ValueStringBuilder sb, ModalPresetId preset)
         {
             sb.Append(preset switch
             {
@@ -235,7 +309,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteModalBody(ref Utf16ValueStringBuilder sb, ModalPresetId preset)
+        public void WriteModalBody(ref Utf16ValueStringBuilder sb, ModalPresetId preset)
         {
             sb.Append(preset switch
             {
@@ -245,7 +319,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteInventoryCode(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
+        public void WriteInventoryCode(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
         {
             sb.Append(code switch
             {
@@ -261,7 +335,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteInventoryName(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
+        public void WriteInventoryName(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
         {
             sb.Append(code switch
             {
@@ -277,7 +351,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteInventoryCategory(ref Utf16ValueStringBuilder sb, InventoryItemCategory category)
+        public void WriteInventoryCategory(ref Utf16ValueStringBuilder sb, InventoryItemCategory category)
         {
             sb.Append(category switch
             {
@@ -293,12 +367,12 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static void WriteInventoryWeight(ref Utf16ValueStringBuilder sb, float weightKg)
+        public void WriteInventoryWeight(ref Utf16ValueStringBuilder sb, float weightKg)
         {
             sb.AppendFormat("{0:F1} KG", weightKg);
         }
 
-        public static void WriteInventoryRarityBadge(ref Utf16ValueStringBuilder sb, InventoryRarity rarity)
+        public void WriteInventoryRarityBadge(ref Utf16ValueStringBuilder sb, InventoryRarity rarity)
         {
             sb.Append('[');
             sb.Append(rarity switch
@@ -316,7 +390,7 @@ namespace SUIF.Showcase.Formatting
             sb.Append(']');
         }
 
-        public static void WriteInventoryStat(ref Utf16ValueStringBuilder sb, InventoryItemDto item)
+        public void WriteInventoryStat(ref Utf16ValueStringBuilder sb, InventoryItemDto item)
         {
             switch (item.StatKind)
             {
@@ -358,7 +432,7 @@ namespace SUIF.Showcase.Formatting
             }
         }
 
-        public static void WriteInventoryDescription(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
+        public void WriteInventoryDescription(ref Utf16ValueStringBuilder sb, InventoryItemCode code)
         {
             sb.Append(code switch
             {
@@ -374,7 +448,7 @@ namespace SUIF.Showcase.Formatting
             });
         }
 
-        public static int GetModuleNavNumber(ShowcaseModuleId module)
+        public int GetModuleNavNumber(ShowcaseModuleId module)
         {
             return module switch
             {

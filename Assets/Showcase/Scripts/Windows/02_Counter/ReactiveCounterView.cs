@@ -1,16 +1,17 @@
 using SUIF.Attributes;
-using SUIF.Base;
 using SUIF.Binding;
 using SUIF.Controls;
+using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Windows.Counter
 {
     [UIView("ReactiveCounterView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
-    public sealed class ReactiveCounterView : BaseView<ReactiveCounterViewModel>
+    public sealed class ReactiveCounterView : BaseReactiveDataView<ReactiveCounterViewModel, CounterViewDto>
     {
         private const string ActiveClass = "is-active";
         private const string MarblePillClass = "fui-marble-pill";
@@ -28,6 +29,7 @@ namespace SUIF.Showcase.Windows.Counter
 
         private readonly FixedSlotLabel[] _marblePills = new FixedSlotLabel[MaxMarbleSlots];
         private readonly Label[] _marbleArrows = new Label[MaxMarbleSlots];
+        private IShowcaseTextFormatter _formatter;
         private FixedElementPool<VisualElement> _marblePool;
         private FixedTextSlot _valueSlot;
 
@@ -35,19 +37,23 @@ namespace SUIF.Showcase.Windows.Counter
         {
         }
 
-        protected override void Bind()
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
         {
+            _formatter = formatter;
+        }
+
+        protected override void OnBind()
+        {
+            _formatter ??= new ShowcaseTextFormatter();
+
             if (_btnDec != null) Binder.Bind(_btnDec).ToClick(() => ViewModel.UpdateCounter(-1));
             if (_btnInc != null) Binder.Bind(_btnInc).ToClick(() => ViewModel.UpdateCounter(1));
             if (_btnBoost != null) Binder.Bind(_btnBoost).ToClick(() => ViewModel.UpdateCounter(10));
             if (_btnReset != null) Binder.Bind(_btnReset).ToClick(ViewModel.ResetCounter);
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
 
-            if (_labelValue != null)
-            {
-                _valueSlot = new FixedTextSlot(_labelValue, 8);
-                AddDisposable(_valueSlot);
-            }
+            _valueSlot = Binder.FixedSlot(_labelValue, 8);
 
             if (_marblesContainer != null)
             {
@@ -58,14 +64,12 @@ namespace SUIF.Showcase.Windows.Counter
                     CreateMarbleSlot);
                 AddDisposable(_marblePool);
             }
-
-            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
-        private void ApplyState(CounterViewDto dto)
+        protected override void RenderData(CounterViewDto dto)
         {
-            _valueSlot?.SetWritten(dto.CurrentValue, ShowcaseTextFormatter.WriteCounterValue);
-            _marblePool?.Render(dto.HistoryCount, this, BindMarbleSlot);
+            _valueSlot?.SetWritten(dto.CurrentValue, _formatter.CounterValue);
+            _marblePool?.Render(dto.HistoryCount, this, static (slot, index, view) => view.BindMarbleSlot(index));
         }
 
         private VisualElement CreateMarbleSlot(int index)
@@ -79,6 +83,7 @@ namespace SUIF.Showcase.Windows.Counter
                 Capacity = MarbleCharCapacity
             };
             pill.AddToClassList(MarblePillClass);
+            Binder.AddDisposable(pill);
             _marblePills[index] = pill;
             row.Add(pill);
 
@@ -90,11 +95,11 @@ namespace SUIF.Showcase.Windows.Counter
             return row;
         }
 
-        private static void BindMarbleSlot(VisualElement slot, int index, ReactiveCounterView view)
+        private void BindMarbleSlot(int index)
         {
-            var history = view.ViewModel.CounterHistory;
-            var pill = view._marblePills[index];
-            var arrow = view._marbleArrows[index];
+            var history = ViewModel.CounterHistory;
+            var pill = _marblePills[index];
+            var arrow = _marbleArrows[index];
 
             pill.SetFixedFormat("{0}", history[index]);
 

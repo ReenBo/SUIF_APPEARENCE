@@ -1,4 +1,3 @@
-using global::R3;
 using SUIF.Attributes;
 using SUIF.Base;
 using SUIF.Binding;
@@ -7,6 +6,7 @@ using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Frame
 {
@@ -16,14 +16,6 @@ namespace SUIF.Showcase.Frame
         private const string ActiveClass = "is-active";
         private const string ActiveModalClass = "is-active-modal";
         private const string HiddenClass = "is-hidden";
-
-        private static readonly ShowcaseThemeId[] AllThemes =
-        {
-            ShowcaseThemeId.Mono,
-            ShowcaseThemeId.Cyan,
-            ShowcaseThemeId.Crimson,
-            ShowcaseThemeId.Amber
-        };
 
         [UQuery("telemetry-base-readout")] private Label _telemetryBaseReadout;
         [UQuery("telemetry-modal-readout")] private Label _telemetryModalReadout;
@@ -52,6 +44,7 @@ namespace SUIF.Showcase.Frame
 
         [UQuery("footer-status-log")] private Label _footerStatusLog;
 
+        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _telemetryBaseSlot;
         private FixedTextSlot _telemetryModalSlot;
         private FixedTextSlot _telemetryFpsSlot;
@@ -70,8 +63,16 @@ namespace SUIF.Showcase.Frame
         {
         }
 
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
+        {
+            _formatter = formatter;
+        }
+
         protected override void Bind()
         {
+            _formatter ??= new ShowcaseTextFormatter();
+
             if (_navBtnLifecycle != null) Binder.Bind(_navBtnLifecycle).ToClick(ViewModel.OpenLifecycleWindow);
             if (_navBtnMvvm != null) Binder.Bind(_navBtnMvvm).ToClick(ViewModel.OpenCounterWindow);
             if (_navBtnList != null) Binder.Bind(_navBtnList).ToClick(ViewModel.OpenRecycledListWindow);
@@ -111,14 +112,10 @@ namespace SUIF.Showcase.Frame
 
         private void ApplyTelemetry(FrameTelemetryDto dto)
         {
-            _telemetryFpsSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteTelemetryFps);
-            _telemetryDcSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteTelemetryDrawCalls);
-            _runBenchmarkSlot?.SetWritten(dto.IsRecording, ShowcaseTextFormatter.WriteBenchmarkButtonText);
-            if (_btnRunBenchmark != null)
-            {
-                if (dto.IsRecording) _btnRunBenchmark.AddToClassList(ActiveClass);
-                else _btnRunBenchmark.RemoveFromClassList(ActiveClass);
-            }
+            _telemetryFpsSlot?.SetWritten(dto, _formatter.TelemetryFps);
+            _telemetryDcSlot?.SetWritten(dto, _formatter.TelemetryDrawCalls);
+            _runBenchmarkSlot?.SetWritten(dto.IsRecording, _formatter.BenchmarkButtonText);
+            UpdateBtn(_btnRunBenchmark, dto.IsRecording);
         }
 
         private void ApplyNavigation(FrameNavigationDto dto)
@@ -156,26 +153,27 @@ namespace SUIF.Showcase.Frame
                 }
             }
 
-            _telemetryBaseSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteModuleBaseReadout);
-            _telemetryModalSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteModalTelemetry);
-            _headerOpenStateSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteFrameOpenState);
-            _headerBaseTitleSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteModuleTitle);
-            _headerLayerTagSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteLayerTag);
-            _closeBtnHintSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteCloseButtonHint);
-            _viewportIdSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteViewportIdBadge);
-            _viewportSubSlot?.SetWritten(dto.ActiveModule, ShowcaseTextFormatter.WriteViewportSubBadge);
-            _viewportCoordsSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteViewportCoords);
-            _footerStatusSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteFooterStatus);
+            _telemetryBaseSlot?.SetWritten(dto.ActiveModule, _formatter.ModuleBaseReadout);
+            _telemetryModalSlot?.SetWritten(dto, _formatter.ModalTelemetry);
+            _headerOpenStateSlot?.SetWritten(dto, _formatter.FrameOpenState);
+            _headerBaseTitleSlot?.SetWritten(dto.ActiveModule, _formatter.ModuleTitle);
+            _headerLayerTagSlot?.SetWritten(dto, _formatter.LayerTag);
+            _closeBtnHintSlot?.SetWritten(dto, _formatter.CloseButtonHint);
+            _viewportIdSlot?.SetWritten(dto.ActiveModule, _formatter.ViewportIdBadge);
+            _viewportSubSlot?.SetWritten(dto.ActiveModule, _formatter.ViewportSubBadge);
+            _viewportCoordsSlot?.SetWritten(dto, _formatter.ViewportCoords);
+            _footerStatusSlot?.SetWritten(dto, _formatter.FooterStatus);
         }
 
         private void ApplyTheme(ShowcaseThemeDto dto)
         {
-            for (int i = 0; i < AllThemes.Length; i++)
+            var themes = _formatter.SupportedThemes;
+            for (int i = 0; i < themes.Length; i++)
             {
-                VisualElement.RemoveFromClassList(ShowcaseTextFormatter.GetThemeCssClass(AllThemes[i]));
+                VisualElement.RemoveFromClassList(_formatter.GetThemeCssClass(themes[i]));
             }
 
-            VisualElement.AddToClassList(ShowcaseTextFormatter.GetThemeCssClass(dto.Id));
+            VisualElement.AddToClassList(_formatter.GetThemeCssClass(dto.Id));
         }
 
         private void AttachWipe(Button btn, DiagonalWipeStyle style)

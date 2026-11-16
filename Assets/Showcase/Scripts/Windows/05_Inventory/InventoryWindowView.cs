@@ -1,16 +1,17 @@
 using SUIF.Attributes;
-using SUIF.Base;
 using SUIF.Binding;
 using SUIF.Controls;
+using SUIF.R3.Base;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Windows.Inventory
 {
     [UIView("InventoryWindowView", SUIF.API.UILayer.Windows, UILoadingMode.Cached)]
-    public sealed class InventoryWindowView : BaseView<InventoryWindowViewModel>
+    public sealed class InventoryWindowView : BaseReactiveDataView<InventoryWindowViewModel, InventoryViewDto>
     {
         private const string SelectedClass = "is-selected";
 
@@ -22,31 +23,35 @@ namespace SUIF.Showcase.Windows.Inventory
         [UQuery("btn-inventory-modal-inspect")] private Button _btnModalInspect;
         [UQuery("btn-window-close")] private Button _btnClose;
 
+        private IShowcaseTextFormatter _formatter;
         private FixedTextSlot _inspectorNameSlot;
         private FixedTextSlot _inspectorRaritySlot;
         private FixedTextSlot _inspectorPowerSlot;
         private FixedTextSlot _inspectorDescSlot;
         private FixedElementPool<Button> _slotPool;
+        private int _lastSelectedIndex = -1;
 
         public InventoryWindowView(VisualElement root) : base(root)
         {
         }
 
-        protected override void Bind()
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
         {
-            if (_btnModalInspect != null)
-            {
-                Binder.Bind(_btnModalInspect).ToClick(ViewModel.InspectInModal);
-            }
-            if (_btnClose != null)
-            {
-                Binder.Bind(_btnClose).ToClick(ViewModel.Close);
-            }
+            _formatter = formatter;
+        }
 
-            _inspectorNameSlot = RegisterFixedSlot(_inspectorName, 24);
-            _inspectorRaritySlot = RegisterFixedSlot(_inspectorRarity, 16);
-            _inspectorPowerSlot = RegisterFixedSlot(_inspectorPower, 16);
-            _inspectorDescSlot = RegisterFixedSlot(_inspectorDesc, 96);
+        protected override void OnBind()
+        {
+            _formatter ??= new ShowcaseTextFormatter();
+
+            if (_btnModalInspect != null) Binder.Bind(_btnModalInspect).ToClick(ViewModel.InspectInModal);
+            if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
+
+            _inspectorNameSlot = Binder.FixedSlot(_inspectorName, 24);
+            _inspectorRaritySlot = Binder.FixedSlot(_inspectorRarity, 16);
+            _inspectorPowerSlot = Binder.FixedSlot(_inspectorPower, 16);
+            _inspectorDescSlot = Binder.FixedSlot(_inspectorDesc, 96);
 
             if (_slotsContainer != null)
             {
@@ -54,22 +59,32 @@ namespace SUIF.Showcase.Windows.Inventory
                 var items = ViewModel.Items;
                 _slotPool = new FixedElementPool<Button>(_slotsContainer, items.Length, CreateInventorySlot);
                 AddDisposable(_slotPool);
-                _slotPool.Render(items.Length, items, BindInventorySlot);
+                _slotPool.Render(items.Length, this, static (slot, index, view) => view.BindInventorySlot(slot, index));
             }
-
-            Binder.ToDto(ViewModel.State, this, static (dto, view) => view.ApplyState(dto));
         }
 
-        private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
+        protected override void RenderData(InventoryViewDto dto)
         {
-            if (element == null)
-            {
-                return null;
-            }
+            var item = ViewModel.GetCurrentItem();
+            _inspectorNameSlot?.SetWritten(item.Code, _formatter.InventoryName);
+            _inspectorRaritySlot?.SetWritten(item.Rarity, _formatter.InventoryRarityBadge);
+            _inspectorPowerSlot?.SetWritten(item, _formatter.InventoryStat);
+            _inspectorDescSlot?.SetWritten(item.Code, _formatter.InventoryDescription);
 
-            var slot = new FixedTextSlot(element, capacity);
-            AddDisposable(slot);
-            return slot;
+            if (_slotPool != null && _lastSelectedIndex != dto.SelectedIndex)
+            {
+                if (_lastSelectedIndex >= 0 && _lastSelectedIndex < _slotPool.Capacity)
+                {
+                    _slotPool.GetSlot(_lastSelectedIndex).RemoveFromClassList(SelectedClass);
+                }
+
+                if (dto.SelectedIndex >= 0 && dto.SelectedIndex < _slotPool.Capacity)
+                {
+                    _slotPool.GetSlot(dto.SelectedIndex).AddToClassList(SelectedClass);
+                }
+
+                _lastSelectedIndex = dto.SelectedIndex;
+            }
         }
 
         private Button CreateInventorySlot(int index)
@@ -80,18 +95,13 @@ namespace SUIF.Showcase.Windows.Inventory
             var header = new VisualElement();
             header.AddToClassList("fui-inventory-slot__header");
 
-            var codeLabel = new FixedSlotLabel { Capacity = 10 };
-            codeLabel.AddToClassList("fui-inventory-slot__code");
-            var weightLabel = new FixedSlotLabel { Capacity = 10 };
-            weightLabel.AddToClassList("fui-inventory-slot__weight");
+            var codeLabel = CreateSlotLabel(10, "fui-inventory-slot__code");
+            var weightLabel = CreateSlotLabel(10, "fui-inventory-slot__weight");
             header.Add(codeLabel);
             header.Add(weightLabel);
 
-            var nameLabel = new FixedSlotLabel { Capacity = 24 };
-            nameLabel.AddToClassList("fui-inventory-slot__name");
-
-            var typeLabel = new FixedSlotLabel { Capacity = 14 };
-            typeLabel.AddToClassList("fui-inventory-slot__type");
+            var nameLabel = CreateSlotLabel(24, "fui-inventory-slot__name");
+            var typeLabel = CreateSlotLabel(14, "fui-inventory-slot__type");
 
             slot.Add(header);
             slot.Add(nameLabel);
@@ -100,33 +110,22 @@ namespace SUIF.Showcase.Windows.Inventory
             return slot;
         }
 
-        private static void BindInventorySlot(Button slot, int index, InventoryItemDto[] items)
+        private FixedSlotLabel CreateSlotLabel(int capacity, string className)
         {
-            var item = items[index];
-            var header = slot[0];
-            ((FixedSlotLabel)header[0]).SetFixedWritten(item.Code, ShowcaseTextFormatter.WriteInventoryCode);
-            ((FixedSlotLabel)header[1]).SetFixedWritten(item.WeightKg, ShowcaseTextFormatter.WriteInventoryWeight);
-            ((FixedSlotLabel)slot[1]).SetFixedWritten(item.Code, ShowcaseTextFormatter.WriteInventoryName);
-            ((FixedSlotLabel)slot[2]).SetFixedWritten(item.Category, ShowcaseTextFormatter.WriteInventoryCategory);
+            var label = new FixedSlotLabel { Capacity = capacity };
+            label.AddToClassList(className);
+            Binder.AddDisposable(label);
+            return label;
         }
 
-        private void ApplyState(InventoryViewDto dto)
+        private void BindInventorySlot(Button slot, int index)
         {
-            var item = ViewModel.GetCurrentItem();
-            _inspectorNameSlot?.SetWritten(item.Code, ShowcaseTextFormatter.WriteInventoryName);
-            _inspectorRaritySlot?.SetWritten(item.Rarity, ShowcaseTextFormatter.WriteInventoryRarityBadge);
-            _inspectorPowerSlot?.SetWritten(item, ShowcaseTextFormatter.WriteInventoryStat);
-            _inspectorDescSlot?.SetWritten(item.Code, ShowcaseTextFormatter.WriteInventoryDescription);
-
-            if (_slotPool != null)
-            {
-                for (var i = 0; i < _slotPool.Capacity; i++)
-                {
-                    var child = _slotPool.GetSlot(i);
-                    if (i == dto.SelectedIndex) child.AddToClassList(SelectedClass);
-                    else child.RemoveFromClassList(SelectedClass);
-                }
-            }
+            var item = ViewModel.Items[index];
+            var header = slot[0];
+            ((FixedSlotLabel)header[0]).SetFixedWritten(item.Code, _formatter.InventoryCode);
+            ((FixedSlotLabel)header[1]).SetFixedWritten(item.WeightKg, _formatter.InventoryWeight);
+            ((FixedSlotLabel)slot[1]).SetFixedWritten(item.Code, _formatter.InventoryName);
+            ((FixedSlotLabel)slot[2]).SetFixedWritten(item.Category, _formatter.InventoryCategory);
         }
     }
 }

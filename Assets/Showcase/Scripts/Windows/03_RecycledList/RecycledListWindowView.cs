@@ -5,6 +5,7 @@ using SUIF.R3.Extensions;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace SUIF.Showcase.Windows.RecycledList
 {
@@ -14,12 +15,22 @@ namespace SUIF.Showcase.Windows.RecycledList
         [UQuery("list-nodes-container")] private ScrollView _listContainer;
         [UQuery("btn-window-close")] private Button _btnClose;
 
+        private IShowcaseTextFormatter _formatter;
+
         public RecycledListWindowView(VisualElement root) : base(root)
         {
         }
 
+        [Inject]
+        public void Construct(IShowcaseTextFormatter formatter)
+        {
+            _formatter = formatter;
+        }
+
         protected override void Bind()
         {
+            _formatter ??= new ShowcaseTextFormatter();
+
             if (_btnClose != null) Binder.Bind(_btnClose).ToClick(ViewModel.Close);
             if (_listContainer == null) return;
 
@@ -31,7 +42,7 @@ namespace SUIF.Showcase.Windows.RecycledList
             }
         }
 
-        private static VisualElement CreateNodeRow(RecycledNodeDto node)
+        private VisualElement CreateNodeRow(RecycledNodeDto node)
         {
             var row = new VisualElement();
             row.AddToClassList("fui-recycled-row");
@@ -39,17 +50,14 @@ namespace SUIF.Showcase.Windows.RecycledList
             var left = new VisualElement();
             left.AddToClassList("fui-recycled-row__left");
 
-            var indexLabel = new FixedSlotLabel { Capacity = 8 };
-            indexLabel.AddToClassList("fui-recycled-row__index");
-            indexLabel.SetFixedWritten(node.Index, ShowcaseTextFormatter.WriteRecycledNodeIndex);
+            var indexLabel = CreateFixedLabel(8, "fui-recycled-row__index");
+            indexLabel.SetFixedWritten(node.Index, _formatter.RecycledNodeIndex);
 
-            var nameLabel = new FixedSlotLabel { Capacity = 10 };
-            nameLabel.AddToClassList("fui-recycled-row__name");
-            nameLabel.SetFixedWritten(node.PoolSlot, ShowcaseTextFormatter.WriteRecycledNodePool);
+            var nameLabel = CreateFixedLabel(10, "fui-recycled-row__name");
+            nameLabel.SetFixedWritten(node.PoolSlot, _formatter.RecycledNodePool);
 
-            var addrLabel = new FixedSlotLabel { Capacity = 16 };
-            addrLabel.AddToClassList("fui-recycled-row__addr");
-            addrLabel.SetFixedWritten(node.MemoryAddress, ShowcaseTextFormatter.WriteRecycledNodeAddress);
+            var addrLabel = CreateFixedLabel(16, "fui-recycled-row__addr");
+            addrLabel.SetFixedWritten(node.MemoryAddress, _formatter.RecycledNodeAddress);
 
             left.Add(indexLabel);
             left.Add(nameLabel);
@@ -58,17 +66,15 @@ namespace SUIF.Showcase.Windows.RecycledList
             var right = new VisualElement();
             right.AddToClassList("fui-recycled-row__right");
 
-            var statusLabel = new FixedSlotLabel { Capacity = 10 };
-            statusLabel.AddToClassList("fui-recycled-row__status");
+            var statusLabel = CreateFixedLabel(10, "fui-recycled-row__status");
             if (node.Status == RecycledNodeStatus.HotSwap)
             {
                 statusLabel.AddToClassList("is-hot");
             }
-            statusLabel.SetFixedWritten(node.Status, ShowcaseTextFormatter.WriteRecycledNodeStatus);
+            statusLabel.SetFixedWritten(node.Status, _formatter.RecycledNodeStatusWriter);
 
-            var latLabel = new FixedSlotLabel { Capacity = 8 };
-            latLabel.AddToClassList("fui-recycled-row__latency");
-            latLabel.SetFixedWritten(node.LatencyMs, ShowcaseTextFormatter.WriteRecycledNodeLatency);
+            var latLabel = CreateFixedLabel(8, "fui-recycled-row__latency");
+            latLabel.SetFixedWritten(node.LatencyMs, _formatter.RecycledNodeLatency);
 
             right.Add(statusLabel);
             right.Add(latLabel);
@@ -76,6 +82,14 @@ namespace SUIF.Showcase.Windows.RecycledList
             row.Add(left);
             row.Add(right);
             return row;
+        }
+
+        private FixedSlotLabel CreateFixedLabel(int capacity, string className)
+        {
+            var label = new FixedSlotLabel { Capacity = capacity };
+            label.AddToClassList(className);
+            Binder.AddDisposable(label);
+            return label;
         }
     }
 }

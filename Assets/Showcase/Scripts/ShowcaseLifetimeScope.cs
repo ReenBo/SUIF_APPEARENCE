@@ -3,6 +3,7 @@ using SUIF.API;
 using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Data;
+using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Counter;
@@ -54,16 +55,12 @@ namespace SUIF.Showcase
 
         protected override void ConfigureWindows(IContainerBuilder builder)
         {
-            if (_inventoryCatalog != null)
-            {
-                builder.RegisterInstance(_inventoryCatalog);
-            }
-
+            builder.Register<ShowcaseTextFormatter>(Lifetime.Singleton).As<IShowcaseTextFormatter>();
             builder.Register<ShowcaseThemeService>(Lifetime.Singleton);
             builder.Register<LifecycleMonitorService>(Lifetime.Singleton).As<ILifecycleMonitorService>();
             builder.Register<CounterService>(Lifetime.Singleton).As<ICounterService>();
             builder.Register<ModalStateService>(Lifetime.Singleton).As<IModalStateService>();
-            builder.Register<InventoryService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<InventoryService>(Lifetime.Singleton).WithParameter(_inventoryCatalog).AsImplementedInterfaces();
             builder.Register<RecycledListService>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<ShowcaseFrameViewModel>(Lifetime.Singleton);
