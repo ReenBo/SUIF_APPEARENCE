@@ -62,8 +62,10 @@ namespace SUIF.Showcase
             builder.Register<ModalStateService>(Lifetime.Singleton).As<IModalStateService>();
             builder.Register<InventoryService>(Lifetime.Singleton).WithParameter(_inventoryCatalog).AsImplementedInterfaces();
             builder.Register<RecycledListService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ShowcaseDataLoader>(Lifetime.Singleton).As<IShowcaseDataLoader>();
 
             builder.Register<ShowcaseFrameViewModel>(Lifetime.Singleton);
+            builder.Register<LoadingSpinnerViewModel>(Lifetime.Transient);
             builder.Register<LifecycleWindowViewModel>(Lifetime.Transient);
             builder.Register<ReactiveCounterViewModel>(Lifetime.Transient);
             builder.Register<RecycledListWindowViewModel>(Lifetime.Transient);

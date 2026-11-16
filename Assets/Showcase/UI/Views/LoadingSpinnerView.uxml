@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/CyberpunkTheme.uss" />
+
+    <ui:VisualElement name="LoadingSpinnerOverlayRoot" class="fui-loading-overlay">
+        <ui:VisualElement class="fui-loading-card">
+            <ui:Label name="loading-spinner-glyph" text="[|]" class="fui-loading-glyph" />
+            <ui:Label name="loading-status-label" text="STANDBY // 0/0" class="fui-loading-status" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

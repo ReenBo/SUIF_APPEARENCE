@@ -38,6 +38,8 @@ namespace SUIF.Showcase.Formatting
         public FixedTextWriter<InventoryRarity> InventoryRarityBadge { get; }
         public FixedTextWriter<InventoryItemDto> InventoryStat { get; }
         public FixedTextWriter<InventoryItemCode> InventoryDescription { get; }
+        public FixedTextWriter<int> LoadingSpinnerGlyph { get; }
+        public FixedTextWriter<LoadingStateDto> LoadingStatus { get; }
 
         public ShowcaseTextFormatter()
         {
@@ -79,6 +81,8 @@ namespace SUIF.Showcase.Formatting
             InventoryRarityBadge = WriteInventoryRarityBadge;
             InventoryStat = WriteInventoryStat;
             InventoryDescription = WriteInventoryDescription;
+            LoadingSpinnerGlyph = WriteLoadingSpinnerGlyph;
+            LoadingStatus = WriteLoadingStatus;
         }
 
         public string GetThemeCssClass(ShowcaseThemeId themeId)
@@ -446,6 +450,30 @@ namespace SUIF.Showcase.Formatting
                 InventoryItemCode.Key08 => "Biometric clearance token for orbital relay terminal.",
                 _ => string.Empty
             });
+        }
+
+        public void WriteLoadingSpinnerGlyph(ref Utf16ValueStringBuilder sb, int step)
+        {
+            sb.Append((step & 3) switch
+            {
+                0 => "[|]",
+                1 => "[/]",
+                2 => "[-]",
+                _ => "[\\]"
+            });
+        }
+
+        public void WriteLoadingStatus(ref Utf16ValueStringBuilder sb, LoadingStateDto dto)
+        {
+            sb.Append(dto.Phase switch
+            {
+                LoadingPhase.Preloading => "PRELOADING // ",
+                LoadingPhase.Completed => "READY // ",
+                _ => "STANDBY // "
+            });
+            sb.Append(dto.CompletedTasks);
+            sb.Append('/');
+            sb.Append(dto.TotalTasks);
         }
 
         public int GetModuleNavNumber(ShowcaseModuleId module)

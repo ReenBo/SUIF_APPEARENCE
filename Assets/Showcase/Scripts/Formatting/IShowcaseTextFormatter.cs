@@ -38,6 +38,8 @@ namespace SUIF.Showcase.Formatting
         FixedTextWriter<InventoryRarity> InventoryRarityBadge { get; }
         FixedTextWriter<InventoryItemDto> InventoryStat { get; }
         FixedTextWriter<InventoryItemCode> InventoryDescription { get; }
+        FixedTextWriter<int> LoadingSpinnerGlyph { get; }
+        FixedTextWriter<LoadingStateDto> LoadingStatus { get; }
 
         string GetThemeCssClass(ShowcaseThemeId themeId);
         int GetModuleNavNumber(ShowcaseModuleId module);
@@ -72,5 +74,7 @@ namespace SUIF.Showcase.Formatting
         void WriteInventoryRarityBadge(ref Utf16ValueStringBuilder sb, InventoryRarity rarity);
         void WriteInventoryStat(ref Utf16ValueStringBuilder sb, InventoryItemDto item);
         void WriteInventoryDescription(ref Utf16ValueStringBuilder sb, InventoryItemCode code);
+        void WriteLoadingSpinnerGlyph(ref Utf16ValueStringBuilder sb, int step);
+        void WriteLoadingStatus(ref Utf16ValueStringBuilder sb, LoadingStateDto dto);
     }
 }

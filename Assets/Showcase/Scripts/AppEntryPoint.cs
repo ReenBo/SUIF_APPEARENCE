@@ -3,8 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using SUIF.API;
 using SUIF.Showcase.Frame;
-using SUIF.Showcase.Windows.Lifecycle;
-using SUIF.Showcase.Windows.Modals;
+using SUIF.Showcase.Services;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -13,11 +12,13 @@ namespace SUIF.Showcase
     public sealed class AppEntryPoint : IAsyncStartable, IDisposable
     {
         private readonly IUIFlow _uiFlow;
+        private readonly IShowcaseDataLoader _dataLoader;
         private readonly CancellationTokenSource _cts = new();
 
-        public AppEntryPoint(IUIFlow uiFlow)
+        public AppEntryPoint(IUIFlow uiFlow, IShowcaseDataLoader dataLoader)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
+            _dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
         }
 
         public async UniTask StartAsync(CancellationToken cancellation)
@@ -29,6 +30,7 @@ namespace SUIF.Showcase
             {
                 await UnityEngine.AddressableAssets.Addressables.InitializeAsync().WithCancellation(ct);
                 await _uiFlow.OpenAsync<ShowcaseFrameView>(ct);
+                await _dataLoader.PreloadAllAsync(ct);
             }
             catch (OperationCanceledException)
             {

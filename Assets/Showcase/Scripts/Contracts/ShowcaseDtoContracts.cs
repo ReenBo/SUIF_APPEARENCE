@@ -274,4 +274,27 @@ namespace SUIF.Showcase.Contracts
             ActiveTheme = activeTheme;
         }
     }
+
+    public enum LoadingPhase : byte
+    {
+        Idle,
+        Preloading,
+        Completed
+    }
+
+    public readonly struct LoadingStateDto
+    {
+        public readonly LoadingPhase Phase;
+        public readonly int CompletedTasks;
+        public readonly int TotalTasks;
+        public readonly int SpinnerStep;
+
+        public LoadingStateDto(LoadingPhase phase, int completedTasks, int totalTasks, int spinnerStep)
+        {
+            Phase = phase;
+            CompletedTasks = completedTasks;
+            TotalTasks = totalTasks;
+            SpinnerStep = spinnerStep;
+        }
+    }
 }

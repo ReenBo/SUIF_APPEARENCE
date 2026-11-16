@@ -8,9 +8,11 @@ using SUIF.API;
 using SUIF.Binding;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
+using SUIF.Showcase.Data;
 using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
 using SUIF.Showcase.Services;
+using UnityEngine;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -154,6 +156,39 @@ namespace SUIF.Showcase.Tests
             Assert.That(Format(first.LatencyMs, _formatter.RecycledNodeLatency), Does.EndWith("ms"));
         }
 
+        [Test]
+        public void ShowcaseDataLoader_PreloadsAllServicesInParallelAndTogglesSpinnerView()
+        {
+            var catalog = ScriptableObject.CreateInstance<ShowcaseInventoryCatalog>();
+            try
+            {
+                using var inventoryService = new InventoryService(catalog);
+                var listService = new RecycledListService();
+                var preloadables = new IShowcasePreloadable[] { inventoryService, listService };
+                using var loader = new ShowcaseDataLoader(_flow, preloadables);
+
+                Assert.That(loader.State.CurrentValue.Phase, Is.EqualTo(LoadingPhase.Idle));
+                Assert.That(Format(loader.State.CurrentValue, _formatter.LoadingStatus), Is.EqualTo("STANDBY // 0/2"));
+
+                loader.PreloadAllAsync().GetAwaiter().GetResult();
+
+                Assert.That(loader.State.CurrentValue.Phase, Is.EqualTo(LoadingPhase.Completed));
+                Assert.That(loader.State.CurrentValue.CompletedTasks, Is.EqualTo(2));
+                Assert.That(loader.State.CurrentValue.TotalTasks, Is.EqualTo(2));
+                Assert.That(_flow.Opened, Contains.Item(typeof(LoadingSpinnerView)));
+                Assert.That(_flow.Closed, Contains.Item(typeof(LoadingSpinnerView)));
+                Assert.That(Format(loader.State.CurrentValue, _formatter.LoadingStatus), Is.EqualTo("READY // 2/2"));
+                Assert.That(Format(0, _formatter.LoadingSpinnerGlyph), Is.EqualTo("[|]"));
+                Assert.That(Format(1, _formatter.LoadingSpinnerGlyph), Is.EqualTo("[/]"));
+                Assert.That(Format(2, _formatter.LoadingSpinnerGlyph), Is.EqualTo("[-]"));
+                Assert.That(Format(3, _formatter.LoadingSpinnerGlyph), Is.EqualTo("[\\]"));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(catalog);
+            }
+        }
+
         private static string Format<TState>(TState state, FixedTextWriter<TState> writer)
         {
             var builder = ZString.CreateStringBuilder(true);
@@ -170,11 +205,12 @@ namespace SUIF.Showcase.Tests
 
         private sealed class MockFlow : IUIFlow
         {
-            private readonly List<Type> _opened = new();
+            public readonly List<Type> Opened = new();
+            public readonly List<Type> Closed = new();
 
             public UniTask<TView> OpenAsync<TView>(CancellationToken ct = default) where TView : class, IView
             {
-                _opened.Add(typeof(TView));
+                Opened.Add(typeof(TView));
                 return UniTask.FromResult<TView>(null);
             }
 
@@ -185,6 +221,7 @@ namespace SUIF.Showcase.Tests
 
             public void Close<TView>() where TView : class, IView
             {
+                Closed.Add(typeof(TView));
             }
 
             public UniTask CloseViewAsync<TView>(CancellationToken ct = default) where TView : class, IView

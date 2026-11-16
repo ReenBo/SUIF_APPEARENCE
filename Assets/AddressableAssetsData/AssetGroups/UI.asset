@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: 08ec461d60792c84b8dfe58392e3f103
   m_SerializeEntries:
+  - m_GUID: 0da7fbbc7890fd741aa58da55a9c94ae
+    m_Address: LoadingSpinnerView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1f0da7fb53d81a94e8a906876f2b6975
     m_Address: ModalDialogView
     m_ReadOnly: 0
