@@ -49,11 +49,15 @@
 - [x] **[perf/uitk-1-5-draw-calls]**: Standardized SUIF DTO & Zero-Realloc UI across `com.reenbo.suif` and `SUIF_APPEARENCE`:
   - Implemented `FixedTextSlot`, `FixedSlotLabel`, `FixedElementPool<TElement>`, `IViewDto`, `BaseDtoView<TViewModel, TDto>`, `FixedTextWriter<TState>`, `DtoBindingExtensions.ToDto`, and fixed `12-vertex / 24-index` `DiagonalWipeEffect`.
   - Migrated Showcase `Frame`, `ThemeService`, `01_Lifecycle`, `02_Counter`, `03_RecycledList`, `04_Modals`, `05_Inventory`, and `06_ThemeMatrix` to typed DTO structs (`ShowcaseDtoContracts.cs`) + `ShowcaseTextFormatter`.
-  - Verified settled Play Mode DX12 Draw Calls at `2–4 DC`, `8s` benchmark `457.3 FPS` / `0.007 MB` GC across `3,663` frames, and `15/15` EditMode tests passing.
-  - Published official human & AI guidelines in `SUIF/Documentation~/DTO_Standard_And_ZeroAlloc_UI.md` and `SUIF/Documentation~/AI_Guidelines_DTO_And_ZeroAlloc.md`, and updated `.agents/rules/unity6-ui-framework.md`.
+  - Verified WebGL2 Draw Calls drop from `45–66 DC` down to `1–18 DC` (`RUN BENCHMARK`) and `5–33 DC` (random clicks); Editor DX12 at `2–4 DC`, `15/15` EditMode tests passing.
+- [x] **[refactor/clean-suif-data-mvvm]**: Refactored SUIF & Showcase to constraint-free Thin MVVM, DI Formatters, `ScriptableObject` Catalog & Parallel Async Preloader:
+  - Replaced `IViewDto`/`BaseDtoView`/`DtoBindingExtensions` with universal constraint-free `BaseDataView<TViewModel, TData>`, `IReactiveDataViewModel<TData>`, `BaseReactiveDataView<TViewModel, TData>`, `DataBindingExtensions.ToData`, `ViewBinder.FixedSlot`, and `IUIDependencyResolver.Inject`.
+  - Moved all domain math, counters, logs, and static catalogs out of ViewModels into DI Domain Services (`LifecycleMonitorService`, `CounterService`, `ModalStateService`, `InventoryService` + `ShowcaseInventoryCatalog.asset` `ScriptableObject`, `RecycledListService`) and unified `BenchmarkTelemetryService.Telemetry` (`FrameTelemetryDto`).
+  - Converted `ShowcaseTextFormatter` into injectable DI `IShowcaseTextFormatter` Singleton (startup-cached `FixedTextWriter<T>` delegates, zero global statics) injected into Views.
+  - Added parallel `UniTask.WhenAll` startup preloader (`ShowcaseDataLoader`) + `LoadingSpinnerView` (`UILayer.Topmost`, `DisplayStyle.None` cached); `16/16` EditMode tests & Play Mode `2 DC` (`0` console errors/warnings) verified.
 - [ ] **[backlog/suif-batched-effects]**: Tracked in [backlog.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/backlog.md) (generalize `DiagonalWipeEffect` into `com.reenbo.suif` after upcoming animation tasks and tests).
-- [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (profile remaining WebGL2 `45–66 DC` floor vs DX12 `5–8 DC` once `npx`/Spector.js or Development WebGL Profiler is available; assign explicit `PanelTextSettings` + embedded font asset).
-- [ ] **Next**: Redesign the Showcase theme and dynamic text switching inside formatter methods cleanly on top of the DTO architecture.
+- [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (assign explicit `PanelTextSettings` + embedded font asset and profile remaining WebGL2 `18–33 DC` peaks).
+- [ ] **Next**: Redesign Showcase UI theme and dynamic text switching inside `IShowcaseTextFormatter` cleanly on top of the refactored DI architecture.
 
 ---
 
@@ -88,6 +92,6 @@
 
 ## 📜 4. Last Session Log
 
-* **Date**: 2026-11-15
+* **Date**: 2026-11-16
 * **Role**: Primary Agent / Orchestrator
-* **Summary**: Completed P1/P2 `AllocPage` zero-realloc optimization and full DTO migration across all Showcase views (`ShowcaseDtoContracts`, `ShowcaseTextFormatter`), reducing settled DX12 Draw Calls to `2–4 DC` (`15/15` EditMode tests passing), and authored official human & AI documentation for the SUIF DTO Standard.
+* **Summary**: Refactored SUIF (`refactor/clean-suif-data-mvvm`) to remove forced `IViewDto`/struct constraints, unified `ViewBinder.FixedSlot` + `BaseReactiveDataView` + DI View injection (`IUIDependencyResolver.Inject`), extracted all business logic & static catalogs out of ViewModels into Domain Services + `ShowcaseInventoryCatalog.asset`, converted `ShowcaseTextFormatter` to injectable DI Singleton, and added `UniTask.WhenAll` parallel preloader + `LoadingSpinnerView` (`16/16` EditMode tests passing, `US.dc=2`, `0` console warnings/errors).
