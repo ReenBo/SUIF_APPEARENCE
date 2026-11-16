@@ -51,7 +51,7 @@ namespace SUIF.Showcase.Windows.Inventory
             if (_slotsContainer != null)
             {
                 _slotsContainer.Clear();
-                var items = InventoryWindowViewModel.Items;
+                var items = ViewModel.Items;
                 _slotPool = new FixedElementPool<Button>(_slotsContainer, items.Length, CreateInventorySlot);
                 AddDisposable(_slotPool);
                 _slotPool.Render(items.Length, items, BindInventorySlot);

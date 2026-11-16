@@ -4,51 +4,37 @@ using global::R3;
 using ObservableCollections;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.R3.Base;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Modals;
 
 namespace SUIF.Showcase.Windows.Lifecycle
 {
-    public sealed class LifecycleWindowViewModel : BaseViewModel
+    public sealed class LifecycleWindowViewModel : BaseViewModel, IReactiveDataViewModel<LifecycleViewDto>
     {
-        private const int MaxLogs = 10;
-
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseFrameViewModel _frameViewModel;
+        private readonly ILifecycleMonitorService _monitorService;
 
-        public ReactiveProperty<LifecycleViewDto> State { get; }
-        public ObservableList<LifecycleLogEntryDto> LifecycleLogs { get; } = new();
+        public ReadOnlyReactiveProperty<LifecycleViewDto> State => _monitorService.State;
+        public Observable<LifecycleViewDto> Data => _monitorService.State;
+        public ObservableList<LifecycleLogEntryDto> LifecycleLogs => _monitorService.Logs;
 
-        public LifecycleWindowViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
+        public LifecycleWindowViewModel(
+            IUIFlow uiFlow,
+            ShowcaseFrameViewModel frameViewModel,
+            ILifecycleMonitorService monitorService)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
-
-            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 2, 0, LifecycleStageId.Initialize, true));
-            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 5, 0, LifecycleStageId.Open, true));
-            LifecycleLogs.Add(new LifecycleLogEntryDto(0, 0, 9, 0, LifecycleStageId.Show, true));
-
-            State = new ReactiveProperty<LifecycleViewDto>(new LifecycleViewDto(LifecycleStageId.Initialize, LifecycleLogs.Count));
-            AddDisposable(State);
+            _monitorService = monitorService ?? throw new ArgumentNullException(nameof(monitorService));
         }
 
         public void TriggerStage(LifecycleStageId stage)
         {
-            var now = DateTime.UtcNow;
-            LifecycleLogs.Insert(0, new LifecycleLogEntryDto(
-                now.Hour,
-                now.Minute,
-                now.Second,
-                now.Millisecond / 10,
-                stage));
-
-            if (LifecycleLogs.Count > MaxLogs)
-            {
-                LifecycleLogs.RemoveAt(LifecycleLogs.Count - 1);
-            }
-
-            State.Value = new LifecycleViewDto(stage, LifecycleLogs.Count);
+            _monitorService.TriggerStage(stage);
         }
 
         public void OpenModal()

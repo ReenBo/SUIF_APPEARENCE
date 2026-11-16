@@ -24,7 +24,7 @@ namespace SUIF.Showcase.Windows.RecycledList
             if (_listContainer == null) return;
 
             _listContainer.Clear();
-            var nodes = RecycledListWindowViewModel.Nodes;
+            var nodes = ViewModel.Nodes;
             for (var i = 0; i < nodes.Length; i++)
             {
                 _listContainer.Add(CreateNodeRow(nodes[i]));

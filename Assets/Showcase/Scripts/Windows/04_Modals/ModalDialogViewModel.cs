@@ -2,40 +2,40 @@ using System;
 using global::R3;
 using SUIF.API;
 using SUIF.Base;
+using SUIF.R3.Base;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Services;
 
 namespace SUIF.Showcase.Windows.Modals
 {
-    public sealed class ModalDialogViewModel : BaseViewModel
+    public sealed class ModalDialogViewModel : BaseViewModel, IReactiveDataViewModel<ModalViewDto>
     {
-        private const int PresetCount = 3;
-
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseFrameViewModel _frameViewModel;
+        private readonly IModalStateService _modalService;
 
-        public ReactiveProperty<ModalViewDto> State { get; } = new(new ModalViewDto(1, ModalPresetId.PopupIntercept));
+        public ReadOnlyReactiveProperty<ModalViewDto> State => _modalService.State;
+        public Observable<ModalViewDto> Data => _modalService.State;
 
-        public ModalDialogViewModel(IUIFlow uiFlow, ShowcaseFrameViewModel frameViewModel)
+        public ModalDialogViewModel(
+            IUIFlow uiFlow,
+            ShowcaseFrameViewModel frameViewModel,
+            IModalStateService modalService)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
-
-            AddDisposable(State);
+            _modalService = modalService ?? throw new ArgumentNullException(nameof(modalService));
         }
 
         public void PushSubPopup()
         {
-            var current = State.Value;
-            var nextPreset = (ModalPresetId)(((int)current.Preset + 1) % PresetCount);
-            State.Value = new ModalViewDto(current.Depth + 1, nextPreset);
+            _modalService.PushSubPopup();
         }
 
         public void CyclePreset()
         {
-            var current = State.Value;
-            var nextPreset = (ModalPresetId)(((int)current.Preset + 1) % PresetCount);
-            State.Value = new ModalViewDto(current.Depth, nextPreset);
+            _modalService.CyclePreset();
         }
 
         public void Dismiss()

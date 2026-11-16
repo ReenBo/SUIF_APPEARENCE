@@ -2,7 +2,9 @@ using SUIF.Addressables;
 using SUIF.API;
 using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
+using SUIF.Showcase.Data;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -20,6 +22,7 @@ namespace SUIF.Showcase
     public sealed class ShowcaseLifetimeScope : SUIFLifetimeScope
     {
         [SerializeField] private UIRoot _sceneUiRoot;
+        [SerializeField] private ShowcaseInventoryCatalog _inventoryCatalog;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -51,7 +54,17 @@ namespace SUIF.Showcase
 
         protected override void ConfigureWindows(IContainerBuilder builder)
         {
+            if (_inventoryCatalog != null)
+            {
+                builder.RegisterInstance(_inventoryCatalog);
+            }
+
             builder.Register<ShowcaseThemeService>(Lifetime.Singleton);
+            builder.Register<LifecycleMonitorService>(Lifetime.Singleton).As<ILifecycleMonitorService>();
+            builder.Register<CounterService>(Lifetime.Singleton).As<ICounterService>();
+            builder.Register<ModalStateService>(Lifetime.Singleton).As<IModalStateService>();
+            builder.Register<InventoryService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<RecycledListService>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<ShowcaseFrameViewModel>(Lifetime.Singleton);
             builder.Register<LifecycleWindowViewModel>(Lifetime.Transient);

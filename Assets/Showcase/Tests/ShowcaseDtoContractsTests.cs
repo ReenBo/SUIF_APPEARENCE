@@ -10,6 +10,7 @@ using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -67,14 +68,15 @@ namespace SUIF.Showcase.Tests
         [Test]
         public void LifecycleViewModel_TriggersTypedStageEntriesWithoutRawStrings()
         {
-            using var vm = new LifecycleWindowViewModel(_flow, _frameVm);
-            Assert.That(vm.State.Value.CurrentStage, Is.EqualTo(LifecycleStageId.Initialize));
-            Assert.That(vm.State.Value.LogCount, Is.EqualTo(3));
+            using var service = new LifecycleMonitorService();
+            using var vm = new LifecycleWindowViewModel(_flow, _frameVm, service);
+            Assert.That(vm.State.CurrentValue.CurrentStage, Is.EqualTo(LifecycleStageId.Initialize));
+            Assert.That(vm.State.CurrentValue.LogCount, Is.EqualTo(3));
 
             vm.TriggerStage(LifecycleStageId.Show);
 
-            Assert.That(vm.State.Value.CurrentStage, Is.EqualTo(LifecycleStageId.Show));
-            Assert.That(vm.State.Value.LogCount, Is.EqualTo(4));
+            Assert.That(vm.State.CurrentValue.CurrentStage, Is.EqualTo(LifecycleStageId.Show));
+            Assert.That(vm.State.CurrentValue.LogCount, Is.EqualTo(4));
             Assert.That(vm.LifecycleLogs[0].Stage, Is.EqualTo(LifecycleStageId.Show));
             Assert.That(vm.LifecycleLogs[0].IsInitialBootEntry, Is.False);
 
@@ -85,46 +87,49 @@ namespace SUIF.Showcase.Tests
         [Test]
         public void CounterViewModel_EmitsTypedStateAndFormatsZeroPaddedValue()
         {
-            using var vm = new ReactiveCounterViewModel(_frameVm);
-            Assert.That(vm.State.Value.CurrentValue, Is.EqualTo(42));
-            Assert.That(vm.State.Value.HistoryCount, Is.EqualTo(5));
+            using var service = new CounterService();
+            using var vm = new ReactiveCounterViewModel(_frameVm, service);
+            Assert.That(vm.State.CurrentValue.CurrentValue, Is.EqualTo(42));
+            Assert.That(vm.State.CurrentValue.HistoryCount, Is.EqualTo(5));
 
             vm.UpdateCounter(10);
 
-            Assert.That(vm.State.Value.CurrentValue, Is.EqualTo(52));
-            Assert.That(vm.State.Value.HistoryCount, Is.EqualTo(6));
-            Assert.That(Format(vm.State.Value.CurrentValue, ShowcaseTextFormatter.WriteCounterValue), Is.EqualTo("052"));
+            Assert.That(vm.State.CurrentValue.CurrentValue, Is.EqualTo(52));
+            Assert.That(vm.State.CurrentValue.HistoryCount, Is.EqualTo(6));
+            Assert.That(Format(vm.State.CurrentValue.CurrentValue, ShowcaseTextFormatter.WriteCounterValue), Is.EqualTo("052"));
 
             vm.ResetCounter();
-            Assert.That(vm.State.Value.CurrentValue, Is.EqualTo(0));
-            Assert.That(vm.State.Value.HistoryCount, Is.EqualTo(1));
+            Assert.That(vm.State.CurrentValue.CurrentValue, Is.EqualTo(0));
+            Assert.That(vm.State.CurrentValue.HistoryCount, Is.EqualTo(1));
         }
 
         [Test]
         public void ModalViewModel_CyclesTypedPresetsAndDepthDto()
         {
-            using var vm = new ModalDialogViewModel(_flow, _frameVm);
-            Assert.That(vm.State.Value.Depth, Is.EqualTo(1));
-            Assert.That(vm.State.Value.Preset, Is.EqualTo(ModalPresetId.PopupIntercept));
+            using var service = new ModalStateService();
+            using var vm = new ModalDialogViewModel(_flow, _frameVm, service);
+            Assert.That(vm.State.CurrentValue.Depth, Is.EqualTo(1));
+            Assert.That(vm.State.CurrentValue.Preset, Is.EqualTo(ModalPresetId.PopupIntercept));
 
             vm.PushSubPopup();
 
-            Assert.That(vm.State.Value.Depth, Is.EqualTo(2));
-            Assert.That(vm.State.Value.Preset, Is.EqualTo(ModalPresetId.MemoryPurge));
-            Assert.That(Format(vm.State.Value.Depth, ShowcaseTextFormatter.WriteModalDepth), Is.EqualTo("DEPTH: 2"));
-            Assert.That(Format(vm.State.Value.Preset, ShowcaseTextFormatter.WriteModalTitle), Is.EqualTo("CONFIRM // MEMORY_PURGE_0x04"));
+            Assert.That(vm.State.CurrentValue.Depth, Is.EqualTo(2));
+            Assert.That(vm.State.CurrentValue.Preset, Is.EqualTo(ModalPresetId.MemoryPurge));
+            Assert.That(Format(vm.State.CurrentValue.Depth, ShowcaseTextFormatter.WriteModalDepth), Is.EqualTo("DEPTH: 2"));
+            Assert.That(Format(vm.State.CurrentValue.Preset, ShowcaseTextFormatter.WriteModalTitle), Is.EqualTo("CONFIRM // MEMORY_PURGE_0x04"));
         }
 
         [Test]
         public void InventoryViewModel_SelectsTypedItemAndFormatsStatsDto()
         {
-            using var vm = new InventoryWindowViewModel(_flow, _frameVm);
-            Assert.That(vm.State.Value.SelectedIndex, Is.EqualTo(0));
+            using var service = new InventoryService();
+            using var vm = new InventoryWindowViewModel(_flow, _frameVm, service);
+            Assert.That(vm.State.CurrentValue.SelectedIndex, Is.EqualTo(0));
 
             vm.SelectSlot(5);
             var item = vm.GetCurrentItem();
 
-            Assert.That(vm.State.Value.SelectedIndex, Is.EqualTo(5));
+            Assert.That(vm.State.CurrentValue.SelectedIndex, Is.EqualTo(5));
             Assert.That(item.Code, Is.EqualTo(InventoryItemCode.Arm06));
             Assert.That(Format(item.Code, ShowcaseTextFormatter.WriteInventoryName), Is.EqualTo("SUBDERMAL_TITANIUM"));
             Assert.That(Format(item.Rarity, ShowcaseTextFormatter.WriteInventoryRarityBadge), Is.EqualTo("[HEAVY]"));
@@ -134,7 +139,9 @@ namespace SUIF.Showcase.Tests
         [Test]
         public void RecycledNodes_UseTypedDtoAndFormatAddressHex()
         {
-            var first = RecycledListWindowViewModel.Nodes[0];
+            var service = new RecycledListService();
+            using var vm = new RecycledListWindowViewModel(_frameVm, service);
+            var first = vm.Nodes[0];
             Assert.That(first.Status, Is.EqualTo(RecycledNodeStatus.HotSwap));
             Assert.That(Format(first.Index, ShowcaseTextFormatter.WriteRecycledNodeIndex), Is.EqualTo("#0001"));
             Assert.That(Format(first.PoolSlot, ShowcaseTextFormatter.WriteRecycledNodePool), Is.EqualTo("NODE_01"));
