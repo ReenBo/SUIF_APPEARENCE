@@ -54,6 +54,8 @@ namespace SUIF.Showcase.Frame
 
         private FixedTextSlot _telemetryBaseSlot;
         private FixedTextSlot _telemetryModalSlot;
+        private FixedTextSlot _telemetryFpsSlot;
+        private FixedTextSlot _telemetryDcSlot;
         private FixedTextSlot _runBenchmarkSlot;
         private FixedTextSlot _headerOpenStateSlot;
         private FixedTextSlot _headerBaseTitleSlot;
@@ -88,52 +90,35 @@ namespace SUIF.Showcase.Frame
             AttachWipe(_navBtnTheme, DiagonalWipeStyle.Navigation);
             AttachWipe(_btnMainClose, DiagonalWipeStyle.Close);
 
-            _telemetryBaseSlot = RegisterFixedSlot(_telemetryBaseReadout, 20);
-            _telemetryModalSlot = RegisterFixedSlot(_telemetryModalReadout, 16);
-            _runBenchmarkSlot = RegisterFixedSlot(_btnRunBenchmark, 16);
-            _headerOpenStateSlot = RegisterFixedSlot(_headerOpenState, 8);
-            _headerBaseTitleSlot = RegisterFixedSlot(_headerBaseTitle, 40);
-            _headerLayerTagSlot = RegisterFixedSlot(_headerLayerTag, 32);
-            _closeBtnHintSlot = RegisterFixedSlot(_closeBtnHint, 12);
-            _viewportIdSlot = RegisterFixedSlot(_viewportIdBadge, 16);
-            _viewportSubSlot = RegisterFixedSlot(_viewportSubBadge, 32);
-            _viewportCoordsSlot = RegisterFixedSlot(_viewportCoords, 32);
-            _footerStatusSlot = RegisterFixedSlot(_footerStatusLog, 48);
+            _telemetryBaseSlot = Binder.FixedSlot(_telemetryBaseReadout, 20);
+            _telemetryModalSlot = Binder.FixedSlot(_telemetryModalReadout, 16);
+            _telemetryFpsSlot = Binder.FixedSlot(_telemetryFpsReadout, 14);
+            _telemetryDcSlot = Binder.FixedSlot(_telemetryDcReadout, 14);
+            _runBenchmarkSlot = Binder.FixedSlot(_btnRunBenchmark, 16);
+            _headerOpenStateSlot = Binder.FixedSlot(_headerOpenState, 8);
+            _headerBaseTitleSlot = Binder.FixedSlot(_headerBaseTitle, 40);
+            _headerLayerTagSlot = Binder.FixedSlot(_headerLayerTag, 32);
+            _closeBtnHintSlot = Binder.FixedSlot(_closeBtnHint, 12);
+            _viewportIdSlot = Binder.FixedSlot(_viewportIdBadge, 16);
+            _viewportSubSlot = Binder.FixedSlot(_viewportSubBadge, 32);
+            _viewportCoordsSlot = Binder.FixedSlot(_viewportCoords, 32);
+            _footerStatusSlot = Binder.FixedSlot(_footerStatusLog, 48);
 
-            Binder.ToDto(ViewModel.Navigation, this, static (dto, view) => view.ApplyNavigation(dto));
-            Binder.ToDto(ViewModel.CurrentTheme, this, static (dto, view) => view.ApplyTheme(dto));
-
-            if (_telemetryFpsReadout != null)
-            {
-                Binder.Bind(_telemetryFpsReadout).ToFixedText(ViewModel.CurrentFps, 14, "{0:F1} FPS");
-            }
-
-            if (_telemetryDcReadout != null)
-            {
-                Binder.Bind(_telemetryDcReadout).ToFixedText(ViewModel.DrawCalls, 14, "[{0} DC]");
-            }
-
-            if (_btnRunBenchmark != null)
-            {
-                AddDisposable(ViewModel.IsBenchmarkRecording.Subscribe(this, static (isRecording, view) =>
-                {
-                    view._runBenchmarkSlot?.SetWritten(isRecording, ShowcaseTextFormatter.WriteBenchmarkButtonText);
-                    if (isRecording) view._btnRunBenchmark.AddToClassList(ActiveClass);
-                    else view._btnRunBenchmark.RemoveFromClassList(ActiveClass);
-                }));
-            }
+            Binder.ToData(ViewModel.Navigation, this, static (dto, view) => view.ApplyNavigation(dto));
+            Binder.ToData(ViewModel.CurrentTheme, this, static (dto, view) => view.ApplyTheme(dto));
+            Binder.ToData(ViewModel.Telemetry, this, static (dto, view) => view.ApplyTelemetry(dto));
         }
 
-        private FixedTextSlot RegisterFixedSlot(TextElement element, int capacity)
+        private void ApplyTelemetry(FrameTelemetryDto dto)
         {
-            if (element == null)
+            _telemetryFpsSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteTelemetryFps);
+            _telemetryDcSlot?.SetWritten(dto, ShowcaseTextFormatter.WriteTelemetryDrawCalls);
+            _runBenchmarkSlot?.SetWritten(dto.IsRecording, ShowcaseTextFormatter.WriteBenchmarkButtonText);
+            if (_btnRunBenchmark != null)
             {
-                return null;
+                if (dto.IsRecording) _btnRunBenchmark.AddToClassList(ActiveClass);
+                else _btnRunBenchmark.RemoveFromClassList(ActiveClass);
             }
-
-            var slot = new FixedTextSlot(element, capacity);
-            AddDisposable(slot);
-            return slot;
         }
 
         private void ApplyNavigation(FrameNavigationDto dto)

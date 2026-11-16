@@ -141,6 +141,19 @@ namespace SUIF.Showcase.Formatting
             sb.Append(isRecording ? "TESTING..." : "RUN BENCHMARK");
         }
 
+        public static void WriteTelemetryFps(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        {
+            sb.AppendFormat("{0:F1}", dto.Fps);
+            sb.Append(" FPS");
+        }
+
+        public static void WriteTelemetryDrawCalls(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        {
+            sb.Append('[');
+            sb.Append(dto.DrawCalls);
+            sb.Append(" DC]");
+        }
+
         public static void WriteLifecycleLogEntry(ref Utf16ValueStringBuilder sb, LifecycleLogEntryDto entry)
         {
             sb.Append("> [");

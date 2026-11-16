@@ -1,5 +1,6 @@
 using System;
 using global::R3;
+using SUIF.Showcase.Contracts;
 using Unity.Profiling;
 using UnityEngine;
 using VContainer.Unity;
@@ -11,11 +12,8 @@ namespace SUIF.Showcase.Benchmark
         private const int MaxSampleCapacity = 15000;
         private const float SmoothingInterval = 0.5f;
 
-        private readonly ReactiveProperty<float> _currentFps = new(60f);
-        private readonly ReactiveProperty<long> _drawCalls = new(0);
-        private readonly ReactiveProperty<long> _batches = new(0);
-        private readonly ReactiveProperty<float> _memoryMb = new(0f);
-        private readonly ReactiveProperty<bool> _isRecording = new(false);
+        private readonly ReactiveProperty<FrameTelemetryDto> _telemetry =
+            new(new FrameTelemetryDto(60f, 0, 0, 0f, false));
 
         private readonly float[] _frameSamples = new float[MaxSampleCapacity];
         private int _sampleCount;
@@ -29,11 +27,7 @@ namespace SUIF.Showcase.Benchmark
         private ProfilerRecorder _totalMemoryRecorder;
         private ProfilerRecorder _gcMemoryRecorder;
 
-        public ReadOnlyReactiveProperty<float> CurrentFps => _currentFps;
-        public ReadOnlyReactiveProperty<long> DrawCalls => _drawCalls;
-        public ReadOnlyReactiveProperty<long> Batches => _batches;
-        public ReadOnlyReactiveProperty<float> MemoryMb => _memoryMb;
-        public ReadOnlyReactiveProperty<bool> IsRecording => _isRecording;
+        public ReadOnlyReactiveProperty<FrameTelemetryDto> Telemetry => _telemetry;
 
         public BenchmarkTelemetryService()
         {
@@ -61,60 +55,52 @@ namespace SUIF.Showcase.Benchmark
 
             if (_timeAccumulator >= SmoothingInterval)
             {
-                _currentFps.Value = _framesAccumulator / _timeAccumulator;
+                float fps = _framesAccumulator / _timeAccumulator;
                 _timeAccumulator = 0f;
                 _framesAccumulator = 0;
 
-                UpdateSystemMetrics();
+                PublishMetrics(fps, _telemetry.Value.IsRecording);
             }
 
-            if (_isRecording.Value && _sampleCount < MaxSampleCapacity)
+            if (_telemetry.Value.IsRecording && _sampleCount < MaxSampleCapacity)
             {
                 _frameSamples[_sampleCount++] = dt;
             }
         }
 
-        private void UpdateSystemMetrics()
+        private void PublishMetrics(float fps, bool isRecording)
         {
-            if (_drawCallsRecorder.Valid)
-            {
-                _drawCalls.Value = _drawCallsRecorder.LastValue;
-            }
+            var prev = _telemetry.Value;
+            long drawCalls = _drawCallsRecorder.Valid ? _drawCallsRecorder.LastValue : prev.DrawCalls;
+            long batches = _batchesRecorder.Valid ? _batchesRecorder.LastValue : prev.Batches;
+            float memoryMb = _totalMemoryRecorder.Valid
+                ? _totalMemoryRecorder.LastValue / (1024f * 1024f)
+                : GC.GetTotalMemory(false) / (1024f * 1024f);
 
-            if (_batchesRecorder.Valid)
-            {
-                _batches.Value = _batchesRecorder.LastValue;
-            }
-
-            if (_totalMemoryRecorder.Valid)
-            {
-                _memoryMb.Value = _totalMemoryRecorder.LastValue / (1024f * 1024f);
-            }
-            else
-            {
-                _memoryMb.Value = GC.GetTotalMemory(false) / (1024f * 1024f);
-            }
+            _telemetry.Value = new FrameTelemetryDto(fps, drawCalls, batches, memoryMb, isRecording);
         }
 
         public void StartRecording()
         {
             _sampleCount = 0;
             _recordingStartTime = Time.unscaledTime;
-            _isRecording.Value = true;
+            var current = _telemetry.Value;
+            _telemetry.Value = new FrameTelemetryDto(current.Fps, current.DrawCalls, current.Batches, current.MemoryMb, true);
         }
 
         public BenchmarkMetrics StopRecording()
         {
-            _isRecording.Value = false;
+            var current = _telemetry.Value;
+            _telemetry.Value = new FrameTelemetryDto(current.Fps, current.DrawCalls, current.Batches, current.MemoryMb, false);
             float totalDuration = Mathf.Max(Time.unscaledTime - _recordingStartTime, 0.001f);
 
             var metrics = new BenchmarkMetrics
             {
                 totalFrames = _sampleCount,
                 durationSeconds = totalDuration,
-                currentDrawCalls = _drawCalls.Value,
-                currentBatches = _batches.Value,
-                totalUsedMemoryMb = _memoryMb.Value,
+                currentDrawCalls = current.DrawCalls,
+                currentBatches = current.Batches,
+                totalUsedMemoryMb = current.MemoryMb,
                 gcAllocatedMemoryMb = _gcMemoryRecorder.Valid ? _gcMemoryRecorder.LastValue / (1024f * 1024f) : 0f
             };
 
@@ -159,12 +145,7 @@ namespace SUIF.Showcase.Benchmark
             _batchesRecorder.Dispose();
             _totalMemoryRecorder.Dispose();
             _gcMemoryRecorder.Dispose();
-
-            _currentFps.Dispose();
-            _drawCalls.Dispose();
-            _batches.Dispose();
-            _memoryMb.Dispose();
-            _isRecording.Dispose();
+            _telemetry.Dispose();
         }
     }
 }

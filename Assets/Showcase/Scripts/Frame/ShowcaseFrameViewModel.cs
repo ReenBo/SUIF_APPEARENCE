@@ -21,17 +21,15 @@ namespace SUIF.Showcase.Frame
         private readonly ShowcaseThemeService _themeService;
         private readonly BenchmarkTelemetryService _telemetryService;
         private readonly Subject<Unit> _benchmarkRequestedSubject = new();
-        private readonly ReactiveProperty<float> _fallbackFps = new(60f);
-        private readonly ReactiveProperty<long> _fallbackDrawCalls = new(0);
-        private readonly ReactiveProperty<bool> _fallbackRecording = new(false);
+        private readonly ReactiveProperty<FrameTelemetryDto> _fallbackTelemetry =
+            new(new FrameTelemetryDto(60f, 0, 0, 0f, false));
 
         public ReactiveProperty<FrameNavigationDto> Navigation { get; } =
             new(new FrameNavigationDto(ShowcaseModuleId.Standby, false, FrameActionStatus.Ready));
 
         public ReadOnlyReactiveProperty<ShowcaseThemeDto> CurrentTheme => _themeService.CurrentTheme;
-        public ReadOnlyReactiveProperty<float> CurrentFps => _telemetryService != null ? _telemetryService.CurrentFps : _fallbackFps;
-        public ReadOnlyReactiveProperty<long> DrawCalls => _telemetryService != null ? _telemetryService.DrawCalls : _fallbackDrawCalls;
-        public ReadOnlyReactiveProperty<bool> IsBenchmarkRecording => _telemetryService != null ? _telemetryService.IsRecording : _fallbackRecording;
+        public ReadOnlyReactiveProperty<FrameTelemetryDto> Telemetry =>
+            _telemetryService != null ? _telemetryService.Telemetry : _fallbackTelemetry;
         public Observable<Unit> BenchmarkRequested => _benchmarkRequestedSubject;
 
         public ShowcaseFrameViewModel(
@@ -45,9 +43,7 @@ namespace SUIF.Showcase.Frame
 
             AddDisposable(Navigation);
             AddDisposable(_benchmarkRequestedSubject);
-            AddDisposable(_fallbackFps);
-            AddDisposable(_fallbackDrawCalls);
-            AddDisposable(_fallbackRecording);
+            AddDisposable(_fallbackTelemetry);
         }
 
         public void TriggerBenchmark()
