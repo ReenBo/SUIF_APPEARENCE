@@ -5,7 +5,9 @@ using SUIF.Showcase.Common;
 using SUIF.Showcase.Data;
 using SUIF.Showcase.Formatting;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Hub;
 using SUIF.Showcase.Services;
+using SUIF.Showcase.Tahoe;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -63,7 +65,11 @@ namespace SUIF.Showcase
             builder.Register<InventoryService>(Lifetime.Singleton).WithParameter(_inventoryCatalog).AsImplementedInterfaces();
             builder.Register<RecycledListService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ShowcaseDataLoader>(Lifetime.Singleton).As<IShowcaseDataLoader>();
+            builder.Register<HubNavigationService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<TahoeDesktopService>(Lifetime.Singleton).As<ITahoeDesktopService>();
 
+            builder.Register<WelcomeHubViewModel>(Lifetime.Transient);
+            builder.Register<MacOSTahoeViewModel>(Lifetime.Transient);
             builder.Register<ShowcaseFrameViewModel>(Lifetime.Singleton);
             builder.Register<LoadingSpinnerViewModel>(Lifetime.Transient);
             builder.Register<LifecycleWindowViewModel>(Lifetime.Transient);

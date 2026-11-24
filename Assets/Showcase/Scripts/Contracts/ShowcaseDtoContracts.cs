@@ -297,4 +297,99 @@ namespace SUIF.Showcase.Contracts
             SpinnerStep = spinnerStep;
         }
     }
+
+    public enum HubStyleType : byte
+    {
+        CyberPunkStyle,
+        MacOSTahoe
+    }
+
+    public enum FutureSlotId : byte
+    {
+        Future1,
+        Future2
+    }
+
+    public enum HubScreenId : byte
+    {
+        Hub,
+        CyberPunkStyle,
+        MacOSTahoe
+    }
+
+    public readonly struct HubToastDto
+    {
+        public readonly bool IsVisible;
+        public readonly FutureSlotId Slot;
+        public readonly int TriggerId;
+
+        public HubToastDto(bool isVisible, FutureSlotId slot, int triggerId)
+        {
+            IsVisible = isVisible;
+            Slot = slot;
+            TriggerId = triggerId;
+        }
+    }
+
+    public enum TahoeThemeId : byte
+    {
+        Dark,
+        White,
+        Indigo,
+        Crimson
+    }
+
+    public enum TahoeWindowId : byte
+    {
+        Lifecycle = 0,
+        Counter = 1,
+        RecycledList = 2,
+        Modals = 3,
+        Inventory6 = 4,
+        Inventory100 = 5,
+        Themes = 6
+    }
+
+    public readonly struct TahoeDesktopStateDto
+    {
+        public readonly TahoeThemeId Theme;
+        public readonly bool HasFocusedWindow;
+        public readonly TahoeWindowId FocusedWindow;
+        public readonly int OpenMask;
+        public readonly bool IsModalSheetOpen;
+        public readonly bool IsBenchmarkRunning;
+        public readonly bool IsBenchmarkCompleted;
+        public readonly int Inventory100SelectedIndex;
+        public readonly int ListScrollStep;
+        public readonly int Inv100ScrollStep;
+
+        public TahoeDesktopStateDto(
+            TahoeThemeId theme,
+            bool hasFocusedWindow,
+            TahoeWindowId focusedWindow,
+            int openMask,
+            bool isModalSheetOpen,
+            bool isBenchmarkRunning,
+            bool isBenchmarkCompleted,
+            int inventory100SelectedIndex,
+            int listScrollStep,
+            int inv100ScrollStep)
+        {
+            Theme = theme;
+            HasFocusedWindow = hasFocusedWindow;
+            FocusedWindow = focusedWindow;
+            OpenMask = openMask;
+            IsModalSheetOpen = isModalSheetOpen;
+            IsBenchmarkRunning = isBenchmarkRunning;
+            IsBenchmarkCompleted = isBenchmarkCompleted;
+            Inventory100SelectedIndex = inventory100SelectedIndex;
+            ListScrollStep = listScrollStep;
+            Inv100ScrollStep = inv100ScrollStep;
+        }
+
+        public bool IsWindowOpen(TahoeWindowId windowId)
+        {
+            return (OpenMask & (1 << (int)windowId)) != 0;
+        }
+    }
 }

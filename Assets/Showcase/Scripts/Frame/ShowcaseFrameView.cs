@@ -4,17 +4,19 @@ using SUIF.Binding;
 using SUIF.R3.Extensions;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SUIF.Showcase.Frame
 {
-    [UIView("ShowcaseFrameView", SUIF.API.UILayer.Screens)]
+    [UIView("ShowcaseFrameView", SUIF.API.UILayer.Screens, SUIF.Attributes.UILoadingMode.Cached)]
     public sealed class ShowcaseFrameView : BaseView<ShowcaseFrameViewModel>
     {
         private const string ActiveClass = "is-active";
         private const string ActiveModalClass = "is-active-modal";
         private const string HiddenClass = "is-hidden";
 
+        [UQuery("btn-back-to-hub")] private Button _btnBackToHub;
         [UQuery("telemetry-base-readout")] private Label _telemetryBaseReadout;
         [UQuery("telemetry-modal-readout")] private Label _telemetryModalReadout;
         [UQuery("telemetry-fps-readout")] private Label _telemetryFpsReadout;
@@ -55,6 +57,7 @@ namespace SUIF.Showcase.Frame
         private FixedTextSlot _viewportSubSlot;
         private FixedTextSlot _viewportCoordsSlot;
         private FixedTextSlot _footerStatusSlot;
+        private VisualElement _keyRoot;
 
         public ShowcaseFrameView(VisualElement root) : base(root)
         {
@@ -62,6 +65,7 @@ namespace SUIF.Showcase.Frame
 
         protected override void Bind()
         {
+            if (_btnBackToHub != null) Binder.Bind(_btnBackToHub).ToClick(ViewModel.ReturnToHub);
             if (_navBtnLifecycle != null) Binder.Bind(_navBtnLifecycle).ToClick(ViewModel.OpenLifecycleWindow);
             if (_navBtnMvvm != null) Binder.Bind(_navBtnMvvm).ToClick(ViewModel.OpenCounterWindow);
             if (_navBtnList != null) Binder.Bind(_navBtnList).ToClick(ViewModel.OpenRecycledListWindow);
@@ -97,6 +101,78 @@ namespace SUIF.Showcase.Frame
             Binder.ToData(ViewModel.Navigation, this, static (dto, view) => view.ApplyNavigation(dto));
             Binder.ToData(ViewModel.CurrentTheme, this, static (dto, view) => view.ApplyTheme(dto));
             Binder.ToData(ViewModel.Telemetry, this, static (dto, view) => view.ApplyTelemetry(dto));
+
+            VisualElement.focusable = true;
+            VisualElement.RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+            VisualElement.RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
+        }
+
+        public override void Show()
+        {
+            base.Show();
+            VisualElement.Focus();
+        }
+
+        public override void Unbind()
+        {
+            CleanupKeyCallbacks();
+            base.Unbind();
+        }
+
+        public override void Dispose()
+        {
+            CleanupKeyCallbacks();
+            base.Dispose();
+        }
+
+        private void CleanupKeyCallbacks()
+        {
+            if (_keyRoot != null)
+            {
+                _keyRoot.UnregisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+                _keyRoot.UnregisterCallback<NavigationCancelEvent>(OnNavigationCancel, TrickleDown.TrickleDown);
+                _keyRoot = null;
+            }
+
+            VisualElement.UnregisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+            VisualElement.UnregisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
+        }
+
+        private void OnAttachToPanel(AttachToPanelEvent evt)
+        {
+            _keyRoot = evt.destinationPanel?.visualTree;
+            if (_keyRoot != null)
+            {
+                _keyRoot.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+                _keyRoot.RegisterCallback<NavigationCancelEvent>(OnNavigationCancel, TrickleDown.TrickleDown);
+            }
+
+            VisualElement.Focus();
+        }
+
+        private void OnDetachFromPanel(DetachFromPanelEvent evt)
+        {
+            if (_keyRoot != null)
+            {
+                _keyRoot.UnregisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+                _keyRoot.UnregisterCallback<NavigationCancelEvent>(OnNavigationCancel, TrickleDown.TrickleDown);
+                _keyRoot = null;
+            }
+        }
+
+        private void OnKeyDown(KeyDownEvent evt)
+        {
+            if (evt.keyCode == KeyCode.Escape)
+            {
+                ViewModel.ReturnToHub();
+                evt.StopPropagation();
+            }
+        }
+
+        private void OnNavigationCancel(NavigationCancelEvent evt)
+        {
+            ViewModel.ReturnToHub();
+            evt.StopPropagation();
         }
 
         private void ApplyTelemetry(FrameTelemetryDto dto)

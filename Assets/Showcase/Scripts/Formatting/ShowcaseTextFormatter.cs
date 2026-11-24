@@ -40,6 +40,20 @@ namespace SUIF.Showcase.Formatting
         public FixedTextWriter<InventoryItemCode> InventoryDescription { get; }
         public FixedTextWriter<int> LoadingSpinnerGlyph { get; }
         public FixedTextWriter<LoadingStateDto> LoadingStatus { get; }
+        public FixedTextWriter<FutureSlotId> HubToastText { get; }
+        public FixedTextWriter<TahoeDesktopStateDto> TahoeStageHeader { get; }
+        public FixedTextWriter<FrameTelemetryDto> TahoeFpsReadout { get; }
+        public FixedTextWriter<FrameTelemetryDto> TahoeDcReadout { get; }
+        public FixedTextWriter<bool> TahoeBenchmarkBadge { get; }
+        public FixedTextWriter<LifecycleStageId> TahoeLifecycleStage { get; }
+        public FixedTextWriter<int> TahoeCounterValue { get; }
+        public FixedTextWriter<int> TahoeInv100SlotCode { get; }
+        public FixedTextWriter<int> TahoeInv100Title { get; }
+        public FixedTextWriter<int> TahoeInv100Meta { get; }
+        public FixedTextWriter<int> TahoeInv100Rarity { get; }
+        public FixedTextWriter<int> TahoeListRowIndex { get; }
+        public FixedTextWriter<int> TahoeListRowTitle { get; }
+        public FixedTextWriter<int> TahoeListRowSlot { get; }
 
         public ShowcaseTextFormatter()
         {
@@ -83,6 +97,31 @@ namespace SUIF.Showcase.Formatting
             InventoryDescription = WriteInventoryDescription;
             LoadingSpinnerGlyph = WriteLoadingSpinnerGlyph;
             LoadingStatus = WriteLoadingStatus;
+            HubToastText = WriteHubToastText;
+            TahoeStageHeader = WriteTahoeStageHeader;
+            TahoeFpsReadout = WriteTahoeFpsReadout;
+            TahoeDcReadout = WriteTahoeDcReadout;
+            TahoeBenchmarkBadge = WriteTahoeBenchmarkBadge;
+            TahoeLifecycleStage = WriteTahoeLifecycleStage;
+            TahoeCounterValue = WriteTahoeCounterValue;
+            TahoeInv100SlotCode = WriteTahoeInv100SlotCode;
+            TahoeInv100Title = WriteTahoeInv100Title;
+            TahoeInv100Meta = WriteTahoeInv100Meta;
+            TahoeInv100Rarity = WriteTahoeInv100Rarity;
+            TahoeListRowIndex = WriteTahoeListRowIndex;
+            TahoeListRowTitle = WriteTahoeListRowTitle;
+            TahoeListRowSlot = WriteTahoeListRowSlot;
+        }
+
+        public string GetTahoeThemeCssClass(TahoeThemeId themeId)
+        {
+            return themeId switch
+            {
+                TahoeThemeId.White => "theme-tahoe-white",
+                TahoeThemeId.Indigo => "theme-tahoe-indigo",
+                TahoeThemeId.Crimson => "theme-tahoe-crimson",
+                _ => "theme-tahoe-dark"
+            };
         }
 
         public string GetThemeCssClass(ShowcaseThemeId themeId)
@@ -495,6 +534,127 @@ namespace SUIF.Showcase.Formatting
             int clamped = value < 0 ? 0 : value % 100;
             sb.Append((char)('0' + clamped / 10));
             sb.Append((char)('0' + clamped % 10));
+        }
+
+        private static void AppendThreeDigits(ref Utf16ValueStringBuilder sb, int value)
+        {
+            int clamped = value < 0 ? 0 : value % 1000;
+            sb.Append((char)('0' + clamped / 100));
+            sb.Append((char)('0' + (clamped / 10) % 10));
+            sb.Append((char)('0' + clamped % 10));
+        }
+
+        public void WriteHubToastText(ref Utf16ValueStringBuilder sb, FutureSlotId slot)
+        {
+            sb.Append(slot == FutureSlotId.Future1 ? "Future1 — Coming Soon" : "Future2 — Coming Soon");
+        }
+
+        public void WriteTahoeStageHeader(ref Utf16ValueStringBuilder sb, TahoeDesktopStateDto state)
+        {
+            if (!state.HasFocusedWindow)
+            {
+                sb.Append("IDLE -> NONE");
+                return;
+            }
+
+            sb.Append("OPEN -> ");
+            sb.Append(state.FocusedWindow switch
+            {
+                TahoeWindowId.Lifecycle => "BASIC WINDOW LIFECYCLE",
+                TahoeWindowId.Counter => "MVVM & R3 REACTIVE COUNTER",
+                TahoeWindowId.RecycledList => "VIRTUALIZED RECYCLED LIST",
+                TahoeWindowId.Modals => "MODALS/POPUPS",
+                TahoeWindowId.Inventory6 => "INVENTORY (6 ITEMS)",
+                TahoeWindowId.Inventory100 => "INVENTORY (100 ITEMS)",
+                TahoeWindowId.Themes => "DYNAMIC THEME SWITCHER",
+                _ => "NONE"
+            });
+        }
+
+        public void WriteTahoeFpsReadout(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        {
+            sb.Append("FPS: ");
+            sb.Append((int)dto.Fps);
+        }
+
+        public void WriteTahoeDcReadout(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto)
+        {
+            sb.Append("DC: ");
+            sb.Append(dto.DrawCalls);
+        }
+
+        public void WriteTahoeBenchmarkBadge(ref Utf16ValueStringBuilder sb, bool isRunning)
+        {
+            sb.Append(isRunning ? "Running Stress Benchmark..." : "Benchmark Complete: 0 GC Alloc");
+        }
+
+        public void WriteTahoeLifecycleStage(ref Utf16ValueStringBuilder sb, LifecycleStageId stage)
+        {
+            sb.Append(stage switch
+            {
+                LifecycleStageId.Initialize => "OnInitialize()",
+                LifecycleStageId.Open => "OnOpen()",
+                LifecycleStageId.Show => "OnShow()",
+                LifecycleStageId.Hide => "OnHide()",
+                LifecycleStageId.Close => "OnClose()",
+                _ => "OnShow()"
+            });
+        }
+
+        public void WriteTahoeCounterValue(ref Utf16ValueStringBuilder sb, int value)
+        {
+            sb.Append(value);
+        }
+
+        public void WriteTahoeInv100SlotCode(ref Utf16ValueStringBuilder sb, int index)
+        {
+            sb.Append('#');
+            AppendThreeDigits(ref sb, index + 1);
+        }
+
+        public void WriteTahoeInv100Title(ref Utf16ValueStringBuilder sb, int index)
+        {
+            sb.Append("SUIF Module #");
+            AppendThreeDigits(ref sb, index + 1);
+        }
+
+        public void WriteTahoeInv100Meta(ref Utf16ValueStringBuilder sb, int index)
+        {
+            int qty = ((index * 3) % 64) + 1;
+            sb.Append("Slot #");
+            AppendThreeDigits(ref sb, index + 1);
+            sb.Append(" · Qty x");
+            sb.Append(qty);
+        }
+
+        public void WriteTahoeInv100Rarity(ref Utf16ValueStringBuilder sb, int index)
+        {
+            int tier = (index * 7 + 3) % 4;
+            sb.Append(tier switch
+            {
+                0 => "Common",
+                1 => "Rare",
+                2 => "Epic",
+                _ => "Mythic"
+            });
+        }
+
+        public void WriteTahoeListRowIndex(ref Utf16ValueStringBuilder sb, int index)
+        {
+            sb.Append('#');
+            AppendThreeDigits(ref sb, index + 1);
+        }
+
+        public void WriteTahoeListRowTitle(ref Utf16ValueStringBuilder sb, int index)
+        {
+            sb.Append("Recycled Row Item #");
+            AppendThreeDigits(ref sb, index + 1);
+        }
+
+        public void WriteTahoeListRowSlot(ref Utf16ValueStringBuilder sb, int index)
+        {
+            sb.Append("VIEW_0");
+            sb.Append((index % 6) + 1);
         }
     }
 }

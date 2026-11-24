@@ -40,8 +40,23 @@ namespace SUIF.Showcase.Formatting
         FixedTextWriter<InventoryItemCode> InventoryDescription { get; }
         FixedTextWriter<int> LoadingSpinnerGlyph { get; }
         FixedTextWriter<LoadingStateDto> LoadingStatus { get; }
+        FixedTextWriter<FutureSlotId> HubToastText { get; }
+        FixedTextWriter<TahoeDesktopStateDto> TahoeStageHeader { get; }
+        FixedTextWriter<FrameTelemetryDto> TahoeFpsReadout { get; }
+        FixedTextWriter<FrameTelemetryDto> TahoeDcReadout { get; }
+        FixedTextWriter<bool> TahoeBenchmarkBadge { get; }
+        FixedTextWriter<LifecycleStageId> TahoeLifecycleStage { get; }
+        FixedTextWriter<int> TahoeCounterValue { get; }
+        FixedTextWriter<int> TahoeInv100SlotCode { get; }
+        FixedTextWriter<int> TahoeInv100Title { get; }
+        FixedTextWriter<int> TahoeInv100Meta { get; }
+        FixedTextWriter<int> TahoeInv100Rarity { get; }
+        FixedTextWriter<int> TahoeListRowIndex { get; }
+        FixedTextWriter<int> TahoeListRowTitle { get; }
+        FixedTextWriter<int> TahoeListRowSlot { get; }
 
         string GetThemeCssClass(ShowcaseThemeId themeId);
+        string GetTahoeThemeCssClass(TahoeThemeId themeId);
         int GetModuleNavNumber(ShowcaseModuleId module);
 
         void WriteModuleTitle(ref Utf16ValueStringBuilder sb, ShowcaseModuleId module);
@@ -76,5 +91,19 @@ namespace SUIF.Showcase.Formatting
         void WriteInventoryDescription(ref Utf16ValueStringBuilder sb, InventoryItemCode code);
         void WriteLoadingSpinnerGlyph(ref Utf16ValueStringBuilder sb, int step);
         void WriteLoadingStatus(ref Utf16ValueStringBuilder sb, LoadingStateDto dto);
+        void WriteHubToastText(ref Utf16ValueStringBuilder sb, FutureSlotId slot);
+        void WriteTahoeStageHeader(ref Utf16ValueStringBuilder sb, TahoeDesktopStateDto state);
+        void WriteTahoeFpsReadout(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto);
+        void WriteTahoeDcReadout(ref Utf16ValueStringBuilder sb, FrameTelemetryDto dto);
+        void WriteTahoeBenchmarkBadge(ref Utf16ValueStringBuilder sb, bool isRunning);
+        void WriteTahoeLifecycleStage(ref Utf16ValueStringBuilder sb, LifecycleStageId stage);
+        void WriteTahoeCounterValue(ref Utf16ValueStringBuilder sb, int value);
+        void WriteTahoeInv100SlotCode(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeInv100Title(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeInv100Meta(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeInv100Rarity(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeListRowIndex(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeListRowTitle(ref Utf16ValueStringBuilder sb, int index);
+        void WriteTahoeListRowSlot(ref Utf16ValueStringBuilder sb, int index);
     }
 }

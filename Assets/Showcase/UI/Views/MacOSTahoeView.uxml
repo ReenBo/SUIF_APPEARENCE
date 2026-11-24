@@ -1,0 +1,288 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/MacOSTahoe.uss" />
+
+    <ui:VisualElement name="tahoe-root" class="tahoe-root theme-tahoe-dark">
+        <ui:VisualElement name="tahoe-shell" class="tahoe-shell">
+
+            <ui:VisualElement class="tahoe-header">
+                <ui:VisualElement class="tahoe-header-left">
+                    <ui:VisualElement class="tahoe-traffic-dots" picking-mode="Ignore">
+                        <ui:VisualElement class="tahoe-dot tahoe-dot-red" picking-mode="Ignore" />
+                        <ui:VisualElement class="tahoe-dot tahoe-dot-amber" picking-mode="Ignore" />
+                        <ui:VisualElement class="tahoe-dot tahoe-dot-green" picking-mode="Ignore" />
+                    </ui:VisualElement>
+
+                    <ui:Button name="btn-tahoe-back" class="tahoe-back-pill">
+                        <ui:Label text="←" class="tahoe-back-pill-arrow font-mono-fui" picking-mode="Ignore" />
+                        <ui:Label text="Back to Hub" class="tahoe-back-pill-text" picking-mode="Ignore" />
+                    </ui:Button>
+
+                    <ui:Label text="WELCOME TO SUIF" class="tahoe-brand-title" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="tahoe-telemetry-pill" picking-mode="Ignore">
+                    <ui:VisualElement class="tahoe-telemetry-dot" picking-mode="Ignore" />
+                    <ui:Label name="tahoe-fps-label" text="FPS: 60" class="tahoe-telemetry-text font-mono-fui" picking-mode="Ignore" />
+                    <ui:Label text="|" class="tahoe-telemetry-sep font-mono-fui" picking-mode="Ignore" />
+                    <ui:Label name="tahoe-dc-label" text="DC: 2" class="tahoe-telemetry-text font-mono-fui" picking-mode="Ignore" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="tahoe-header-actions">
+                    <ui:Button name="btn-tahoe-open-all" text="Open All" class="tahoe-action-btn" />
+                    <ui:Button name="btn-tahoe-benchmark" text="Run Benchmark" class="tahoe-action-btn tahoe-bench-btn" />
+                    <ui:Button name="btn-tahoe-close-all" text="Close All" class="tahoe-action-btn tahoe-close-all-btn" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="tahoe-workspace">
+                <ui:VisualElement class="tahoe-sidebar">
+                    <ui:VisualElement class="tahoe-nav-stack">
+                        <ui:Label text="AVAILABLE VIEWS" class="tahoe-section-title" />
+
+                        <ui:Button name="tahoe-nav-lifecycle" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-sky" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-lifecycle" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Basic Window Lifecycle" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-counter" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-indigo" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-counter" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="MVVM &amp; R3 Reactive Counter" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-list" class="tahoe-nav-btn is-open">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-teal" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-list" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Virtualized Recycled List" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-modals" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-rose" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-modals" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Modals/Popups" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-inv6" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-amber" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-inv6" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="INVENTORY (6 Items)" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-inv100" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-orange" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-inv100" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="INVENTORY (100 Items)" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="tahoe-nav-themes" class="tahoe-nav-btn">
+                            <ui:VisualElement class="tahoe-nav-icon-box tahoe-icon-purple" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-icon-themes" class="tahoe-nav-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Dynamic Theme Switcher" class="tahoe-nav-label" picking-mode="Ignore" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="tahoe-info-card" picking-mode="Ignore">
+                        <ui:Label text="MULTI-WINDOW STACK" class="tahoe-info-title" picking-mode="Ignore" />
+                        <ui:Label text="Every view opens as an independent frosted window layered above existing windows. Drag any title bar to reposition or click to focus." class="tahoe-info-desc" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="tahoe-stage-column">
+                    <ui:VisualElement class="tahoe-stage-topbar">
+                        <ui:Label name="tahoe-stage-header" text="OPEN -&gt; VIRTUALIZED RECYCLED LIST" class="tahoe-stage-header" />
+                        <ui:Label name="tahoe-bench-badge" text="Benchmark Complete: 0 GC Alloc" class="tahoe-bench-badge font-mono-fui" style="display: none;" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement name="tahoe-window-stage" class="tahoe-window-stage">
+                        <ui:VisualElement name="tahoe-empty-state" class="tahoe-empty-state" picking-mode="Ignore" style="display: none;">
+                            <ui:VisualElement class="tahoe-empty-icon-box" picking-mode="Ignore">
+                                <ui:VisualElement name="tahoe-empty-icon" class="tahoe-empty-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="NO ACTIVE WINDOWS" class="tahoe-empty-label" picking-mode="Ignore" />
+                        </ui:VisualElement>
+
+                        <!-- Window 0: Basic Window Lifecycle -->
+                        <ui:VisualElement name="tahoe-win-lifecycle" class="tahoe-floating-window tahoe-win-w-360" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-lifecycle" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="Basic Window Lifecycle" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-lifecycle" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:VisualElement class="tahoe-chip-wrap">
+                                    <ui:Button name="tahoe-hook-init" text="OnInitialize()" class="tahoe-hook-btn font-mono-fui" />
+                                    <ui:Button name="tahoe-hook-open" text="OnOpen()" class="tahoe-hook-btn font-mono-fui" />
+                                    <ui:Button name="tahoe-hook-show" text="OnShow()" class="tahoe-hook-btn font-mono-fui is-active" />
+                                    <ui:Button name="tahoe-hook-hide" text="OnHide()" class="tahoe-hook-btn font-mono-fui" />
+                                    <ui:Button name="tahoe-hook-close" text="OnClose()" class="tahoe-hook-btn font-mono-fui" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="tahoe-card-box">
+                                    <ui:Label text="Active Hook" class="tahoe-sub-label" />
+                                    <ui:Label name="tahoe-lifecycle-val" text="OnShow()" class="tahoe-accent-value font-mono-fui" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 1: MVVM & R3 Reactive Counter -->
+                        <ui:VisualElement name="tahoe-win-counter" class="tahoe-floating-window tahoe-win-w-360" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-counter" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="MVVM &amp; R3 Reactive Counter" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-counter" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:VisualElement class="tahoe-card-box">
+                                    <ui:Label text="ReactiveProperty&lt;int&gt;" class="tahoe-sub-label" />
+                                    <ui:Label name="tahoe-counter-val" text="42" class="tahoe-counter-big font-mono-fui" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="tahoe-btn-row-3">
+                                    <ui:Button name="tahoe-counter-dec" text="-1" class="tahoe-pill-action" />
+                                    <ui:Button name="tahoe-counter-inc" text="+1" class="tahoe-pill-action tahoe-pill-primary" />
+                                    <ui:Button name="tahoe-counter-reset" text="Reset" class="tahoe-pill-action" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 2: Virtualized Recycled List -->
+                        <ui:VisualElement name="tahoe-win-list" class="tahoe-floating-window tahoe-win-w-400 is-focused">
+                            <ui:VisualElement name="tahoe-drag-list" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="Virtualized Recycled List" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-list" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:ScrollView name="tahoe-list-scroll" class="tahoe-scroll-list" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 3: Modals/Popups -->
+                        <ui:VisualElement name="tahoe-win-modals" class="tahoe-floating-window tahoe-win-w-360" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-modals" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="Modals/Popups" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-modals" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:VisualElement class="tahoe-modal-info">
+                                    <ui:Label text="Sheet &amp; Dialog Layer" class="tahoe-modal-info-title" />
+                                    <ui:Label text="Non-blocking macOS sheet presentation with isolated input focus and clean disposal." class="tahoe-modal-info-desc" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="tahoe-modal-sheet" class="tahoe-modal-sheet" style="display: none;">
+                                    <ui:Label text="Modal Sheet Active" class="tahoe-nav-label" />
+                                    <ui:Button name="tahoe-modal-dismiss" text="Dismiss" class="tahoe-sheet-dismiss" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-modal-present" text="Present Sheet Dialog" class="tahoe-pill-action tahoe-pill-primary" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 4: INVENTORY (6 Items) -->
+                        <ui:VisualElement name="tahoe-win-inv6" class="tahoe-floating-window tahoe-win-w-360" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-inv6" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="INVENTORY (6 Items)" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-inv6" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:VisualElement name="tahoe-inv6-grid" class="tahoe-inv6-grid" />
+                                <ui:VisualElement class="tahoe-card-box">
+                                    <ui:VisualElement class="tahoe-card-col">
+                                        <ui:Label name="tahoe-inv6-title" text="Monowire Edge" class="tahoe-nav-label" />
+                                        <ui:Label name="tahoe-inv6-desc" text="Thermal melee wire" class="tahoe-sub-label" />
+                                    </ui:VisualElement>
+                                    <ui:Label name="tahoe-inv6-rarity" text="LEGENDARY" class="tahoe-rarity-pill" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 5: INVENTORY (100 Items) -->
+                        <ui:VisualElement name="tahoe-win-inv100" class="tahoe-floating-window tahoe-win-w-420" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-inv100" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="INVENTORY (100 Items)" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-inv100" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:ScrollView name="tahoe-inv100-scroll" class="tahoe-inv100-scroll">
+                                    <ui:VisualElement name="tahoe-inv100-grid" class="tahoe-inv100-grid" />
+                                </ui:ScrollView>
+                                <ui:VisualElement class="tahoe-card-box">
+                                    <ui:VisualElement class="tahoe-card-col">
+                                        <ui:Label name="tahoe-inv100-title" text="SUIF Module #001" class="tahoe-nav-label" />
+                                        <ui:Label name="tahoe-inv100-meta" text="Slot #001 · Qty x1" class="tahoe-sub-label font-mono-fui" />
+                                    </ui:VisualElement>
+                                    <ui:Label name="tahoe-inv100-rarity" text="Mythic" class="tahoe-rarity-pill" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Window 6: Dynamic Theme Switcher -->
+                        <ui:VisualElement name="tahoe-win-themes" class="tahoe-floating-window tahoe-win-w-360" style="display: none;">
+                            <ui:VisualElement name="tahoe-drag-themes" class="tahoe-win-header">
+                                <ui:VisualElement class="tahoe-win-title-row" picking-mode="Ignore">
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-red" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-amber" picking-mode="Ignore" />
+                                    <ui:VisualElement class="tahoe-dot-sm tahoe-dot-green" picking-mode="Ignore" />
+                                    <ui:Label text="Dynamic Theme Switcher" class="tahoe-win-title" picking-mode="Ignore" />
+                                </ui:VisualElement>
+                                <ui:Button name="tahoe-close-themes" text="X" class="tahoe-win-close" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="tahoe-win-body">
+                                <ui:VisualElement class="tahoe-theme-grid">
+                                    <ui:Button name="tahoe-theme-dark" class="tahoe-theme-btn is-active">
+                                        <ui:Label text="Tahoe Dark" class="tahoe-nav-label" picking-mode="Ignore" />
+                                        <ui:VisualElement class="tahoe-swatch tahoe-swatch-dark" picking-mode="Ignore" />
+                                    </ui:Button>
+                                    <ui:Button name="tahoe-theme-white" class="tahoe-theme-btn">
+                                        <ui:Label text="Tahoe White" class="tahoe-nav-label" picking-mode="Ignore" />
+                                        <ui:VisualElement class="tahoe-swatch tahoe-swatch-white" picking-mode="Ignore" />
+                                    </ui:Button>
+                                    <ui:Button name="tahoe-theme-indigo" class="tahoe-theme-btn">
+                                        <ui:Label text="Tahoe Indigo" class="tahoe-nav-label" picking-mode="Ignore" />
+                                        <ui:VisualElement class="tahoe-swatch tahoe-swatch-indigo" picking-mode="Ignore" />
+                                    </ui:Button>
+                                    <ui:Button name="tahoe-theme-crimson" class="tahoe-theme-btn">
+                                        <ui:Label text="Tahoe Crimson" class="tahoe-nav-label" picking-mode="Ignore" />
+                                        <ui:VisualElement class="tahoe-swatch tahoe-swatch-crimson" picking-mode="Ignore" />
+                                    </ui:Button>
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

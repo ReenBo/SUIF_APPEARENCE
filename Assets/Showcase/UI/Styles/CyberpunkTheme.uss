@@ -117,6 +117,28 @@
     align-items: center;
 }
 
+.fui-back-hub-btn {
+    height: 30px;
+    padding: 0 12px;
+    margin-right: 14px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-color: rgba(242, 242, 247, 0.32);
+    color: var(--fg-primary);
+    font-size: 10px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    transition-property: background-color, border-color, color;
+    transition-duration: 0.18s;
+}
+
+.fui-back-hub-btn:hover {
+    background-color: var(--cyber-cyan);
+    border-color: var(--cyber-cyan);
+    color: #050507;
+}
+
 .fui-hazard-box {
     width: 36px;
     height: 38px;

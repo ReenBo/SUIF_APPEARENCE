@@ -62,7 +62,11 @@
   - Verified in Play Mode (`Schiffbauer-Regular SDF Atlas` `refCount=102..104`, `0` OS fallback atlases, `US.dc=2`, `0` console warnings/errors); resolved `[debt/ui-font-textsettings]` in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md).
 - [ ] **[backlog/suif-batched-effects]**: Tracked in [backlog.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/backlog.md) (generalize `DiagonalWipeEffect` into `com.reenbo.suif` after upcoming animation tasks and tests).
 - [ ] **[debt/webgl2-draw-calls-profiling]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (profile remaining WebGL2 `18–33 DC` peaks and tune Inspector card width if needed for wider `Schiffbauer` glyphs at 1280x720).
-- [ ] **Next**: Push/merge `perf/uitk-font-batching` -> verify WebGL2 CI build Draw Calls with single `Schiffbauer-Regular SDF` atlas, then proceed with Showcase theme/text tuning.
+- [x] **[feature/welcome-hub-launcher]**: Implemented `"Welcome to SUIF"` Parallax Launcher Hub entry screen (`WelcomeHubView`), multi-window `MacOSTahoeView`, and `CyberPunkStyle` (`ShowcaseFrameView`) `<- BACK TO HUB` / `Escape` integration (`feature/welcome-hub-launcher` branched from `develop`):
+  - Baked pre-populated single-atlas `Dynamic` `SDFAA` fonts (`Inter-Regular SDF.asset`, `JetBrainsMono-Regular SDF.asset`, `1024x1024`, `pad=6`, `multiAtlas=false`) and rendered all emblems/icons via zero-texture `Painter2D` / `MeshGenerationContext.Allocate` (`0` OS fallback atlases).
+  - Implemented 1-Draw-Call `HubBackdropEffect` (4 soft radial glow orbs, 64px architectural grid, 48 interactive particles + constellation filaments) and out-of-phase squircle card levitation/hover/punch motion via `IVisualElementScheduledItem` (`1–4 DC` on Hub).
+  - Implemented `MacOSTahoeView` with 7 draggable floating windows reusing existing DI Domain Services, 4 Tahoe theme tokens (`Dark`, `White`, `Indigo`, `Crimson`), `Open All` / `Run Benchmark` / `Close All`, and `21/21` passing EditMode tests.
+- [ ] **Next**: Review and commit/merge `feature/welcome-hub-launcher` into `develop`.
 
 ---
 

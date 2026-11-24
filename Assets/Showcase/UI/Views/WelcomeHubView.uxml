@@ -1,0 +1,69 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="../Styles/WelcomeHub.uss" />
+
+    <ui:VisualElement name="hub-root" class="hub-root">
+        <ui:VisualElement name="hub-stage" class="hub-stage">
+            <ui:VisualElement name="hub-backdrop" class="hub-backdrop" picking-mode="Ignore" />
+            <ui:VisualElement class="hub-blur-veil" picking-mode="Ignore" />
+
+            <ui:VisualElement name="hub-content" class="hub-content">
+                <ui:VisualElement class="hub-header" picking-mode="Ignore">
+                    <ui:VisualElement class="hub-eyebrow" picking-mode="Ignore">
+                        <ui:VisualElement name="hub-eyebrow-dot" class="hub-eyebrow-dot" picking-mode="Ignore" />
+                        <ui:Label text="COM.REENBO.SUIF // UNITY 6+ UI TOOLKIT" class="hub-eyebrow-text font-mono-fui" picking-mode="Ignore" />
+                    </ui:VisualElement>
+
+                    <ui:Label text="Welcome to SUIF" class="hub-title" picking-mode="Ignore" />
+                    <ui:Label text="Scalable, zero-allocation MVVM framework for Unity 6 UI Toolkit." class="hub-lead" picking-mode="Ignore" />
+                    <ui:Label text="Replaces coupled MonoBehaviour UI scripts with pure POCO views, R3 reactive streams, VContainer DI, and Addressables streaming — delivering 0 GC spikes, minimal draw calls, and instant runtime skinning." class="hub-desc" picking-mode="Ignore" />
+
+                    <ui:VisualElement class="hub-pills-row" picking-mode="Ignore">
+                        <ui:Label text="0 MonoBehaviours" class="hub-pill-badge font-mono-fui" picking-mode="Ignore" />
+                        <ui:Label text="0 GC Alloc" class="hub-pill-badge hub-pill-cyan font-mono-fui" picking-mode="Ignore" />
+                        <ui:Label text="R3 + VContainer" class="hub-pill-badge hub-pill-sky font-mono-fui" picking-mode="Ignore" />
+                        <ui:Label text="Runtime Themes" class="hub-pill-badge hub-pill-violet font-mono-fui" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="hub-grid-wrap" picking-mode="Ignore">
+                    <ui:VisualElement name="hub-grid" class="hub-grid">
+                        <ui:Button name="card-cyberpunk" class="squircle-card card-cyberpunk">
+                            <ui:VisualElement class="card-emblem-box" picking-mode="Ignore">
+                                <ui:VisualElement name="emblem-cyberpunk" class="card-emblem-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="CyberPunkStyle" class="card-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="card-macos" class="squircle-card card-macos">
+                            <ui:VisualElement class="card-emblem-box" picking-mode="Ignore">
+                                <ui:VisualElement name="emblem-macos" class="card-emblem-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="MacOSTahoe" class="card-label" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="card-future1" class="squircle-card card-future">
+                            <ui:VisualElement class="card-emblem-box" picking-mode="Ignore">
+                                <ui:VisualElement name="emblem-future1" class="card-emblem-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Future1" class="card-label card-label-muted" picking-mode="Ignore" />
+                        </ui:Button>
+
+                        <ui:Button name="card-future2" class="squircle-card card-future">
+                            <ui:VisualElement class="card-emblem-box" picking-mode="Ignore">
+                                <ui:VisualElement name="emblem-future2" class="card-emblem-icon" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:Label text="Future2" class="card-label card-label-muted" picking-mode="Ignore" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="hub-footer" picking-mode="Ignore">
+                    <ui:VisualElement name="hub-pill-toast" class="hub-pill-toast" picking-mode="Ignore">
+                        <ui:VisualElement class="hub-toast-dot" picking-mode="Ignore" />
+                        <ui:Label name="hub-pill-toast-text" text="Future1 — Coming Soon" class="hub-toast-text" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

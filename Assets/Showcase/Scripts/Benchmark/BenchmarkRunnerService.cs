@@ -2,7 +2,9 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using global::R3;
+using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Frame;
+using SUIF.Showcase.Services;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -12,6 +14,7 @@ namespace SUIF.Showcase.Benchmark
     {
         private readonly ShowcaseFrameViewModel _frameViewModel;
         private readonly BenchmarkTelemetryService _telemetryService;
+        private readonly IHubNavigationService _hubNavigation;
         private readonly CancellationTokenSource _cts = new();
         private readonly CompositeDisposable _disposables = new();
 
@@ -20,10 +23,12 @@ namespace SUIF.Showcase.Benchmark
 
         public BenchmarkRunnerService(
             ShowcaseFrameViewModel frameViewModel,
-            BenchmarkTelemetryService telemetryService)
+            BenchmarkTelemetryService telemetryService,
+            IHubNavigationService hubNavigation = null)
         {
             _frameViewModel = frameViewModel ?? throw new ArgumentNullException(nameof(frameViewModel));
             _telemetryService = telemetryService ?? throw new ArgumentNullException(nameof(telemetryService));
+            _hubNavigation = hubNavigation;
 
             _frameViewModel.BenchmarkRequested
                 .Subscribe(_ => RunBenchmarkAsync().Forget())
@@ -76,6 +81,11 @@ namespace SUIF.Showcase.Benchmark
 
             try
             {
+                if (_hubNavigation != null && _hubNavigation.ActiveScreen.CurrentValue != HubScreenId.CyberPunkStyle)
+                {
+                    await _hubNavigation.OpenStyleAsync(HubStyleType.CyberPunkStyle, ct);
+                }
+
                 await UniTask.Delay(TimeSpan.FromSeconds(0.8), cancellationToken: ct);
 
                 _telemetryService.StartRecording();

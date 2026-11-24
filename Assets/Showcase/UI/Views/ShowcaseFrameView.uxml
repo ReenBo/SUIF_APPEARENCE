@@ -12,6 +12,7 @@
             <ui:VisualElement class="fui-header">
                 <ui:VisualElement class="fui-header-top">
                     <ui:VisualElement class="fui-header-left">
+                        <ui:Button name="btn-back-to-hub" text="&lt;- BACK TO HUB" class="fui-back-hub-btn" />
                         <ui:VisualElement class="fui-hazard-box">
                             <ui:VisualElement class="fui-hazard-pattern" />
                         </ui:VisualElement>

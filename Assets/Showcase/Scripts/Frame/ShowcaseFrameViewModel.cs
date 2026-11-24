@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using global::R3;
 using SUIF.API;
@@ -7,6 +8,7 @@ using SUIF.Showcase.Benchmark;
 using SUIF.Showcase.Common;
 using SUIF.Showcase.Contracts;
 using SUIF.Showcase.Formatting;
+using SUIF.Showcase.Services;
 using SUIF.Showcase.Windows.Counter;
 using SUIF.Showcase.Windows.Inventory;
 using SUIF.Showcase.Windows.Lifecycle;
@@ -21,6 +23,7 @@ namespace SUIF.Showcase.Frame
         private readonly IUIFlow _uiFlow;
         private readonly ShowcaseThemeService _themeService;
         private readonly BenchmarkTelemetryService _telemetryService;
+        private readonly IHubNavigationService _hubNavigation;
         private readonly Subject<Unit> _benchmarkRequestedSubject = new();
         private readonly ReactiveProperty<FrameTelemetryDto> _fallbackTelemetry =
             new(new FrameTelemetryDto(60f, 0, 0, 0f, false));
@@ -38,16 +41,54 @@ namespace SUIF.Showcase.Frame
             IUIFlow uiFlow,
             ShowcaseThemeService themeService,
             IShowcaseTextFormatter formatter,
-            BenchmarkTelemetryService telemetryService = null)
+            BenchmarkTelemetryService telemetryService = null,
+            IHubNavigationService hubNavigation = null)
         {
             _uiFlow = uiFlow ?? throw new ArgumentNullException(nameof(uiFlow));
             _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
             Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
             _telemetryService = telemetryService;
+            _hubNavigation = hubNavigation;
 
             AddDisposable(Navigation);
             AddDisposable(_benchmarkRequestedSubject);
             AddDisposable(_fallbackTelemetry);
+
+            if (_hubNavigation != null)
+            {
+                AddDisposable(_hubNavigation.ActiveScreen.Subscribe(OnHubScreenChanged));
+            }
+        }
+
+        private void OnHubScreenChanged(HubScreenId screen)
+        {
+            if (screen == HubScreenId.CyberPunkStyle)
+            {
+                if (Navigation.Value.ActiveModule == ShowcaseModuleId.Standby)
+                {
+                    OpenLifecycleWindow();
+                }
+            }
+            else if (Navigation.Value.ActiveModule != ShowcaseModuleId.Standby || Navigation.Value.IsModalOpen)
+            {
+                ResetToStandby();
+            }
+        }
+
+        public void ReturnToHub()
+        {
+            _hubNavigation?.ReturnToHubAsync(CancellationToken.None).Forget();
+        }
+
+        public void ResetToStandby()
+        {
+            if (Navigation.Value.IsModalOpen)
+            {
+                _uiFlow.Close<ModalDialogView>();
+            }
+
+            CloseAllBaseWindows();
+            Navigation.Value = new FrameNavigationDto(ShowcaseModuleId.Standby, false, FrameActionStatus.Ready);
         }
 
         public void TriggerBenchmark()
