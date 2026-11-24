@@ -18,12 +18,12 @@
   - Enable `npx` on `PATH` for `chrome_devtools` MCP or capture a WebGL2 frame using Spector.js / a Development WebGL build attached to Unity Profiler to pinpoint the exact source of the remaining `+40–58 DC` in WebGL2.
   - Also clean up unused `Mobile_RPAsset.asset` passes (`renderScale = 1`, `supportsHDR = 0`, shadows off) for the UI-only WebGL target once live profiling confirms URP vs WebGL2 UITK breakdown.
 
-### 2. `[debt/ui-font-textsettings]` Assign Explicit `PanelTextSettings` & Embedded Font Asset for WebGL Determinism
-- **Severity:** Medium (Cross-platform UI rendering & single-atlas text batching)
-- **Logged:** `2026-11-13` (Audited in detail `2026-11-24` on `perf/uitk-font-batching`)
-- **Current State:**
-  - `Project PanelTextSettings count: 0`: [ShowcasePanelSettings.asset](file:///e:/GIT/SUIF_APPEARENCE/Assets/Settings/ShowcasePanelSettings.asset) has `textSettings: NULL` (`themeStyleSheet: UnityDefaultRuntimeTheme`, `dynamicAtlasMaxSize: 4096`, `maxSubTextureSize: 64`), and [CyberpunkTheme.uss](file:///e:/GIT/SUIF_APPEARENCE/Assets/Showcase/UI/Styles/CyberpunkTheme.uss) only specifies `font-size` / `-unity-font-style` without `-unity-font-definition`.
-  - [Schiffbauer-Regular SDF.asset](file:///e:/GIT/SUIF/Runtime/Core/Styles/5_Themes/Typography/Fonts/Schiffbauer-Regular%20SDF.asset) in `SUIF` has `atlasPopulationMode = Static`, `atlasRenderMode = SDFAA`, `512x512`, **`pad = 0` (`atlasPadding = 0`)**, **`isMultiAtlasTexturesEnabled = true`**, `chars = 96`, `glyphs = 96`, `fallbacks = 0`.
-  - Showcase UXML contains **13 non-ASCII Unicode glyphs** (`●` `U+25CF`, `↻` `U+21BB`, `×` `U+00D7`, `■` `U+25A0`, `┼` `U+253C`, `»` `U+00BB`, `›` `U+203A`, `▲` `U+25B2`, `▼` `U+25BC`, `–` `U+2013`, `═` `U+2550`, `◢` `U+25E2`, `◣` `U+25E3`) across `LifecycleWindowView.uxml`, `ModalDialogView.uxml`, and `ShowcaseFrameView.uxml`, triggering Editor OS fallback (`Microsoft YaHei - Regular Atlas` alongside `Arial - Regular Atlas`), while Linux WebGL CI (`ubuntu-latest`) lacks Windows OS fonts.
-- **Required Resolution:**
-  - Create and assign a dedicated `PanelTextSettings` asset and embedded `Static` `SDFAA` (`atlasPadding` `5–9` px, `isMultiAtlasTexturesEnabled = false`) `FontAsset` via `-unity-font-definition`, fix `Schiffbauer-Regular SDF.asset` padding/multi-atlas flags, and either bake or replace the 13 non-ASCII glyphs so text consolidates into 1 font atlas deterministically on WebGL.
+### 2. `[debt/ui-font-textsettings]` [RESOLVED] Assign Explicit `PanelTextSettings` & Embedded Font Asset for WebGL Determinism
+- **Severity:** Medium (Cross-platform UI rendering & single-atlas text batching) -> **Resolved (`2026-11-24`, `perf/uitk-font-batching`)**
+- **Logged:** `2026-11-13` (Audited & resolved `2026-11-24` on `perf/uitk-font-batching`)
+- **Resolution Verified:**
+  - Created [ShowcasePanelTextSettings.asset](file:///e:/GIT/SUIF_APPEARENCE/Assets/Settings/ShowcasePanelTextSettings.asset) (`defaultFontAsset = Schiffbauer-Regular SDF`, `fallbackFontAssets = []`, `enableEmojiSupport = false`, `clearDynamicDataOnBuild = false`) and wired it into [ShowcasePanelSettings.asset](file:///e:/GIT/SUIF_APPEARENCE/Assets/Settings/ShowcasePanelSettings.asset).
+  - Configured `.unity-text-element` in [CyberpunkTheme.uss](file:///e:/GIT/SUIF_APPEARENCE/Assets/Showcase/UI/Styles/CyberpunkTheme.uss) with `-unity-font: none` and explicit `-unity-font-definition` pointing to `Schiffbauer-Regular SDF.asset`.
+  - Replaced 9 unbaked Unicode symbols (`●`, `↻`, `■`, `┼`, `▲`, `▼`, `═`, `◢`, `◣`) in Showcase UXML (`fe5c7e5`) so all remaining symbols (`×`, `»`, `›`, `–`) fit cleanly in `Schiffbauer-Regular SDF`.
+  - Re-baked `Schiffbauer-Regular SDF.asset` (`7f0bf53` in `SUIF`) for Unity 6.6 Advanced Text Generator (ATG): **`AtlasPopulationMode.Dynamic`** (ATG rejects `Static` assets), pre-populated **`165` glyphs** (printable ASCII + Cyrillic + `× » › –`), `sourceFontFile = Schiffbauer-Regular`, `GlyphRenderMode.SDFAA`, `1024x1024`, **`atlasPadding = 6`**, `isMultiAtlasTexturesEnabled = false`.
+  - Play Mode verification (`05_Inventory`, `01_Lifecycle`, `04_Modals`): **`Schiffbauer-Regular SDF Atlas`** (`1024x1024`, `refCount = 102..104`), **`0` OS fallback atlases** (`Arial` / `Microsoft YaHei`), `US.dc = 2` (settled Inventory/Lifecycle), `0` console warnings/errors, `16/16` EditMode tests passing.
