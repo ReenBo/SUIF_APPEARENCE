@@ -11,6 +11,11 @@
     --cyber-amber: #ffb800;
 }
 
+.unity-text-element {
+    -unity-font: none;
+    -unity-font-definition: url("project://database/Packages/com.reenbo.suif/Runtime/Core/Styles/5_Themes/Typography/Fonts/Schiffbauer-Regular%20SDF.asset?fileID=11400000&guid=51c49f19576158f449b55ee452f79092&type=2#Schiffbauer-Regular SDF");
+}
+
 .theme-mono {
     --fg-primary: #f4f4f6;
     --cyber-cyan: #00f0ff;
