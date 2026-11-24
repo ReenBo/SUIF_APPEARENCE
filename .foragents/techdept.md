@@ -20,9 +20,10 @@
 
 ### 2. `[debt/ui-font-textsettings]` Assign Explicit `PanelTextSettings` & Embedded Font Asset for WebGL Determinism
 - **Severity:** Medium (Cross-platform UI rendering & single-atlas text batching)
-- **Logged:** `2026-11-13`
+- **Logged:** `2026-11-13` (Audited in detail `2026-11-24` on `perf/uitk-font-batching`)
 - **Current State:**
-  - [ShowcasePanelSettings.asset](file:///e:/GIT/SUIF_APPEARENCE/Assets/Settings/ShowcasePanelSettings.asset) has `textSettings: {fileID: 0}` and [CyberpunkTheme.uss](file:///e:/GIT/SUIF_APPEARENCE/Assets/Showcase/UI/Styles/CyberpunkTheme.uss) does not specify an embedded `FontAsset` (`unity-font-definition`).
-  - In Editor PlayMode, `TextureRegistry` allocated a secondary fallback font atlas (`Microsoft YaHei - Regular Atlas` alongside `Arial - Regular Atlas`), while Linux CI WebGL builds (`ubuntu-latest`) lack Windows OS fallback fonts.
+  - `Project PanelTextSettings count: 0`: [ShowcasePanelSettings.asset](file:///e:/GIT/SUIF_APPEARENCE/Assets/Settings/ShowcasePanelSettings.asset) has `textSettings: NULL` (`themeStyleSheet: UnityDefaultRuntimeTheme`, `dynamicAtlasMaxSize: 4096`, `maxSubTextureSize: 64`), and [CyberpunkTheme.uss](file:///e:/GIT/SUIF_APPEARENCE/Assets/Showcase/UI/Styles/CyberpunkTheme.uss) only specifies `font-size` / `-unity-font-style` without `-unity-font-definition`.
+  - [Schiffbauer-Regular SDF.asset](file:///e:/GIT/SUIF/Runtime/Core/Styles/5_Themes/Typography/Fonts/Schiffbauer-Regular%20SDF.asset) in `SUIF` has `atlasPopulationMode = Static`, `atlasRenderMode = SDFAA`, `512x512`, **`pad = 0` (`atlasPadding = 0`)**, **`isMultiAtlasTexturesEnabled = true`**, `chars = 96`, `glyphs = 96`, `fallbacks = 0`.
+  - Showcase UXML contains **13 non-ASCII Unicode glyphs** (`●` `U+25CF`, `↻` `U+21BB`, `×` `U+00D7`, `■` `U+25A0`, `┼` `U+253C`, `»` `U+00BB`, `›` `U+203A`, `▲` `U+25B2`, `▼` `U+25BC`, `–` `U+2013`, `═` `U+2550`, `◢` `U+25E2`, `◣` `U+25E3`) across `LifecycleWindowView.uxml`, `ModalDialogView.uxml`, and `ShowcaseFrameView.uxml`, triggering Editor OS fallback (`Microsoft YaHei - Regular Atlas` alongside `Arial - Regular Atlas`), while Linux WebGL CI (`ubuntu-latest`) lacks Windows OS fonts.
 - **Required Resolution:**
-  - Create and assign a dedicated `PanelTextSettings` and embedded SDF/Font asset covering all ASCII and FUI symbol glyphs used across `SUIF_APPEARENCE` so text renders identically in WebGL and stays consolidated in a single font atlas.
+  - Create and assign a dedicated `PanelTextSettings` asset and embedded `Static` `SDFAA` (`atlasPadding` `5–9` px, `isMultiAtlasTexturesEnabled = false`) `FontAsset` via `-unity-font-definition`, fix `Schiffbauer-Regular SDF.asset` padding/multi-atlas flags, and either bake or replace the 13 non-ASCII glyphs so text consolidates into 1 font atlas deterministically on WebGL.

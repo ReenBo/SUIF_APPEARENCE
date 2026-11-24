@@ -55,9 +55,10 @@
   - Moved all domain math, counters, logs, and static catalogs out of ViewModels into DI Domain Services (`LifecycleMonitorService`, `CounterService`, `ModalStateService`, `InventoryService` + `ShowcaseInventoryCatalog.asset` `ScriptableObject`, `RecycledListService`) and unified `BenchmarkTelemetryService.Telemetry` (`FrameTelemetryDto`).
   - Converted `ShowcaseTextFormatter` into injectable DI `IShowcaseTextFormatter` Singleton (startup-cached `FixedTextWriter<T>` delegates, zero global statics), exposed cleanly via `ViewModel.Formatter` with zero `[Inject]` or VContainer references in any View.
   - Added parallel `UniTask.WhenAll` startup preloader (`ShowcaseDataLoader`) + `LoadingSpinnerView` (`UILayer.Topmost`, `DisplayStyle.None` cached); `16/16` EditMode tests & Play Mode `2 DC` (`0` console errors/warnings) verified.
+- [ ] **[perf/uitk-font-batching]** *(active branch in `SUIF_APPEARENCE` and `SUIF`)*: Audited Unity 6 UI Toolkit text batching (`TextureSlotManager` `8`-slot uber-shader, `ShaderInfoStorage` `TextCoreSettings`, `KickRangesReason`), published [suif-fonts-and-text-batching.md](file:///e:/GIT/SUIF_APPEARENCE/.agents/rules/suif-fonts-and-text-batching.md) (`03590a4`) & [Font_Batching_And_TextSettings_Standard.md](file:///e:/GIT/SUIF/Documentation~/Font_Batching_And_TextSettings_Standard.md) (`7c978b1`), and logged full Showcase font/glyph audit in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md).
 - [ ] **[backlog/suif-batched-effects]**: Tracked in [backlog.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/backlog.md) (generalize `DiagonalWipeEffect` into `com.reenbo.suif` after upcoming animation tasks and tests).
-- [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (assign explicit `PanelTextSettings` + embedded font asset and profile remaining WebGL2 `18–33 DC` peaks).
-- [ ] **Next**: Redesign Showcase UI theme and dynamic text switching inside `IShowcaseTextFormatter` cleanly on top of the refactored DI architecture.
+- [ ] **[debt/webgl2-draw-calls-profiling]** & **[debt/ui-font-textsettings]**: Tracked in [techdept.md](file:///e:/GIT/SUIF_APPEARENCE/.foragents/techdept.md) (next: configure explicit `ShowcasePanelTextSettings`, single-atlas `Static` `SDFAA` `FontAsset` with `atlasPadding >= 5` px, fix `Schiffbauer-Regular SDF.asset`, and resolve the 13 non-ASCII UXML glyphs).
+- [ ] **Next**: Configure Showcase `PanelTextSettings`, SDF `FontAsset`, and USS `-unity-font-definition` on `perf/uitk-font-batching` and re-measure Editor & WebGL2 Draw Calls before theme redesign.
 
 ---
 
@@ -92,6 +93,6 @@
 
 ## 📜 4. Last Session Log
 
-* **Date**: 2026-11-16
+* **Date**: 2026-11-24
 * **Role**: Primary Agent / Orchestrator
-* **Summary**: Refactored SUIF (`refactor/clean-suif-data-mvvm`) to remove forced `IViewDto`/struct constraints, unified `ViewBinder.FixedSlot` + `BaseReactiveDataView` + DI View injection (`IUIDependencyResolver.Inject`), extracted all business logic & static catalogs out of ViewModels into Domain Services + `ShowcaseInventoryCatalog.asset`, converted `ShowcaseTextFormatter` to injectable DI Singleton, and added `UniTask.WhenAll` parallel preloader + `LoadingSpinnerView` (`16/16` EditMode tests passing, `US.dc=2`, `0` console warnings/errors).
+* **Summary**: Created `perf/uitk-font-batching` branches in `SUIF_APPEARENCE` and `SUIF`, audited Unity 6 UI Toolkit text batching internals (`TextureSlotManager` 8 slots, `TextCoreSettings`, `KickRangesReason`) and current Showcase/SUIF font assets (`textSettings = NULL`, `Schiffbauer-Regular SDF` `pad=0`/`multiAtlas=True`, 13 non-ASCII UXML glyphs), and authored official AI rules (`suif-fonts-and-text-batching.md`) and human docs (`Font_Batching_And_TextSettings_Standard.md`).
