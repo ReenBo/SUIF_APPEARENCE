@@ -30,7 +30,7 @@
 
             <ui:VisualElement class="fui-modal-action-row">
                 <ui:Button name="btn-modal-push" text="+ PUSH SUB-POPUP" class="fui-modal-btn" />
-                <ui:Button name="btn-modal-cycle" text="↻ SWITCH PAYLOAD" class="fui-modal-btn" />
+                <ui:Button name="btn-modal-cycle" text="[R] SWITCH PAYLOAD" class="fui-modal-btn" />
                 <ui:Button name="btn-modal-dismiss" text="DISMISS OVERLAY" class="fui-modal-btn is-dismiss" />
             </ui:VisualElement>
 

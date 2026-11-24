@@ -32,7 +32,7 @@
                         <ui:VisualElement class="fui-telemetry-row">
                             <ui:Label text="ACTIVE_BASE:" class="fui-telemetry-label" />
                             <ui:Label name="telemetry-base-readout" text="01_LIFECYCLE" class="fui-telemetry-value" />
-                            <ui:Label text="■" class="fui-telemetry-pip" />
+                            <ui:Label text="#" class="fui-telemetry-pip" />
                         </ui:VisualElement>
                         <ui:VisualElement class="fui-telemetry-row">
                             <ui:Label text="OVERLAY_STACK:" class="fui-telemetry-label" />
@@ -58,7 +58,7 @@
                 <ui:VisualElement class="fui-divider-row">
                     <ui:VisualElement class="fui-divider-line" />
                     <ui:VisualElement class="fui-divider-notch" />
-                    <ui:Label text="┼ SECT_SPLIT ┼" class="fui-divider-tag" />
+                    <ui:Label text="+ SECT_SPLIT +" class="fui-divider-tag" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
@@ -138,13 +138,13 @@
                                 <ui:Label text="06" class="fui-btn-tag" />
                                 <ui:Label text="Dynamic Theme Switcher" class="fui-btn-label" />
                             </ui:VisualElement>
-                            <ui:Label text="■" class="fui-btn-arrow" picking-mode="Ignore" />
+                            <ui:Label text="#" class="fui-btn-arrow" picking-mode="Ignore" />
                         </ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>
 
                 <ui:VisualElement class="fui-v-divider">
-                    <ui:Label text="▲" class="fui-v-arrow" />
+                    <ui:Label text="^" class="fui-v-arrow" />
                     <ui:VisualElement class="fui-v-line">
                         <ui:VisualElement class="fui-v-tick" />
                         <ui:VisualElement class="fui-v-center-box">
@@ -152,7 +152,7 @@
                         </ui:VisualElement>
                         <ui:VisualElement class="fui-v-tick" />
                     </ui:VisualElement>
-                    <ui:Label text="▼" class="fui-v-arrow" />
+                    <ui:Label text="v" class="fui-v-arrow" />
                 </ui:VisualElement>
 
                 <ui:VisualElement class="fui-viewport-container">
@@ -208,7 +208,7 @@
                                 <ui:VisualElement class="fui-footer-hazard-bar" />
                                 <ui:Label name="footer-status-log" text="STATE_SYNC // READY" class="fui-footer-log" />
                             </ui:VisualElement>
-                            <ui:Label text="══════◣ SUIF_VIEWPORT_BUS ◢══════" class="fui-footer-center" />
+                            <ui:Label text="======/ SUIF_VIEWPORT_BUS \======" class="fui-footer-center" />
                             <ui:VisualElement class="fui-footer-right">
                                 <ui:Label text="&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;" class="fui-footer-chevrons" />
                                 <ui:Label text="+" class="fui-footer-plus-box" />

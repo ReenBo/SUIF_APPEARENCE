@@ -23,7 +23,7 @@
                 <ui:Label text="OnOpen()" class="fui-step-name" />
             </ui:Button>
             <ui:Button name="btn-stage-show" class="fui-lifecycle-step-btn is-active">
-                <ui:Label text="STEP_03 ●" class="fui-step-label" />
+                <ui:Label text="STEP_03 *" class="fui-step-label" />
                 <ui:Label text="OnShow()" class="fui-step-name" />
             </ui:Button>
             <ui:Button name="btn-stage-hide" class="fui-lifecycle-step-btn">
